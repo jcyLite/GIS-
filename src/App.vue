@@ -84,7 +84,7 @@
 								<img @click.stop="changeName(item,index)" src="./img/edit.png" alt="" />
 								<img @click="poperDetail(item,index)" src="./img/detail.png" alt="" style="width:20px;"/>
 								<img src="./img/earth.png" alt="" />
-								<img @click="deleteLayer(item,index)" src="./img/hsz.png" alt="" />
+								<img @click="deleteLayer(item,index)" src="./img/hsz.png" alt="" style="width: 17px;" />
 							</div>
 						</div>
 						<div class="b">
@@ -93,11 +93,11 @@
 								批量上传
 							</span>
 							<span @click="cksxb(item,index)">
-								<img src="./img/shuxing.png" alt="" />
+								<img src="./img/shuxing.png" alt="" style="width:17px;"/>
 								<span>查看属性表</span>
 							</span>
 							<span>
-								<img src="./img/download.png" alt="" />导出
+								<img src="./img/download.png" alt="" style="margin-right: 4px;" />导出
 							</span>
 						</div>
 					</div>
@@ -125,7 +125,9 @@
 				<span style="cursor: pointer;" @click="search">搜索</span>
 			</div>
 			<div id="mapDiv"></div>
-			<poper-bottom :d="d[active]" v-model=cksxbd></poper-bottom>
+			<div id="poper-bottom-cont">
+				<poper-bottom :d="d[active]" v-model=cksxbd></poper-bottom>
+			</div>
 		</div>
 	</div>
 </template>
@@ -175,7 +177,6 @@
 				bigLei: [],
 				cityAry: [],
 				overLayObj:null, // 地图图层对象
-				moduleId:'', // 属性表 某行的id
 			}
 		},
 		watch:{
@@ -258,6 +259,7 @@
 			 * 点击单个图层眼睛
 			 */
 			clickEye(item,index) {
+				this.active=index;
 				(this.eye.indexOf(index)==-1)?(this.eye.push(index)):(this.eye.splice(this.eye.indexOf(index),1));
 				this.exchangeDisplay(item,index);
 			},
@@ -278,6 +280,9 @@
 			 * 地图定位到各个点的中央区域，让用户有更好的视野
 			 */
 			setCenterMap() {
+				if(!this.d[this.active].datas){
+					return false;
+				}
 				let centerArr=[];
 				if(this.layerType=='点'){
 					this.d[this.active].datas.forEach((item,index)=>{
@@ -309,15 +314,18 @@
 					var tempstr = '/' + this.d[index].moduleName + '/' + 'queryModule';
 					this.$http.post(tempstr, {}).then(d => {
 						this.d[index].datas = d.data;
-						var a;
-						if(item.tleixing == '点') {
-							a = this.jzdian(d.data, this.d[index].tid);
-						} else if(item.tleixing == '线') {
-							a = this.jzxian(d.data, this.d[index].tid);
-						} else if(item.tleixing == '面') {
-							a = this.jzmian(d.data, this.d[index].tid);
+						if(d.data){
+							// 生成对应的图层以及图层内的所有覆盖物 点 线 面
+							var a;
+							if(item.tleixing == '点') {
+								a = this.jzdian(d.data, this.d[index].tid);
+							} else if(item.tleixing == '线') {
+								a = this.jzxian(d.data, this.d[index].tid);
+							} else if(item.tleixing == '面') {
+								a = this.jzmian(d.data, this.d[index].tid);
+							}
+							this.tlayer[index]=a;
 						}
-						this.tlayer[index]=a;
 						this.jeye(index);  // 点 线 面 显示切换
 						this.setCenterMap();
 					});
@@ -360,6 +368,8 @@
 					//this.layerType=this.d[0].tleixing;  // 设置默认的图层类型--点 线 面
 					this.cksxbd = false; // 隐藏属性表格
 					this.tlayer=[]; // 换了大类就清空图层的点
+					this.map.clearOverLays(); // 清除所有地图上的覆盖物
+					this.eye=[]; // 清除眼睛选中效果
 				}) 
 			},
 			// makeData(d) {
@@ -379,7 +389,6 @@
 			 * 生成图层的各个点 线 面
 			 */
 			makeData(arr,type,tid) {
-				console.log(111111111)
 				console.log(arr)
 				console.log(type)
 				console.log(tid)
@@ -405,11 +414,11 @@
 				this.noSearch = false;
 			},
 			fiter() {
+				alert(111111)
 				var that = this;
 				this.$createFiter({
 					$events: {
-						shaixuan(a) {
-							console.log(a);
+						screen(a) {  // 筛选
 							var tempStr;
 							if(a == 0) {
 								tempStr = "点";
@@ -432,7 +441,8 @@
 									console.log(1110);
 								}
 								that.d = d.datas;
-								that.makeData(d.datas)
+								that.map.clearOverLays(); // 清除所有地图上的覆盖物
+								that.eye=[]; // 清除眼睛选中效果
 							})
 						}
 					}
@@ -469,44 +479,62 @@
 				//this.overLayObj=overLay;
 			},
 			jzdian(data, tid) {
+				// data是属性表里面的数据
+				if(!data){
+					return false;
+				}
 				var lx = 0,
 					ly = 0;
 				var that = this;
 				var tlayers = [];
 				window.activeMarkers = [];
-				data.forEach(item => {
+				data&&data.forEach((item,index) => {
 					var x = item.lnglat.lng;
 					var y = item.lnglat.lat;
 					lx += parseFloat(x);
 					ly += parseFloat(y);
 					var marker = new T.Marker(new T.LngLat(parseFloat(x), parseFloat(y)));
 					marker.id=item.id;
-					marker.addEventListener('mouseup',function(){
-						this.enableDragging();
-						console.log(this.getLnglat());
+					marker.subIndex=index;
+					marker.addEventListener('mouseup',function(param){
+						let suIndex=this.subIndex;
+						that.$children.forEach((item,index) => {  // 选择poperBottom组件实例,修改oactive
+							if(item.$el.parentNode.id=='poper-bottom-cont'){
+								item.oactive=suIndex;
+								item.moduleId=item.d.datas[suIndex].id;
+							}
+						});
+						this.enableDragging(); // 让用户拖动 点 （ 但是需要先点击一下才能拖动 ）
+					})
+					marker.addEventListener('dragend',function(param){  // 拖拽事件
+						console.log('发生了拖拽事件完毕')
+						this.setLngLat(new T.LngLat(param.lnglat.lng,param.lnglat.lat));
 					})
 					marker.bid = item.bid;
 					marker.tid = tid;
-					marker.addEventListener('click', function(obj) {
-						that.markerClick(this, obj)
+					marker.addEventListener('click', function(obj) {  // 点击事件
+						that.markerClick(this, obj);   // 触发弹框
 					});
 					
 					activeMarkers.push(marker);
 					this.map.addOverLay(marker);
-					marker.hide();
+					marker.hide(); // 隐藏 点
 					tlayers.push(marker)
 				});
 				var px = lx / data.length;
 				var py = ly / data.length;
 				return {
 					tlayers,
-					p: {
+					p: {  // ???????????做什么的
 						px,
 						py
 					}
 				};
 			},
 			jzxian(data, tid) {
+				if(!data){
+					return false;
+				}
 				var that = this;
 				var lx = 0,
 					ly = 0,
@@ -547,12 +575,15 @@
 				};
 			},
 			jzmian(data, tid) {
+				if(!data){
+					return false;
+				}
 				var that = this;
 				var lx = 0,
 					ly = 0,
 					bb = 0;
 				var tlayers = [];
-				data.forEach(item => {
+				data&&data.forEach(item => {
 					var points = [];
 					item.lnglat.forEach(ii => {
 						lx += parseFloat(ii.lng);
@@ -599,6 +630,9 @@
 			jeye(index) {
 				//眼睛
 				var a = this.tlayer[index]
+				if(!a){
+					return false;
+				}
 				if(this.eye.indexOf(index) != -1) {
 					a.tlayers.forEach((item, index) => {
 						item.show()

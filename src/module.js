@@ -1,12 +1,20 @@
 export function markerClick(marker,obj){//点击标注时触发事件
-	var that=this;
+    var that=this;
 	var lnglat=obj.lnglat;
 	var sContent = require('./components/dialog.tpl')();
 	var InfoContent=new T.InfoWindow();
 	InfoContent.setContent(sContent);
 	marker.openInfoWindow(InfoContent,lnglat);
 	$(()=>{
-		scbc.call(that,marker,true)
+        if(that.$el.id=='app'){  // 如果用户在app.vue组件点击的标注点（即地图上点击的时候）
+            that.$children.forEach((item,index) => {  // 选择poperBottom组件实例传到dialog.vue
+                if(item.$el.parentNode.id=='poper-bottom-cont'){
+                    scbc.call(item,marker,true)
+                }
+            });
+        }else{
+            scbc.call(that,marker,true)
+        }
 	})
 };
 

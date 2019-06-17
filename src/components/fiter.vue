@@ -24,7 +24,7 @@
 			</div>
 			<div class="buttons">
 				<div @click="chongzhi" class="button">重置</div>
-				<div @click="shaixuan" class="button">筛选</div>
+				<div @click="screen" class="button">筛选</div>
 			</div>
 		</div>
 	</div>
@@ -55,9 +55,9 @@
 				this.inputv='';
 				this.activeb=-1;
 			},
-			shaixuan(){
+			screen(){  // 筛选
                 this.showv=false;
-				this.$emit('shaixuan',this.activeb)
+				this.$emit('screen',this.activeb)
 			},
 			show(){
 				this.showv=true;

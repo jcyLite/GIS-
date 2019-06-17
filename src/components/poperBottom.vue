@@ -39,8 +39,10 @@
 			width:186%;
 			border-bottom:1px solid #ddd;
 			.a{
-				margin-left:10px;
-				font-size:14px;
+				margin-left: 16px;
+				font-size: 16px;
+				font-weight: bold;
+				color: #666;
 			}
 			.right{
 				width:400px;
@@ -382,7 +384,7 @@
 				console.log(obj.data) //得到当前行数据
 				that.oactive=parseInt(obj.data.index)-1;
 				that.dingwei(that.d.datas[that.oactive],that.oactive)
-				that.$parent.moduleId=obj.data.id;
+				that.moduleId=obj.data.id;
 				// let parentObj=that.$parent;
 				// // 获取地图中心坐标
 				// let lnglat=null;
@@ -509,7 +511,6 @@
 							}
 						})
 					})
-					//that.makeData(that.d)???  makeData不存在
 					that.cksxbd = true;
 					that.active=[];
 					that.idsDelete=[];
@@ -525,7 +526,8 @@
 				idsDelete:[], // 要删除的id数组
 				oactive:-1,
 				searchVal:'',
-				bactive:false
+				bactive:false,
+				moduleId:'', // 属性表 某行的id
 			}
 		}
 	}

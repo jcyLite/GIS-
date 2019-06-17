@@ -222,7 +222,7 @@ export default {
             lnglat:lnglat
         };
         if(type=='edit'){  // 此时是编辑页面，需要传编辑的那个属性的id
-            dic.id=this.that.$parent.moduleId;
+            dic.id=this.that.moduleId;
         }
         var aa = JSON.stringify(dic);
         let moduleName=$(".leftBox .bottom .box.active").attr("moduleName");
