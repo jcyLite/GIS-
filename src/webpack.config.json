@@ -9,6 +9,6 @@
     "compress": false,
     "proxy": {
         "api": ["/czcgnl", "/file"],
-        "target": "http://202.102.101.92:18088"
+        "target": "http://202.102.101.92:20001"
     }
 }

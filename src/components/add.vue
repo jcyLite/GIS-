@@ -1,11 +1,11 @@
 <template>
-	<div v-if="poper" class="poper">
+	<div v-if="poper" class="poper ">
 		<div @click="poper=false" class="shade"></div>
 		<div class="box">
 			<div style="overflow: hidden;" class="scroller">
 				<div class="row">
 					<div class="col">图层名称：</div>
-					<input v-model="poperData.tname" class="col" type="text" />
+					<input v-model="poperData.tname" class="col layui-input" type="text" />
 				</div>
 				<div class="row">
 					<div class="col">部件大类：</div>
@@ -42,7 +42,7 @@
 				<!--</div>-->
 				<div class="row">
 					<div class="col">描述：</div>
-					<input v-model="poperData.miaoshu" class="col" type="text" />
+					<input v-model="poperData.miaoshu" class="col layui-input" type="text" />
 				</div>
 			</div>
 			<div class="buttons">
@@ -78,7 +78,11 @@
             this.tempAry = this.abc;
             // this.secondAry =  this.abc[0].sub;
 	        console.log("sstempAryssss=="+this.tempAry);
-            console.log("this.secondAry=="+this.secondAry);
+			console.log("this.secondAry=="+this.secondAry);
+			layui.form.render(); // 重载一下layui的表单元素
+		},
+		updated(){
+			layui.form.render(); // 重载一下layui的表单元素
 		},
         watch:{
             'poperData.bigType' :{
@@ -113,7 +117,6 @@
 				this.poper=true;
 			},
 			addbtuceng(){
-				// alert(3)
 				this.$emit('addbtuceng',this.poperData)
 			}
 		}

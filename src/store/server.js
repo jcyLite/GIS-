@@ -31,11 +31,6 @@ axios.interceptors.response.use(
         return res.data
     },
     err => {
-        Dialog.$create({
-            type: 'alert',
-            title: '系统异常提示!',
-            content: '服务器异常',
-            icon: 'potic-alert'
-        }).show()
+        layui.layer.msg("系统异常提示")
     }
 )

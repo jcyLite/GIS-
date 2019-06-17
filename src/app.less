@@ -1,42 +1,56 @@
 body {
     margin: 0;
 }
-
+/**
+ *清除浮动
+*/
+.clearfix:after{
+    display: block;
+    clear: both;
+    content: "";
+    visibility: hidden;
+    height: 0;
+}
+.clearfix{
+    zoom:1;
+}
 .leftBox {
-    width: 250px;
-    height: 600px;
+    width: 270px;
+    height: 100%;
     float: left;
     .top {
+        border-bottom:1px solid #ddd;
+        padding:15px 10px;
+        box-shadow:0px 1px 8px -6px #333;
         select {
             width: 100px;
         }
-        border-bottom:1px solid #ddd;
-        padding:20px;
     }
     .bottom {
         .bottom-top {
-            padding-left: 10px;
-            margin-top: 20px;
+            padding: 10px;
             font-size: 15px;
+            border-bottom: 1px solid #ddd;
             >div:last-child {
                 float: right;
-                margin-right: 10px;
             }
             >div {
                 float: left;
                 img {
-                    margin-right: 8px;
+                    margin-left: 8px;
                     width: 20px;
+                    cursor: pointer;
                 }
             }
         }
         .box {
             border: 1px solid #ddd;
+            border-radius: 5px;
             height: 70px;
             margin: 10px;
             width: 250px;
             &.active{
-                border:1px solid #007BC4;
+                border:1px solid rgba(51, 153, 255, 1);
             }
             .t {
                 border-bottom: 1px solid #ddd;
@@ -69,6 +83,8 @@ body {
                 img {
                     width: 15px;
                     margin-right: 10px;
+                    margin-top: -5px;
+                    cursor: pointer;
                 }
             }
             .b {
@@ -76,7 +92,9 @@ body {
                 font-size: 12px;
                 img {
                     width: 12px;
-                    margin-left: 10px;
+                    margin:0 2px 0 10px;
+                    position: relative;
+                    top: -2px;
                 }
                 span {
                     cursor: pointer;
@@ -89,21 +107,18 @@ body {
 .rightBox {
     float: left;
     position: relative;
-    margin-left:20px;
     width:calc(100% - 270px);
     height:100vh;
     #mapDiv {
         width: 100%;
         height: 100vh;
         .tdt-infowindow-content{
-            width: 354px !important;
-            //background: cyan;
+            width: 380px!important;
         }
     }
     .cksxb{
         width:100%;
         height:200px;
-        border:1px solid #ddd;
         bottom:0;
         background:#fff;
         z-index:100000;
@@ -140,18 +155,19 @@ body {
         z-index: 100000;
         .toola {
             float: left;
-            width: 110px;
             height: 30px;
             background: #fff;
             box-shadow: 1px 1px 2px rgba(0, 0, 0, .5);
+            border-radius: 4px;
         }
         .toolb {
             margin-left: 20px;
             float: left;
-            width: 160px;
+            width: auto;
             height: 30px;
             background: #fff;
             box-shadow: 1px 1px 2px rgba(0, 0, 0, .5);
+            border-radius: 4px;
         }
         .toola,
         .toolb {

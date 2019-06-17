@@ -3,96 +3,102 @@
 	.search {
 		position: relative;
 		.search-icon {
-			width: 20px;
+			width: 23px;
 			position: absolute;
 			right: 0px;
-			top: -20px;
+			bottom: 5px;
+			cursor: pointer;
 		}
 	}
 	
 	.top {
-		select {
-			font-size: 12px;
-			option {
-				margin-right: 12px;
+		.floor{
+			line-height: 34px;
+			height: 34px;
+			&:nth-child(1){
+				margin-bottom: 10px;
+			}
+			.left-span{
+				float: left;
+				width: 70px;
+			}
+			.layui-form-select{
+				float: left;
+    			width: 150px;
+			}
+			select {
+				font-size: 12px;
+				option {
+					margin-right: 12px;
+				}
 			}
 		}
 	}
 	
 	.shuru {
-		width: 6rem;
+		width: 150px;
 		border: 1px solid #e5e5e5;
 	}
 </style>
 <template>
 	<div id="app">
 		<leftSearch v-model="noSearch" class="leftBox"></leftSearch>
-		<div v-show="noSearch" class="leftBox">
+		<div v-show="noSearch" class="leftBox layui-form">
 			<div class="top">
-				<div>
-					部件大类：
-					<select v-model="dl" name="aa" id="">
-
-						<option v-for="item in bigLei" :value='item.value'>{{item.value}}</option>
-
+				<div class="floor">
+					<span class="left-span">部件大类：</span>
+					<select v-model="dl" name="aa" id="" lay-filter="bigLei">
+						<option v-for="(item,index) in bigLei" :key="index" :value='item.value'>{{item.value}}</option>
 					</select>
 				</div>
-				<div>
-					图层名称：
-					<input v-model="xl" class="shuru" />
-
+				<div class="floor">
+					<span class="left-span">图层名称：</span>
+					<input v-model="xl" class="shuru layui-input" />
 				</div>
 				<div class="search">
 					<img @click="searchlei" class="search-icon" src="./img/search.png" alt="" />
-
 				</div>
 			</div>
 			<div class="bottom">
-				<div class="bottom-top">
+				<div class="bottom-top clearfix">
 					<div>
 						共{{d.length}}个图层
 					</div>
 					<div>
 						<img @click="fiter" src="./img/filter.png" alt="" />
 						<img @click="addatuceng" src="./img/addb.png" alt="" />
-						<img @click="d=[]" src="./img/huishou.png" alt="" />
-
+						<img @click="deleteAllLayer" src="./img/huishou.png" alt="" />
 					</div>
 				</div>
 				<div class="container">
-					<div :class="{active:active==index}" @click="active=index,jiazhai(item,index)" class="box" v-for="(item,index) of d">
+					<div :class="{active:active==index}" @click="clickLeftLayer(item,index)" class="box" :moduleName='item.moduleName' v-for="(item,index) of d" :key="index">
 						<div class="t">
-							<div @click="(eye.indexOf(index)==-1)?(eye.push(index)):(eye.splice(eye.indexOf(index),1)),jeye(item,index)" class="eye">
+							<div @click.stop="clickEye(item,index)" class="eye">
 								<img v-if="eye.indexOf(index)==-1" src="./img/eye.png" alt="" />
 								<img v-if="eye.indexOf(index)!=-1" src="./img/eye_active.png" alt="" />
-
 							</div>
 							<div class="contenteditable">
 								{{item.tname }}
 							</div>
 							<div class="u">
-								<img @click="changeName(item,index)" src="./img/edit.png" alt="" />
-								<img @click="poperDetail(item,index)" src="./img/detail.png" alt="" />
+								<img @click.stop="changeName(item,index)" src="./img/edit.png" alt="" />
+								<img @click="poperDetail(item,index)" src="./img/detail.png" alt="" style="width:20px;"/>
 								<img src="./img/earth.png" alt="" />
-								<img @click="d.splice(index,1)" src="./img/hsz.png" alt="" />
-
+								<img @click="deleteLayer(item,index)" src="./img/hsz.png" alt="" />
 							</div>
 						</div>
 						<div class="b">
 							<span>
-
 								<img src="./img/upload.png" alt="" />
 								批量上传
 							</span>
-							<span @click="cksxb">
+							<span @click="cksxb(item,index)">
 								<img src="./img/shuxing.png" alt="" />
-
-							<span>查看属性表</span></span>
+								<span>查看属性表</span>
+							</span>
 							<span>
-
-<img src="./img/download.png" alt="" />
-
-导出</span>
+								<img src="./img/download.png" alt="" />导出
+							</span>
 						</div>
 					</div>
 				</div>
@@ -101,10 +107,9 @@
 		<div class="rightBox">
 			<div class="topTool">
 				<div class="toola">
-					<img @click="editMarker" src="./img/position.png" alt="" />
-					<img @click="openPolylineTool" src="./img/zx.png" alt="" />
-					<img @click="openPolygonTool" src="./img/m.png" alt="" />
-
+					<img @click="editMarker" v-show="layerType=='点'" src="./img/position.png" alt="" />
+					<img @click="openPolylineTool" v-show="layerType=='线'" src="./img/zx.png" alt="" />
+					<img @click="openPolygonTool" v-show="layerType=='面'" src="./img/m.png" alt="" />
 				</div>
 				<div class="toolb">
 					<img @click="openCircleTool" src="./img/circle.png" alt="" />
@@ -116,7 +121,7 @@
 				</div>
 			</div>
 			<div v-show="searchShow" class="search">
-				<input type="text" />
+				<input type="text" class="layui-input" />
 				<span style="cursor: pointer;" @click="search">搜索</span>
 			</div>
 			<div id="mapDiv"></div>
@@ -126,6 +131,9 @@
 </template>
 
 <script>
+	import 'layui-src/dist/layui.all.js';
+	import 'layui-src/src/css/modules/layer/default/layer.css';
+	import 'layui-src/src/css/layui.css';
 	import './components/dialog.less';
 	import poperBottom from './components/poperBottom.vue';
 	import leftSearch from './components/leftSearch.vue';
@@ -145,7 +153,7 @@
 			return {
 				noSearch: true,
 				poperChangeName: false,
-				active: 0,
+				active: -1,
 				cksxbd: false,
 				poper: false,
 				map: null,
@@ -157,21 +165,36 @@
 				infoWin1: null,
 				polygonTool: null,
 				searchShow: false,
-				d: [],
+				d: [], // 左边图层信息
+				layerType:'', // 图层的类型 --- 点 线 面
 				contents: [],
 				eye: [],
-				tlayer: [],
+				tlayer: [],  // 储存某大类里面多个图层的所有点
 				dl: '',
 				xl: '',
 				bigLei: [],
 				cityAry: [],
+				overLayObj:null, // 地图图层对象
+				moduleId:'', // 属性表 某行的id
 			}
+		},
+		watch:{
+			// eye(newV){
+			// 	newV.forEach((item)=>{
+			// 			var tempstr = '/' + this.d[this.active].moduleName + '/' + 'queryModule';
+			// 			this.$http.post(tempstr, {}).then(d => {
+			// 				this.d[this.active].datas = d.data;
+			// 				 // 生成该图层的各个点 线 面
+							
+			// 			})
+			// 	})
+			// }
 		},
 		mounted() {
 			window.uu = this;
 			var that = this;
 			//读取后台数据
-			window.$ = require('jquery');
+			window.$ = require('jquery');  // 引入jq
 			this.map = new T.Map("mapDiv");
 			window.map = this.map;
 			//设置显示地图的中心点和级别
@@ -188,9 +211,9 @@
 			this.requestCity();
 			var infoWin1 = this.infoWin1;
 			var sContent = require('./components/dialog.tpl')();
-			var bContent = require('./components/dialogb.tpl')();
 			var that = this;
 			this.markerTool.addEventListener('mouseup', function() {
+				// 点击标注一个点的时候触发，线和面的触发是其他方法
 				var markers = that.markerTool.getMarkers();
 				infoWin1.setContent(sContent);
 				for(var i = 0; i < markers.length; i++) {
@@ -219,8 +242,88 @@
 				var method = $(this).attr('click');
 				that[method] ? that[method].call(this, e) : '';
 			})
+			layui.form.on('select(bigLei)', function(data){
+				//console.log(data.elem); //得到select原始DOM对象
+				//console.log(data.value); //得到被选中的值
+				//console.log(data.othis); //得到美化后的DOM对象
+				that.dl=data.value;
+			});  
+			layui.form.render(); // 重载一下layui的表单元素
+		},
+		updated(){
+			layui.form.render(); // 重载一下layui的表单元素
 		},
 		methods: {
+			/**
+			 * 点击单个图层眼睛
+			 */
+			clickEye(item,index) {
+				(this.eye.indexOf(index)==-1)?(this.eye.push(index)):(this.eye.splice(this.eye.indexOf(index),1));
+				this.exchangeDisplay(item,index);
+			},
+			/**
+			 * 点击左侧的图层模块
+			 */
+			clickLeftLayer(item,index) {
+				this.active=index;
+				this.layerType=item.tleixing;
+				// 眼睛选中
+				if(this.eye.indexOf(index)==-1){
+					this.eye.push(index)
+				}
+				// 触发眼睛选中后的 图层显示隐藏切换
+				this.exchangeDisplay(item,index);
+			},
+			/**
+			 * 地图定位到各个点的中央区域，让用户有更好的视野
+			 */
+			setCenterMap() {
+				let centerArr=[];
+				if(this.layerType=='点'){
+					this.d[this.active].datas.forEach((item,index)=>{
+						centerArr.push(new T.LngLat(item.lnglat.lng, item.lnglat.lat));
+					})
+				}else if(this.layerType=='线'||this.layerType=='面'){
+					this.d[this.active].datas.forEach((item,index)=>{
+						item.lnglat.forEach((innerItem,innerIndex)=>{
+							centerArr.push(new T.LngLat(innerItem.lng, innerItem.lat));
+						})
+					})
+				}
+				if(centerArr.length==0){
+					return false;
+				}
+				let centerPoint=this.map.getViewport(centerArr).center;  //获取中央的坐标
+				let centerzoom=this.map.getViewport(centerArr).zoom;  //获取中央的级别
+				//定位到显示弹窗的中心位置
+				window.map.centerAndZoom(new T.LngLat(centerPoint.lng,centerPoint.lat), centerzoom);
+			},
+			/**
+			 * 点 线  面 显示 隐藏切换
+			 */
+			exchangeDisplay(item,index) {
+				if(this.tlayer[index]){
+					this.jeye(index);  // 点 线 面 显示切换
+					this.setCenterMap();
+				}else{
+					var tempstr = '/' + this.d[index].moduleName + '/' + 'queryModule';
+					this.$http.post(tempstr, {}).then(d => {
+						this.d[index].datas = d.data;
+						var a;
+						if(item.tleixing == '点') {
+							a = this.jzdian(d.data, this.d[index].tid);
+						} else if(item.tleixing == '线') {
+							a = this.jzxian(d.data, this.d[index].tid);
+						} else if(item.tleixing == '面') {
+							a = this.jzmian(d.data, this.d[index].tid);
+						}
+						this.tlayer[index]=a;
+						this.jeye(index);  // 点 线 面 显示切换
+						this.setCenterMap();
+					});
+					
+				}
+			},
 			requestCity() {
 				this.$http.post('gis/queryByCode', {
 					dictionaryCode: '行政区划及代码'
@@ -242,38 +345,53 @@
 				})
 			},
 			searchlei() {
-				//大类小类搜索
+				// 添加验证
+				//layui.layer.msg('22')
+
+				//大类搜索
 				this.$http.post('/layer/findLayer', {
 					name: this.xl,
 					artTypeName: this.dl
 				}).then(dd => {
-					dd.datas.forEach((item, index) => {
-						var tempstr = '/' + item.moduleName + '/' + 'queryModule';
-						console.log('tempstr==' + tempstr);
-						this.$http.post(tempstr, {}).then(d => {
-							dd.datas[index].datas = d.datas;
-							console.log('dddd==' + JSON.stringify(d));
-						})
-					});
-					 setTimeout(() => {
-						console.log('dd.datas==' + JSON.stringify(dd.datas));
-						this.d = dd.datas;
-						this.makeData(dd.datas)
-					}, 1000);
+					dd.datas.forEach((item,index)=>{
+						item.datas=null;  // 先添加属性，后面存放属性表格数据
+					})
+					this.d=dd.datas;
+					//this.layerType=this.d[0].tleixing;  // 设置默认的图层类型--点 线 面
+					this.cksxbd = false; // 隐藏属性表格
+					this.tlayer=[]; // 换了大类就清空图层的点
 				}) 
 			},
-			makeData(d) {
-				d.forEach((item, index) => {
-					var a;
-					if(item.tleixing == 'dian') {
-						a = this.jzdian(item.data, item.tid);
-					} else if(item.tleixing == 'xian') {
-						a = this.jzxian(item.data, item.tid);
-					} else if(item.tleixing == 'mian') {
-						a = this.jzmian(item.data, item.tid);
-					}
-					this.tlayer.push(a);
-				})
+			// makeData(d) {
+			// 	d.forEach((item, index) => {
+			// 		var a;
+			// 		if(item.tleixing == 'dian') {
+			// 			a = this.jzdian(item.data, item.tid);
+			// 		} else if(item.tleixing == 'xian') {
+			// 			a = this.jzxian(item.data, item.tid);
+			// 		} else if(item.tleixing == 'mian') {
+			// 			a = this.jzmian(item.data, item.tid);
+			// 		}
+			// 		this.tlayer.push(a);
+			// 	})
+			// },
+			/**
+			 * 生成图层的各个点 线 面
+			 */
+			makeData(arr,type,tid) {
+				console.log(111111111)
+				console.log(arr)
+				console.log(type)
+				console.log(tid)
+				var a;
+				if(type == '点') {
+					a = this.jzdian(arr, tid);
+				} else if(type == '线') {
+					a = this.jzxian(arr, tid);
+				} else if(type == '面') {
+					a = this.jzmian(arr,tid);
+				}
+				this.tlayer.push(a);
 			},
 			poperDetail(data) {
 				this.$createPoperDetail({
@@ -325,14 +443,18 @@
 				var that = this;
 				this.$createChangeName({
 					$props: {
-						data: item.tname
+						data1: item.tname
 					},
 					$events: {
 						confirm(data) {
 							item.tname = data;
-							that.$http.post('changeName', {
-								tid: item.tid,
-								tname: data
+							that.$http.post('/layer/modifyLayer', {
+								id: item.tid,
+								name: data
+							}).then(res=>{
+								if(res.code==-1){
+									layui.layer.msg(res.msg)
+								}
 							})
 						}
 					}
@@ -342,8 +464,9 @@
 				//点击标注时触发事件
 				markerClick.call(this, marker, obj)
 			},
-			scbc(overLay, type) {
-				scbc.call(this, overLay, type);
+			scbc(overLay) {
+				scbc.call(this, overLay);
+				//this.overLayObj=overLay;
 			},
 			jzdian(data, tid) {
 				var lx = 0,
@@ -357,17 +480,23 @@
 					lx += parseFloat(x);
 					ly += parseFloat(y);
 					var marker = new T.Marker(new T.LngLat(parseFloat(x), parseFloat(y)));
+					marker.id=item.id;
+					marker.addEventListener('mouseup',function(){
+						this.enableDragging();
+						console.log(this.getLnglat());
+					})
 					marker.bid = item.bid;
 					marker.tid = tid;
 					marker.addEventListener('click', function(obj) {
 						that.markerClick(this, obj)
 					});
+					
 					activeMarkers.push(marker);
 					this.map.addOverLay(marker);
 					marker.hide();
 					tlayers.push(marker)
 				});
-				 var px = lx / data.length;
+				var px = lx / data.length;
 				var py = ly / data.length;
 				return {
 					tlayers,
@@ -400,12 +529,13 @@
 						var InfoContent = new T.InfoWindow();
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
-						that.scbc(this, 'xian')
+						that.scbc(this)
 					});
 					this.map.addOverLay(pointers);
 					pointers.hide();
 					tlayers.push(pointers)
 				});
+				window.xianLayers=tlayers
 				var px = lx / bb;
 				var py = ly / bb;
 				return {
@@ -417,6 +547,7 @@
 				};
 			},
 			jzmian(data, tid) {
+				var that = this;
 				var lx = 0,
 					ly = 0,
 					bb = 0;
@@ -444,12 +575,14 @@
 						var InfoContent = new T.InfoWindow();
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
-						that.scbc(this, 'xian')
+						
+						that.scbc(this)
 					});
 					this.map.addOverLay(polygons);
 					polygons.hide();
 					tlayers.push(polygons)
 				});
+				window.mianLayers=tlayers
 				var px = lx / bb;
 				var py = ly / bb;
 				return {
@@ -460,7 +593,10 @@
 					}
 				};
 			},
-			jeye(item, index) {
+			/**
+			 *  点 线 面 显示切换
+			 */
+			jeye(index) {
 				//眼睛
 				var a = this.tlayer[index]
 				if(this.eye.indexOf(index) != -1) {
@@ -476,13 +612,22 @@
 			jiazhai(i, index) {
 				//地图位移
 				var a = this.tlayer[index];
-				var px = a.p.px;
-				var py = a.p.py;
-				this.map.centerAndZoom(new T.LngLat(px, py), this.zoom);
+				if(a){
+					var px = a.p.px;
+					var py = a.p.py;
+					this.map.centerAndZoom(new T.LngLat(px, py), this.zoom);
+				}
 			},
-			cksxb() {
-				// console.log('01010101');
-				this.cksxbd = true;
+			cksxb(item,index) {
+				if(!item.datas){
+					let tempstr = '/' + item.moduleName + '/' + 'queryModule';
+					this.$http.post(tempstr, {}).then(d => {
+						this.d[index].datas = d.data;
+						this.cksxbd = true;
+					});
+				}else{
+					this.cksxbd = true;
+				}
 			},
 			contenteditable(item) {
 				this.$http.post('/changeName', {
@@ -524,7 +669,7 @@
 					var InfoContent = new T.InfoWindow();
 					InfoContent.setContent(sContent);
 					that.map.openInfoWindow(InfoContent, lnglat);
-					that.scbc(obj.currentPolyline, 'xian');
+					that.scbc(obj.currentPolyline);
 					obj.currentPolyline.addEventListener('click', () => {
 						var InfoContent = new T.InfoWindow();
 						InfoContent.setContent(sContent);
@@ -545,7 +690,7 @@
 					var InfoContent = new T.InfoWindow();
 					InfoContent.setContent(sContent);
 					that.map.openInfoWindow(InfoContent, lnglat);
-					that.scbc(obj.currentPolygon, 'xian');
+					that.scbc(obj.currentPolygon);
 					obj.currentPolygon.addEventListener('click', () => {
 						var InfoContent = new T.InfoWindow();
 						InfoContent.setContent(sContent);
@@ -596,7 +741,7 @@
 						addbtuceng(poperData) {
 							console.log('poperData==' + poperData);
 							if(!poperData.tname) {
-								alert('未填写图层名称');
+								layer.msg('未填写图层名称');
 								return;
 							}
 							/*
@@ -620,18 +765,63 @@
 								detail: poperData.miaoshu
 							}).then(d => {
 								if(d.responseCode == 0) {
-									alert('保存成功');
+									layui.layer.msg('保存成功');
 									window.location.reload();
 								} else if(d.responseCode == -1) {
-									alert('图层名称已存在');
+									layui.layer.msg('图层名称已存在');
 								} else {
-									alert('保存失败');
+									layui.layer.msg('保存失败');
 								}
 							})
 						}
 					}
 				}).show()
-			}
+			},
+			/**
+			 * 转换静态表格--layui-table
+			 */
+			initTable(){
+				var table = layui.table;
+				table.init('gis-table', {
+					height: 160 //设置高度
+					,limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
+					//支持所有基础参数
+					,done: function () {
+						// 为了点击复选框获取到id 必须把id列写入表格，但是不能展示出来
+						// 结合lay-data="{field:'id', style:'display:none;'}"
+						$("[data-field='id']").css('display','none');
+					}
+				}); 
+			},
+			/**
+			 * 删除单个图层
+			 */
+			deleteLayer(item,index){
+				let idStr=item.tid;
+				//let that=this;
+				this.$http.post('/layer/delLayer', {
+					ids:idStr
+				}).then(d => {
+					this.d.splice(index,1)
+				})
+			},
+			/**
+			 * 删除全部图层
+			 */
+			deleteAllLayer(){
+				let idStr='';
+				let arr=[];
+				this.d.forEach((item,index)=>{
+					arr.push(item.tid)
+				})
+				idStr=arr.join(",");
+				//let that=this;
+				this.$http.post('/layer/delLayer', {
+					ids:idStr
+				}).then(d => {
+					this.d=[];
+				})
+			},
 		}
 	}
 </script>

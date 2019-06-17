@@ -10,10 +10,12 @@ import changeName from './components/changeName.vue'
 import add from './components/add.vue'
 import filter from './components/fiter.vue'
 import poperDetail from './components/poperDetail.vue'
+import diyLayer from './components/diyLayer.vue'
 Vue.createAPI(changeName,true)
 Vue.createAPI(add,true)
 Vue.createAPI(filter,true)
 Vue.createAPI(poperDetail,true)
+Vue.createAPI(diyLayer,true)
 
 
 export function createApp () {

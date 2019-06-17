@@ -6,193 +6,119 @@ export function markerClick(marker,obj){//点击标注时触发事件
 	InfoContent.setContent(sContent);
 	marker.openInfoWindow(InfoContent,lnglat);
 	$(()=>{
-		scbc.call(that,marker)
+		scbc.call(that,marker,true)
 	})
 };
-function abc(cpJson){
-    // console.log(cpJson)
-    function init(obj){
-        $("obj").html("<option>请选择</option>");
-    }
-    //获取省份的数据
-    init($("#pro"));
-    //获取有几个省份，通过循环遍历出来
-    for(var i = 0; i<cpJson.length;i++){
-        // console.log('cpJson[i].name=='+cpJson[i]);
-        //获取到的数据
-        var proresult = "<option value='"+cpJson[i].code+"'>"+cpJson[i].name+"</option>";
-        //添加到显示省份的控件里
-        $("#pro").append(proresult);
-    }
 
-    //var code = $("#pro"").val();
-    //$("#districtCode").val(code);
-
-    //获取当前省份的城市。通过选取省份触发change()事件
-    $("#pro").change(function(){
-        init($("#city"));
-        init($("#dis"));
-        //清空前面选取时遗留的数据。gt(index)方法获取下标大于index的数据，index从0开始
-        $("#city option:gt(0)").remove();
-        $("#dis option:gt(0)").remove();
-        for(var j = 0;j<cpJson.length;j++){
-            //判断选取的省份和JSon数据相匹配的数据
-            //if($(this).attr("value") == cpJson[j].p){
-            if($(this).val() == cpJson[j].code){
-                //根据当前城市进行循环
-                for(var k = 0;k<cpJson[j].sub.length;k++){
-                    //获取当前省份对应的城市数据
-                    var cityresult = "<option value='"+cpJson[j].sub[k].code+"'>"+cpJson[j].sub[k].name+"</option>";
-                    //添加到城市控件里
-                    $("#city").append(cityresult);
-                }
-            }
-        }
-    });
-
-    //获取当前城市的乡镇。通过选取城市触发change()事件
-    $("#city").change(function(){
-        init($("#dis"));
-        //清空前面选取时遗留的数据。gt(index)方法获取下标大于index的数据，index从0开始
-        $("#dis option:gt(0)").remove();
-        //根据省份循环
-        for(var j = 0;j<cpJson.length;j++){
-            //根据城市循环
-            for(var k = 0;k<cpJson[j].sub.length;k++){
-                //判断选取的城市和JSon数据相匹配的数据，如果没有对应的乡镇就进行下次循环
-                //if($(this).attr("value") == cpJson[j].c[k].c1 && cpJson[j].d != null ){
-                if($(this).val() == cpJson[j].sub[k].code){
-                    ////根据乡镇循环
-                    for(var n = 0;n<cpJson[j].sub.length;n++){
-                        var cityresult = "<option value='"+cpJson[j].sub[k].sub[n].code+"'>"+cpJson[j].sub[k].sub[n].name+"</option>";
-                        $("#dis").append(cityresult);
-                    }
-                }
-            }
-        }
-    });
-}
-export function scbc(overLay,type){
-
-    // console.log('ary==='+ary);
+import Vue from 'vue'
+import dialog from './components/dialog.vue'
+/**
+ * 绘制点 线 面 的时候触发， 并弹框
+ */
+export function scbc(overLay,editBool){  // editBool--true：编辑弹框  false：新增弹框
     var that=this;
+    // 请求地区数据，然后初始化弹框组件
+    new Vue({
+        el:'#dialogCont',
+        data(){
+            return {
+                overLay,
+                that,
+                editBool:editBool||false
+            }
+        },
+        render:h=>h(dialog),
+    })
+    
+    
 
-	$('.buttons .sc').click(function(){//点击删除
-		that.$http.post('/del',{
-			bid:overLay.bid,
-			tid:overLay.tid
-		})
-		map.removeOverLay(overLay);
-		map.closeInfoWindow()
-	})
-	$(".buttons .bj").click(function(){//点击编辑
-		console.log($('.dialogb'))
-		$('.dialogb').find('input').attr('disabled',false)
-		$('.dialogb').find('select').attr('disabled',false)
-	})
-	$('.buttons .bc').click(function(){//点击保存
+	// $('.buttons .sc').click(function(){//点击取消
+	// 	map.removeOverLay(overLay);
+	// 	map.closeInfoWindow()
+	// })
+    // $("body").on("click",".buttons .bj",function(){//点击编辑
+	// 	console.log($('.dialogb'))
+	// 	$('.dialogb').find('input').attr('disabled',false)
+	// 	$('.dialogb').find('select').attr('disabled',false)
+	// })
+	//$('.buttons .bc').click(function(){//点击保存
+        // var select3 = document.getElementById("dis");
+        // var thirdName = select3.value;
+        // var thirdValue = $('#dis').find('option[value='+thirdName+']').html();
 
-        var select3 = document.getElementById("dis");
-        var thirdName = select3.value;
-        var thirdValue = $('#dis').find('option[value='+thirdName+']').html();
+        // var select2 = document.getElementById("city");
+        // var secondName = select2.value;
+        // var secondValue = $('#city').find('option[value='+secondName+']').html();
 
-        var select2 = document.getElementById("city");
-        var secondName = select2.value;
-        var secondValue = $('#city').find('option[value='+secondName+']').html();
-
-        var select1 = document.getElementById("pro");
-        var firstName = select1.value;
-        var firstValue = $('#pro').find('option[value='+firstName+']').html();
-
-
-        // console.log('firstValue='+firstValue);
-        // console.log('firstName='+firstName);
-        //
-        // console.log('secondValue='+secondValue);
-        // console.log('secondName='+secondName);
-        //
-        //
-        // console.log('thirdValue='+thirdValue);
-        // console.log('thirdName='+thirdName);
-
-        var bujianName = document.getElementById("bujianName").value;
-        var dizhiScript = document.getElementById("dizhiScript").value;
-        var zhuguanPart = document.getElementById("zhuguanPart").value;
-        var quanshuPart = document.getElementById("quanshuPart").value;
-        var yanghuPart = document.getElementById("yanghuPart").value;
-        var shujuSource = document.getElementById("shujuSource").value;
-        var shujuReceive = document.getElementById("shujuReceive").value;
-        var beizhu = document.getElementById("beizhu").value;
+        // var select1 = document.getElementById("pro");
+        // var firstName = select1.value;
+        // var firstValue = $('#pro').find('option[value='+firstName+']').html();
 
 
+        // // console.log('firstValue='+firstValue);
+        // // console.log('firstName='+firstName);
+        // //
+        // // console.log('secondValue='+secondValue);
+        // // console.log('secondName='+secondName);
+        // //
+        // //
+        // // console.log('thirdValue='+thirdValue);
+        // // console.log('thirdName='+thirdName);
 
-
-
-
-        if(!type){
-			console.log(overLay.getLngLat())
-            var dic = {
-                cityCode:'320400000000',
-                cityName:'常州市',
-                districtCode:firstName,
-                districtName:firstValue,
-                streetCode:secondName,
-                streetName:secondValue,
-                communityCode:thirdName,
-                communityName:thirdValue,
-                name:bujianName,
-                address:dizhiScript,
-                adminDept:zhuguanPart,
-                ownerDept:quanshuPart,
-                guardDept:yanghuPart,
-                source:shujuSource,
-                recorder:shujuReceive,
-                remark:beizhu,
-                lnglat:overLay.getLngLat()
-            };
-			var aa = JSON.stringify(dic);
-			that.$http.post('/module10101/saveModule',{
-               aa
-			}).then(d=>{
-
-                if (d.code == 0) {
-                    alert('添加成功');
-                    window.location.reload();
-                } else if(d.code == -1){
-                    alert('部件名称已存在');
-                }else{
-                    alert('添加失败');
-                }
-
-			    // console.log("ddd="+d);
-            })
-		}
-
-		else if(type=='xian'){
-			console.log(overLay.getLngLats())
-		}
-	})
+        // var bujianName = document.getElementById("bujianName").value;
+        // var dizhiScript = document.getElementById("dizhiScript").value;
+        // var zhuguanPart = document.getElementById("zhuguanPart").value;
+        // var quanshuPart = document.getElementById("quanshuPart").value;
+        // var yanghuPart = document.getElementById("yanghuPart").value;
+        // var shujuSource = document.getElementById("shujuSource").value;
+        // var shujuReceive = document.getElementById("shujuReceive").value;
+        // var beizhu = document.getElementById("beizhu").value;
+        // var lnglat = overLay.getLngLat?overLay.getLngLat():overLay.getLngLats();
+        // if(lnglat instanceof Array){  // 如果是线和面，则lnglat是个数组
+        //     lnglat=lnglat.length>1?lnglat:lnglat[0]  // 如果是面，则lnglat是个两层的数组。。这里要改下结构
+        // }
+        // var dic = {
+        //     cityCode:'320400000000',
+        //     cityName:'常州市',
+        //     districtCode:firstName,
+        //     districtName:firstValue,
+        //     streetCode:secondName,
+        //     streetName:secondValue,
+        //     communityCode:thirdName,
+        //     communityName:thirdValue,
+        //     name:bujianName,
+        //     address:dizhiScript,
+        //     adminDept:zhuguanPart,
+        //     ownerDept:quanshuPart,
+        //     guardDept:yanghuPart,
+        //     source:shujuSource,
+        //     recorder:shujuReceive,
+        //     remark:beizhu,
+        //     lnglat:lnglat
+        // };
+        // var aa = JSON.stringify(dic);
+        // let moduleName=$(".leftBox .bottom .box.active").attr("moduleName");
+        // var url=`/${moduleName}/saveModule`;
+        // that.$http.post(url,{
+        //     aa
+        // }).then(d=>{
+        //     if (d.code == 0) {
+        //         layui.layer.msg("添加成功")
+        //         window.location.reload();
+        //     } else if(d.code == -1){
+        //         layui.layer.msg("部件名称已存在")
+        //     }else{
+        //         layui.layer.msg("添加失败")
+        //     }
+        // })
+		
+	//})
 
         // var aa = overLay
         // var that=this;
         // var  cpJson = new Array();
         // var cpJson = ary;
         // console.log('cpJson=='+cpJson);
-
-    that.$http.post('gis/queryByCode',{
-        dictionaryCode:'行政区划及代码'
-    }).then(d=>{
-        // console.log('ddddd城市列表=='+d);
-        $(()=>{
-            console.log(typeof(d))
-            abc(d)
-        });
-
-
-        //初始化
-
-
-    })
 
         //省份，城市，乡镇的数据
         // var cpJson = [

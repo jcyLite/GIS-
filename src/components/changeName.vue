@@ -18,6 +18,7 @@
 		.box{
 			width:200px;
 			height:90px;
+			padding: 20px;
 			background:#fff;
 			z-index:10000000000001;
 			left:0;
@@ -28,9 +29,8 @@
 			position:absolute;
 			border-radius:10px;
 			input{
-				margin-left:10px;
-				margin-top:10px;
-				height:20px;
+				margin-bottom: 20px;
+    			height: 35px;
 				border-radius:4px;
 				border:1px solid #ddd;
 				padding-left:10px;
@@ -60,7 +60,7 @@
 	<div v-if="isShow" class="cpt-changeName">
 		<div @click="hide" class="shade"></div>
 		<div class="box">
-			<input v-model="currentData" type="text" />
+			<input v-model="currentData" type="text" class="layui-input" />
 			<div class="change-name-buttons">
 				<div @click="hide" class="button cancel">取消</div>
 				<div @click="confirm" class="button confirm">确定</div>
@@ -72,7 +72,7 @@
 <script>
 	export default {
 		name:'changeName',
-		props:['data'],
+		props:['data1'],
 		data(){
 			return {
 				isShow:false,
@@ -80,7 +80,7 @@
 			}
 		},
 		mounted(){
-			this.currentData=this.data;
+			this.currentData=this.data1;
 		},
 		methods:{
 			show(){
