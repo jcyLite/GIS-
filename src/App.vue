@@ -3,10 +3,10 @@
 	.search {
 		position: relative;
 		.search-icon {
-			width: 23px;
+			width: 18px;
 			position: absolute;
 			right: 0px;
-			bottom: 5px;
+			bottom: 7px;
 			cursor: pointer;
 		}
 	}
@@ -66,7 +66,7 @@
 					</div>
 					<div>
 						<img @click="fiter" src="./img/filter.png" alt="" />
-						<img @click="addatuceng" src="./img/addb.png" alt="" />
+						<img @click="addatuceng" src="./img/addb.png" alt="" style="width: 18px;"/>
 						<img @click="deleteAllLayer" src="./img/huishou.png" alt="" />
 					</div>
 				</div>
@@ -116,7 +116,8 @@
 					<img @click="openRectangleTool" src="./img/reck.png" alt="" />
 					<img @click="mlineTool" src="./img/cz.png" alt="" />
 					<img @click="mpolygonTool" src="./img/cm.png" alt="" />
-					<img @click="searchShow=true" src="./img/search.png" alt="" />
+					<!-- 暂时隐藏掉 -->
+					<!-- <img @click="searchShow=true" src="./img/search.png" alt=""/> -->
 
 				</div>
 			</div>
@@ -220,12 +221,11 @@
 				for(var i = 0; i < markers.length; i++) {
 					let marker = markers[i];
 					marker.openInfoWindow(infoWin1);
-					that.scbc(marker,true);      //  ??????????????????????????？？？？？？？
+					that.scbc(marker,false);
 					// 点击新增标注点的时候触发，区别于点击上次增加的标注点
 					marker.tid=$(".leftBox .bottom .box.active").attr("tid");
 					marker.addEventListener('click', function(obj) {
 						that.markerClick(this, obj,false)
-						//alert(1111)
 					});
 					marker.enableDragging();
 				}
@@ -263,6 +263,7 @@
 			 */
 			clickEye(item,index) {
 				this.active=index;
+				this.layerType=item.tleixing;
 				(this.eye.indexOf(index)==-1)?(this.eye.push(index)):(this.eye.splice(this.eye.indexOf(index),1));
 				this.exchangeDisplay(item,index);
 			},
@@ -327,7 +328,7 @@
 							} else if(item.tleixing == '面') {
 								a = this.jzmian(d.data, this.d[index].tid);
 							}
-							this.tlayer[index]=a;
+							this.tlayer[index]=a; // 储存覆盖物
 						}
 						this.jeye(index);  // 点 线 面 显示切换
 						this.setCenterMap();
@@ -434,10 +435,8 @@
 								artTypeName: that.dl,
 								type: tempStr
 							}).then(d => {
-								that.tlayer.splice(0, that.tlayer.length);
+								that.tlayer.splice(0, that.tlayer.length); // 清空缓存的覆盖物
 								that.d.splice(0, that.d.length);
-								console.log('that.tlayer==' + that.tlayer);
-								console.log('that.d==' + that.d);
 								if(d.datas == null) {
 									d.datas = [];
 									console.log(1110);
@@ -474,10 +473,11 @@
 			},
 			markerClick(marker, obj,isHistory) {  // isHistory：true--是上次标记的点
 				//点击标注时触发事件
-				//alert(888)
+				//alert('22'+isHistory)
 				markerClick.call(this, marker, obj,isHistory)
 			},
 			scbc(overLay,isHistory) {
+				//alert('11'+isHistory)
 				scbc.call(this, overLay,isHistory);
 				//this.overLayObj=overLay;
 			},
@@ -596,7 +596,7 @@
 					ly = 0,
 					bb = 0;
 				var tlayers = [];
-				data&&data.forEach(item => {
+				data&&data.forEach((item,index) => {
 					var points = [];
 					item.lnglat.forEach(ii => {
 						lx += parseFloat(ii.lng);
@@ -664,15 +664,15 @@
 					})
 				}
 			},
-			jiazhai(i, index) {
-				//地图位移
-				var a = this.tlayer[index];
-				if(a){
-					var px = a.p.px;
-					var py = a.p.py;
-					this.map.centerAndZoom(new T.LngLat(px, py), this.zoom);
-				}
-			},
+			// jiazhai(i, index) {
+			// 	//地图位移
+			// 	var a = this.tlayer[index];
+			// 	if(a){
+			// 		var px = a.p.px;
+			// 		var py = a.p.py;
+			// 		this.map.centerAndZoom(new T.LngLat(px, py), this.zoom);
+			// 	}
+			// },
 			cksxb(item,index) {
 				if(!item.datas){
 					let tempstr = '/' + item.moduleName + '/' + 'queryModule';
@@ -724,7 +724,10 @@
 					var InfoContent = new T.InfoWindow();
 					InfoContent.setContent(sContent);
 					that.map.openInfoWindow(InfoContent, lnglat);
-					that.scbc(obj.currentPolyline);
+					obj.currentPolyline.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
+					that.scbc(obj.currentPolyline,false);
+					console.log(8888888)
+					console.log(obj.currentPolyline)
 					obj.currentPolyline.addEventListener('click', () => {
 						var InfoContent = new T.InfoWindow();
 						InfoContent.setContent(sContent);
@@ -745,7 +748,8 @@
 					var InfoContent = new T.InfoWindow();
 					InfoContent.setContent(sContent);
 					that.map.openInfoWindow(InfoContent, lnglat);
-					that.scbc(obj.currentPolygon);
+					obj.currentPolygon.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
+					that.scbc(obj.currentPolygon,false);
 					obj.currentPolygon.addEventListener('click', () => {
 						var InfoContent = new T.InfoWindow();
 						InfoContent.setContent(sContent);
@@ -857,7 +861,7 @@
 				this.$http.post('/layer/delLayer', {
 					ids:idStr
 				}).then(d => {
-					this.d.splice(index,1)
+					this.d.splice(index,1);
 				})
 			},
 			/**

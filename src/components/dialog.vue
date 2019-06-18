@@ -235,7 +235,6 @@ export default {
         var aa = JSON.stringify(dic);
         let moduleName='';
         this.that.d.forEach((item,index)=>{
-          alert(this.overLay.tid)
           if(item.tid==this.overLay.tid){
             moduleName=item.moduleName;
           }

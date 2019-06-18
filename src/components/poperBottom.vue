@@ -9,6 +9,9 @@
 			right:10px;
 			top:6px;
 			cursor: pointer;
+			img{
+				width: 24px;
+			}
 		}
 		.box{
 			width:100%;
@@ -47,18 +50,32 @@
 			.right{
 				width:400px;
 				line-height: 29px;
-				margin-right:30px;
+				margin-right:46px;
 				float:right;
 				.b{
+					position: relative;
+					top:1px;
 					font-size:14px;
 					cursor: pointer;
+					margin-right: 3px;
 				}
 				.d{
 					cursor: pointer;
 				}
 				.c{
+					position: relative;
+					top:1px;
 					font-size:14px;
 					cursor: pointer;
+					margin:0 3px;
+				}
+				.screen-img{
+					width:18px;
+				}
+				.right-input{
+					height: 25px;
+					display: inline-block;
+					margin: 5px;
 				}
 			}
 			.col:first-child{
@@ -103,7 +120,9 @@
 
 <template>
 	<div v-if="acksxbd" :class="{active:bactive}" class="poperBottom cksxb" id="poper-bottom">
-		<div @click="acksxbd=false" class="close">X</div>
+		<div @click="acksxbd=false" class="close">
+			<img src="../img/closebtn.png" alt="">
+		</div>
 		<div class="box">
 			<div class="row title">
 				<span class="a">{{d.tname}}</span>
@@ -112,9 +131,12 @@
 					|
 					<span class="c">筛选</span>
 					|
-					<input v-model="searchVal" type="text" />
+					<input v-model="searchVal" type="text" class="layui-input right-input" />
 					<!--<img @click="sxsearch" class="sxsearch" src="../img/search.png" alt="" />-->
-					<span @click="bactive=!bactive" class="d">{{!bactive?'全屏显示':'小屏显示'}}</span>
+					<span @click="bactive=!bactive" class="d">
+						<img v-show="!bactive" src="../img/fullScreen.png" class="screen-img"/>
+						<img v-show="bactive" src="../img/smallScreen.png" class="screen-img" />
+					</span>
 				</div>
 			</div>
 			<div class="row-box">
@@ -478,6 +500,8 @@
 					markerClick.call(this,xianLayers[index],item,true); // 定位 线
 					lnglat=item.lnglat[0];
 				}else if(lxType=='面'){
+					console.log(777)
+					console.log(mianLayers[index])
 					markerClick.call(this,mianLayers[index],item,true); // 定位 面
 					lnglat=item.lnglat[0];
 				}
