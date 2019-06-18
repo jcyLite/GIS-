@@ -1,57 +1,3 @@
-<template>
-	<div v-show="isShow" class="poperDetail">
-		<div @click=hide class="shade">
-			
-		</div>
-		<div class="midbox">
-			<div class="inner">
-				<div class="floor">
-					<span>经度</span>
-					<input type="text" v-model="lat">
-				</div>
-				<div class="floor">
-					<span>纬度</span>
-					<input type="text" v-model="lng">
-				</div>
-				<button @click="setPoint">确定</button>
-			</div>
-		</div>
-	</div>
-</template>
-
-<script>
-	export default {
-		name:'diyLayer',
-		props:['data','overLay'],
-		data(){
-			return {
-				lat:'',  // 经度
-				lng:'',	 // 纬度
-				isShow:true
-			}
-		},
-		mounted(){
-			console.log(this.data)
-			
-		},
-		methods:{
-			/**
-			 * 确定经纬度
-			 */
-			setPoint(){
-				
-				//this.overLay.setLngLats(new T.LngLat(119.58, 31.47))
-			},
-			show(){
-				this.isShow=true;
-			},
-			hide(){
-				this.isShow=false;
-			}
-		}
-	}
-</script>
-
 <style lang=less>
 	.poperDetail{
 		position:fixed;
@@ -94,3 +40,57 @@
 		}
 	}
 </style>
+<template>
+	<div v-show="isShow" class="poperDetail">
+		<div @click=hide class="shade">
+			
+		</div>
+		<div class="midbox">
+			<div class="inner">
+				<div class="floor">
+					<span>经度</span>
+					<input type="text" v-model="lat">
+				</div>
+				<div class="floor">
+					<span>纬度</span>
+					<input type="text" v-model="lng">
+				</div>
+				<div @click="setPoint" class="button-2">确定</div>
+			</div>
+		</div>
+	</div>
+</template>
+
+<script>
+	export default {
+		name:'diyLayer',
+		props:['data','overLay'],
+		data(){
+			return {
+				lat:'',  // 经度
+				lng:'',	 // 纬度
+				isShow:true
+			}
+		},
+		mounted(){
+			// console.log(this.overLay.getLngLat())
+			
+		},
+		methods:{
+			/**
+			 * 确定经纬度
+			 */
+			setPoint(){
+				this.overLay.setLngLat(new T.LngLat(this.lng, this.lat))
+				//this.overLay.setLngLats(new T.LngLat(119.58, 31.47))
+			},
+			show(){
+				this.isShow=true;
+			},
+			hide(){
+				this.isShow=false;
+			}
+		}
+	}
+</script>
+

@@ -58,7 +58,7 @@
       </div>
     </div>
     <div class="buttons">
-      <div class="button-0" @click="diyFun(overLay)" v-show="false">自定义</div>
+      <div class="button-0" @click="diyFun" v-show="true">自定义</div>
       <div class="button-1 sc" @click="cancleDialog" v-show="!isHistory">取消</div>
       <div class="button-2 bc" @click="submitDialog('add')" v-show="!isHistory">保存</div>
       <div class="button-2 bc" @click="submitDialog('edit')" v-show="isHistory">保存</div>
@@ -162,10 +162,10 @@ export default {
     /**
      * 弹出自定义弹框
      */
-    diyFun(overLay) {
+    diyFun() {
       this.$createDiyLayer({
         $props: {
-          overLay
+          overLay:this.overLay
         }
       }).show();
     },
