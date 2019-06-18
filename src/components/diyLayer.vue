@@ -49,11 +49,11 @@
 			<div class="inner">
 				<div class="floor">
 					<span>经度</span>
-					<input type="text" v-model="lat">
+					<input type="text" v-model="lat" />
 				</div>
 				<div class="floor">
 					<span>纬度</span>
-					<input type="text" v-model="lng">
+					<input type="text" v-model="lng" />
 				</div>
 				<div @click="setPoint" class="button-2">确定</div>
 			</div>
@@ -73,7 +73,7 @@
 			}
 		},
 		mounted(){
-			// console.log(this.overLay.getLngLat())
+			console.log(this.overLay.getLngLat())
 			
 		},
 		methods:{
@@ -81,8 +81,13 @@
 			 * 确定经纬度
 			 */
 			setPoint(){
+				window.map.closeInfoWindow()
+				this.hide();
 				this.overLay.setLngLat(new T.LngLat(this.lng, this.lat))
+				
+				window.map.centerAndZoom(new T.LngLat(this.lng, this.lat), 12);
 				//this.overLay.setLngLats(new T.LngLat(119.58, 31.47))
+				
 			},
 			show(){
 				this.isShow=true;
