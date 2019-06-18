@@ -1,6 +1,17 @@
 body {
     margin: 0;
-    color:#333;
+    color:#606266;
+    .too-long1{
+        overflow: hidden;
+        text-overflow:ellipsis;
+        white-space: nowrap;
+    }
+    .too-long2{
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+    }
 }
 /**
  *清除浮动
@@ -32,6 +43,7 @@ body {
             padding: 10px;
             font-size: 15px;
             border-bottom: 1px solid #ddd;
+            background-color: #f6f8fa;
             >div:last-child {
                 float: right;
             }
@@ -44,9 +56,14 @@ body {
                 }
             }
         }
+        .container{
+            padding-top: 10px;
+            background: #fbfbfb;
+        }
         .box {
             border: 1px solid #ddd;
             border-radius: 5px;
+            background: #fff;
             height: 70px;
             margin: 10px;
             width: 250px;
@@ -61,6 +78,10 @@ body {
                 line-height: 30px;
                 .eye{
                     width:20px;
+                    img{
+                        margin-top: -6px;
+                        width: 17px;
+                    }
                 }
                 .contenteditable{
                     width:100px;
@@ -225,7 +246,7 @@ body {
 
 ::-webkit-scrollbar {
     /* 滚动条整体部分 */
-    width: 10px;
+    width: 5px;
     margin-right: 2px
 }
 
@@ -247,7 +268,7 @@ body {
 
  ::-webkit-scrollbar-track-piece {
     /*内层轨道，滚动条中间部分 */
-    background-color: #333333;
+    background-color: #cbcbcb;
     border-radius: 10px;
 }
 
@@ -255,7 +276,7 @@ body {
     /* 滑块 */
     width: 10px;
     border-radius: 5px;
-    background: #CBCBCB;
+    background: #1e9fff;
 }
 
  ::-webkit-scrollbar-corner {

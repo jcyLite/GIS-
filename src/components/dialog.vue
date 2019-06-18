@@ -59,9 +59,9 @@
     </div>
     <div class="buttons">
       <div class="button-0" @click="diyFun(overLay)" v-show="false">自定义</div>
-      <div class="button-1 sc" @click="cancleDialog" v-show="!editBool">取消</div>
-      <div class="button-2 bc" @click="submitDialog('add')" v-show="!editBool">保存</div>
-      <div class="button-2 bc" @click="submitDialog('edit')" v-show="editBool">保存</div>
+      <div class="button-1 sc" @click="cancleDialog" v-show="!isHistory">取消</div>
+      <div class="button-2 bc" @click="submitDialog('add')" v-show="!isHistory">保存</div>
+      <div class="button-2 bc" @click="submitDialog('edit')" v-show="isHistory">保存</div>
     </div>
   </div>
 </template>
@@ -72,7 +72,7 @@ export default {
           mainData:null,
           overLay:this.$root.overLay,
           that:this.$root.that,
-          editBool:this.$root.editBool,
+          isHistory:this.$root.isHistory,
           countySelect:null,
           streetSelect:null,
           communitySelect:null,
@@ -88,8 +88,15 @@ export default {
       })
     }
     //如果是修改 则渲染数据
-    if(this.editBool){
-      this.mainData=this.that.d.datas[this.that.oactive];
+    if(this.isHistory){
+      //this.mainData=this.that.d.datas[this.that.oactive];
+      this.that.d.forEach((item,index)=>{
+        if(item.tid==this.overLay.tid){
+           this.mainData=item.datas[this.overLay.subIndex];
+        }
+      })
+    }else{
+      this.mainData=null;
     }
     //获取当前省份的城市。通过选取省份触发change()事件
     $("#pro").change(function(){
@@ -163,12 +170,9 @@ export default {
       }).show();
     },
     /**
-     * 取消
+     * 删除
      */
     cancleDialog() {
-        if(this.editBool){
-            return false;
-        }
         map.removeOverLay(this.overLay);
         map.closeInfoWindow()
     },
@@ -194,7 +198,7 @@ export default {
         var shujuReceive = document.getElementById("shujuReceive").value;
         var beizhu = document.getElementById("beizhu").value;
         var lnglat =null;
-        if(!this.that.editBool){  // 新增
+        if(!this.that.isHistory){  // 新增
             lnglat=this.overLay.getLngLat?this.overLay.getLngLat():this.overLay.getLngLats();
         }else{  // 编辑
             lnglat = this.overLay
@@ -222,10 +226,20 @@ export default {
             lnglat:lnglat
         };
         if(type=='edit'){  // 此时是编辑页面，需要传编辑的那个属性的id
-            dic.id=this.that.moduleId;
+          this.that.d.forEach((item,index) => {  // 选择poperBottom组件实例,获取属性表的某行id
+            if(item.tid==this.overLay.tid){
+              dic.id=item.datas[this.overLay.subIndex].id;
+            }
+          });
         }
         var aa = JSON.stringify(dic);
-        let moduleName=$(".leftBox .bottom .box.active").attr("moduleName");
+        let moduleName='';
+        this.that.d.forEach((item,index)=>{
+          alert(this.overLay.tid)
+          if(item.tid==this.overLay.tid){
+            moduleName=item.moduleName;
+          }
+        })
         var url=`/${moduleName}/saveModule`;
         this.that.$http.post(url,{
             aa

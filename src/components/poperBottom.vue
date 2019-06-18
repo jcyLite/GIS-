@@ -102,7 +102,7 @@
 </style>
 
 <template>
-	<div v-if="acksxbd" :class="{active:bactive}" class="poperBottom cksxb">
+	<div v-if="acksxbd" :class="{active:bactive}" class="poperBottom cksxb" id="poper-bottom">
 		<div @click="acksxbd=false" class="close">X</div>
 		<div class="box">
 			<div class="row title">
@@ -472,13 +472,13 @@
 				let lxType=this.$parent.layerType;
 				var lnglat=null;
 				if(lxType=='点'){
-					markerClick.call(this,activeMarkers[index],item); // 定位 点
+					markerClick.call(this,activeMarkers[index],item,true); // 定位 点
 					lnglat=item.lnglat;
 				}else if(lxType=='线'){
-					markerClick.call(this,xianLayers[index],item); // 定位 线
+					markerClick.call(this,xianLayers[index],item,true); // 定位 线
 					lnglat=item.lnglat[0];
 				}else if(lxType=='面'){
-					markerClick.call(this,mianLayers[index],item); // 定位 面
+					markerClick.call(this,mianLayers[index],item,true); // 定位 面
 					lnglat=item.lnglat[0];
 				}
 				//定位到显示弹窗的中心位置

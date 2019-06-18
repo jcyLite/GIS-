@@ -1,4 +1,4 @@
-export function markerClick(marker,obj){//点击标注时触发事件
+export function markerClick(marker,obj,isHistory){//点击标注时触发事件 isHistory：true--是上次标记的点
     var that=this;
 	var lnglat=obj.lnglat;
 	var sContent = require('./components/dialog.tpl')();
@@ -6,14 +6,20 @@ export function markerClick(marker,obj){//点击标注时触发事件
 	InfoContent.setContent(sContent);
 	marker.openInfoWindow(InfoContent,lnglat);
 	$(()=>{
-        if(that.$el.id=='app'){  // 如果用户在app.vue组件点击的标注点（即地图上点击的时候）
-            that.$children.forEach((item,index) => {  // 选择poperBottom组件实例传到dialog.vue
-                if(item.$el.parentNode.id=='poper-bottom-cont'){
-                    scbc.call(item,marker,true)
-                }
-            });
+        // if(that.$el.id=='app'){  // 如果用户在app.vue组件点击的标注点（即地图上点击的时候）
+        //     that.$children.forEach((item,index) => {  // 选择poperBottom组件实例传到dialog.vue
+        //         if(item.$el.parentNode.id=='poper-bottom-cont'){
+        //             scbc.call(item,marker,isHistory)
+        //         }
+        //     });
+        // }else{
+        //     scbc.call(that,marker,isHistory)
+        // }
+        if(that.$el.id =='poper-bottom'){  // 如果用户在poperBottom.vue组件点击的覆盖物（即地图上点击的时候）
+            // 把app.vue组件实例传到dialog.vue
+            scbc.call(that.$parent,marker,isHistory)
         }else{
-            scbc.call(that,marker,true)
+            scbc.call(that,marker,isHistory)
         }
 	})
 };
@@ -23,7 +29,7 @@ import dialog from './components/dialog.vue'
 /**
  * 绘制点 线 面 的时候触发， 并弹框
  */
-export function scbc(overLay,editBool){  // editBool--true：编辑弹框  false：新增弹框
+export function scbc(overLay,isHistory){  // editBool--true：编辑弹框  false：新增弹框
     var that=this;
     // 请求地区数据，然后初始化弹框组件
     new Vue({
@@ -32,7 +38,7 @@ export function scbc(overLay,editBool){  // editBool--true：编辑弹框  false
             return {
                 overLay,
                 that,
-                editBool:editBool||false
+                isHistory:isHistory||false, // isHistory：true--是上次标记的点
             }
         },
         render:h=>h(dialog),

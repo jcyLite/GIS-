@@ -71,20 +71,20 @@
 					</div>
 				</div>
 				<div class="container">
-					<div :class="{active:active==index}" @click="clickLeftLayer(item,index)" class="box" :moduleName='item.moduleName' v-for="(item,index) of d" :key="index">
+					<div :class="{active:active==index}" @click="clickLeftLayer(item,index)" class="box" :tid="item.tid" :moduleName='item.moduleName' v-for="(item,index) of d" :key="index">
 						<div class="t">
 							<div @click.stop="clickEye(item,index)" class="eye">
 								<img v-if="eye.indexOf(index)==-1" src="./img/eye.png" alt="" />
 								<img v-if="eye.indexOf(index)!=-1" src="./img/eye_active.png" alt="" />
 							</div>
-							<div class="contenteditable">
+							<div class="contenteditable too-long1">
 								{{item.tname }}
 							</div>
 							<div class="u">
-								<img @click.stop="changeName(item,index)" src="./img/edit.png" alt="" />
-								<img @click="poperDetail(item,index)" src="./img/detail.png" alt="" style="width:20px;"/>
+								<img @click.stop="changeName(item,index)" src="./img/edit.png" alt="" style="margin-right:6px;" />
+								<img @click="poperDetail(item,index)" src="./img/detail.png" alt="" style="width:17px;margin-right:5px;"/>
 								<img src="./img/earth.png" alt="" />
-								<img @click="deleteLayer(item,index)" src="./img/hsz.png" alt="" style="width: 17px;" />
+								<img @click="deleteLayer(item,index)" src="./img/hsz.png" alt="" style="width: 15px;" />
 							</div>
 						</div>
 						<div class="b">
@@ -220,9 +220,12 @@
 				for(var i = 0; i < markers.length; i++) {
 					let marker = markers[i];
 					marker.openInfoWindow(infoWin1);
-					that.scbc(marker);
+					that.scbc(marker,true);      //  ??????????????????????????？？？？？？？
+					// 点击新增标注点的时候触发，区别于点击上次增加的标注点
+					marker.tid=$(".leftBox .bottom .box.active").attr("tid");
 					marker.addEventListener('click', function(obj) {
-						that.markerClick(this, obj)
+						that.markerClick(this, obj,false)
+						//alert(1111)
 					});
 					marker.enableDragging();
 				}
@@ -414,7 +417,6 @@
 				this.noSearch = false;
 			},
 			fiter() {
-				alert(111111)
 				var that = this;
 				this.$createFiter({
 					$events: {
@@ -470,15 +472,16 @@
 					}
 				}).show()
 			},
-			markerClick(marker, obj) {
+			markerClick(marker, obj,isHistory) {  // isHistory：true--是上次标记的点
 				//点击标注时触发事件
-				markerClick.call(this, marker, obj)
+				//alert(888)
+				markerClick.call(this, marker, obj,isHistory)
 			},
-			scbc(overLay) {
-				scbc.call(this, overLay);
+			scbc(overLay,isHistory) {
+				scbc.call(this, overLay,isHistory);
 				//this.overLayObj=overLay;
 			},
-			jzdian(data, tid) {
+			jzdian(data, tid) {  // tid 是整个图层的id
 				// data是属性表里面的数据
 				if(!data){
 					return false;
@@ -497,11 +500,10 @@
 					marker.id=item.id;
 					marker.subIndex=index;
 					marker.addEventListener('mouseup',function(param){
-						let suIndex=this.subIndex;
+						let subIndex=this.subIndex;
 						that.$children.forEach((item,index) => {  // 选择poperBottom组件实例,修改oactive
 							if(item.$el.parentNode.id=='poper-bottom-cont'){
-								item.oactive=suIndex;
-								item.moduleId=item.d.datas[suIndex].id;
+								item.oactive=subIndex;
 							}
 						});
 						this.enableDragging(); // 让用户拖动 点 （ 但是需要先点击一下才能拖动 ）
@@ -512,8 +514,10 @@
 					})
 					marker.bid = item.bid;
 					marker.tid = tid;
+					// 点击上次增加的标注点的时候触发，区别于点击新增标注点
 					marker.addEventListener('click', function(obj) {  // 点击事件
-						that.markerClick(this, obj);   // 触发弹框
+						that.markerClick(this, obj,true);   // 触发弹框
+						//alert(222)
 					});
 					
 					activeMarkers.push(marker);
@@ -540,7 +544,7 @@
 					ly = 0,
 					bb = 0;
 				var tlayers = [];
-				data && data.forEach(item => {
+				data && data.forEach((item,index) => {
 					var points = [];
 					item.lnglat.forEach(ii => {
 						lx += parseFloat(ii.lng);
@@ -551,13 +555,22 @@
 					var pointers = new T.Polyline(points);
 					pointers.bid = item.bid;
 					pointers.tid = tid;
+					pointers.subIndex=index;
+					// 点击上次增加的标注点的时候触发，区别于点击新增标注点
 					pointers.addEventListener('click', function(obj) {
 						var lnglat = obj.lnglat;
 						var sContent = require('./components/dialog.tpl')();
 						var InfoContent = new T.InfoWindow();
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
-						that.scbc(this)
+						that.scbc(this,true); // true 代表是历史数据线
+						// 同步一下poperbottom组件的两个属性
+						let subIndex=this.subIndex;
+						that.$children.forEach((item,index) => {  // 选择poperBottom组件实例,修改oactive
+							if(item.$el.parentNode.id=='poper-bottom-cont'){
+								item.oactive=subIndex;
+							}
+						});
 					});
 					this.map.addOverLay(pointers);
 					pointers.hide();
@@ -600,14 +613,22 @@
 					});
 					polygons.bid = item.bid;
 					polygons.tid = tid;
+					polygons.subIndex=index;
+					// 点击上次增加的标注点的时候触发，区别于点击新增标注点
 					polygons.addEventListener('click', function(obj) {
 						var lnglat = obj.lnglat;
 						var sContent = require('./components/dialog.tpl')();
 						var InfoContent = new T.InfoWindow();
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
-						
-						that.scbc(this)
+						that.scbc(this,true) // true 代表是历史数据面
+						// 同步一下poperbottom组件的两个属性
+						let subIndex=this.subIndex;
+						that.$children.forEach((item,index) => {  // 选择poperBottom组件实例,修改oactive
+							if(item.$el.parentNode.id=='poper-bottom-cont'){
+								item.oactive=subIndex;
+							}
+						});
 					});
 					this.map.addOverLay(polygons);
 					polygons.hide();
@@ -689,7 +710,7 @@
 					let marker = markers[i];
 					markers[i].disableDragging();
 				}
-				this.markerTool.open();
+				this.markerTool.open();  // 开启标注点功能
 			},
 			openPolylineTool() {
 				var that = this;
