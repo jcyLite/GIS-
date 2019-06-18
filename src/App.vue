@@ -862,6 +862,14 @@
 					ids:idStr
 				}).then(d => {
 					this.d.splice(index,1);
+					this.tlayer.forEach((outItem,outIndex)=>{
+						outItem.tlayers.forEach((innerItem,innerIndex)=>{
+							if(innerItem.tid==idStr){
+								this.map.removeOverLay(innerItem); // 删除对应图层的覆盖物
+							}
+						})
+					})
+					this.tlayer.splice(index,1);  // 删除对应图层的缓存
 				})
 			},
 			/**
@@ -879,6 +887,8 @@
 					ids:idStr
 				}).then(d => {
 					this.d=[];
+					this.tlayer=[];
+					this.map.clearOverLays(); // 清除所有覆盖物
 				})
 			},
 		}
