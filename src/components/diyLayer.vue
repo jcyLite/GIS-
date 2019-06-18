@@ -83,9 +83,10 @@
 			setPoint(){
 				window.map.closeInfoWindow()
 				this.hide();
+				window.map.centerAndZoom(new T.LngLat(this.lng, this.lat), 12);
 				this.overLay.setLngLat(new T.LngLat(this.lng, this.lat))
 				
-				window.map.centerAndZoom(new T.LngLat(this.lng, this.lat), 12);
+				
 				//this.overLay.setLngLats(new T.LngLat(119.58, 31.47))
 				
 			},
