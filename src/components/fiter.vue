@@ -23,7 +23,7 @@
 				</div>
 			</div>
 			<div class="buttons">
-				<div @click="chongzhi" class="button">重置</div>
+				<!-- <div @click="chongzhi" class="button">重置</div> -->
 				<div @click="screen" class="button">筛选</div>
 			</div>
 		</div>
