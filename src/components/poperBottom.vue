@@ -521,26 +521,32 @@
 			// 	}
 			// },
 			deleteModul(){
-				let tempstr = '/' + this.d.moduleName + '/' + 'delModule';
-				let idStr=this.idsDelete.join(",");
-				let that=this;
-				this.$http.post(tempstr, {
-					ids:idStr
-				}).then(d => {
-					console.log(this)
-					that.idsDelete.forEach((item,index)=>{
-						that.d.datas.forEach((innerItem,innerIndex)=>{
-							if(item==innerItem.id){
-								that.d.datas.splice(innerIndex,1);
-							}
+				let that = this;
+				layer.confirm('确定要删除所选中的属性行吗？', {
+					btn: ['确定','取消'] //按钮
+				}, function(){ // 确定 回调
+					let tempstr = '/' + that.d.moduleName + '/' + 'delModule';
+					let idStr=that.idsDelete.join(",");
+					let loading = layer.load(2);
+					that.$http.post(tempstr, {
+						ids:idStr
+					}).then(d => {
+						that.idsDelete.forEach((item,index)=>{
+							that.d.datas.forEach((innerItem,innerIndex)=>{
+								if(item==innerItem.id){
+									that.d.datas.splice(innerIndex,1);
+								}
+							})
 						})
+						that.cksxbd = true;
+						that.active=[];
+						that.idsDelete=[];
+						that.initTable();
+						layer.closeAll();
 					})
-					that.cksxbd = true;
-					that.active=[];
-					that.idsDelete=[];
-					that.initTable();
-				})
-				
+				}, function(){ // 取消 回调
+					// nothing
+				});
 			},
 		},
 		data(){

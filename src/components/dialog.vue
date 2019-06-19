@@ -1,28 +1,30 @@
 <template id='dialog-template'>
   <div class="dialog">
-    <div class="scroller">
+    <div class="scroller layui-form">
       <div class="row">
         <div class="col">所在行政区：</div>
         <div class="addPP">常州市</div>
       </div>
-      <div class="row addrow">
-        <div id="info" class="info">
-          <span>区：</span>
-          <select class="addSelect" id="pro" >
-            <option>请选择</option>
-            <option v-for="(item,index) in countySelect" :key="index" :value="item.code">{{item.name}}</option>
-          </select>
-          <span>街道：</span>
-          <select class="addSelect" id="city" >
+      <div class="row">
+        <div class="col">区：</div>
+        <select class="addSelect" id="pro" lay-filter='pro'>
+          <option>请选择</option>
+          <option v-for="(item,index) in countySelect" :key="index" :value="item.code">{{item.name}}</option>
+        </select>      
+      </div>
+      <div class="row">
+        <div class="col">街道：</div>
+        <select class="addSelect" id="city" lay-filter='city'>
             <option>请选择</option>
             <option v-for="(item,index) in streetSelect" :key="index" :value="item.code">{{item.name}}</option>
-          </select>
-          <span>社区：</span>
-          <select class="addSelect" id="dis" >
+        </select>  
+      </div>
+      <div class="row">
+        <div class="col">社区：</div>
+        <select class="addSelect" id="dis" >
             <option>请选择</option>
             <option v-for="(item,index) in communitySelect" :key="index" :value="item.code">{{item.name}}</option>
-          </select>
-        </div>
+        </select>    
       </div>
       <div class="row">
         <div class="col">部件名称：</div>
@@ -81,10 +83,12 @@ export default {
   mounted() {
     let that=this;
     if(!this.countySelect){
+      let loading = layer.load(2);
       this.that.$http.post('gis/queryByCode',{
           dictionaryCode:'行政区划及代码'
       }).then(res=>{
         this.countySelect=res;
+        layer.close(loading);
       })
     }
     //如果是修改 则渲染数据
@@ -99,61 +103,63 @@ export default {
       this.mainData=null;
     }
     //获取当前省份的城市。通过选取省份触发change()事件
-    $("#pro").change(function(){
-      let val=$(this).val();
-      that.countySelect.forEach((item,index)=>{
-        if(item.code==val){
-          that.streetSelect=item.sub;
-          that.communitySelect=null;
-        }
-      })
-    });
-    // layui.form.on('select(pro)', function(data){
-    //   console.log(data.elem); //得到select原始DOM对象
-    //   console.log(data.value); //得到被选中的值
-    //   console.log(data.othis); //得到美化后的DOM对象
-    //   let val=data.value;
+    // $("body").on("change","#pro",function(){
+    //   let val=$(this).val();
     //   that.countySelect.forEach((item,index)=>{
     //     if(item.code==val){
     //       that.streetSelect=item.sub;
     //       that.communitySelect=null;
     //     }
     //   })
-    //   console.log(888888)
-    //   console.log(that.streetSelect)
-    //   that.$nextTick(() => {
-    //   that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
-    //     layui.form.render(); // 重载一下layui的表单元素
-    //   });
     // });
 
-    //获取当前城市的乡镇。通过选取城市触发change()事件
-    $("#city").change(function(){
-        let val=$(this).val();
-        that.streetSelect.forEach((item,index)=>{
-          if(item.code==val){
-            that.communitySelect=item.sub;
-          }
-        })
+    layui.form.on('select(pro)', function(data){
+      console.log(data.elem); //得到select原始DOM对象
+      console.log(data.value); //得到被选中的值
+      console.log(data.othis); //得到美化后的DOM对象
+      let val=data.value;
+      that.countySelect.forEach((item,index)=>{
+        if(item.code==val){
+          that.streetSelect=item.sub;
+          that.communitySelect=null;
+        }
+      })
+      console.log(888888)
+      console.log(that.streetSelect)
+      that.$nextTick(() => {
+      that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
+        layui.form.render(); // 重载一下layui的表单元素
+      });
     });
-    // layui.form.on('select(city)', function(data){
-    //   console.log(data.elem); //得到select原始DOM对象
-    //   console.log(data.value); //得到被选中的值
-    //   console.log(data.othis); //得到美化后的DOM对象
-    //   let val=data.value;
-    //   that.streetSelect.forEach((item,index)=>{
+
+    //获取当前城市的乡镇。通过选取城市触发change()事件
+    // $("#city").change(function(){
+    //     let val=$(this).val();
+    //     that.streetSelect.forEach((item,index)=>{
     //       if(item.code==val){
     //         that.communitySelect=item.sub;
     //       }
-    //   })
-    //   console.log(888888)
-    //   console.log(that.communitySelect)
-    //   that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
-    //   layui.form.render(); // 重载一下layui的表单元素
+    //     })
     // });
+
+    layui.form.on('select(city)', function(data){
+      console.log(data.elem); //得到select原始DOM对象
+      console.log(data.value); //得到被选中的值
+      console.log(data.othis); //得到美化后的DOM对象
+      let val=data.value;
+      that.streetSelect.forEach((item,index)=>{
+          if(item.code==val){
+            that.communitySelect=item.sub;
+          }
+      })
+      console.log(888888)
+      console.log(that.communitySelect)
+      that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
+      layui.form.render(); // 重载一下layui的表单元素
+    });
   },
   updated(){
-		//	layui.form.render(); // 重载一下layui的表单元素
+  	layui.form.render(); // 重载一下layui的表单元素
   },
   watch: {
     
@@ -163,6 +169,16 @@ export default {
      * 弹出自定义弹框
      */
     diyFun() {
+      // layui.layer.open({
+      //       type: 1,//这就是定义窗口类型的属性
+      //       title: '234234234234234',
+      //       shadeClose: true,
+      //       shade: 0.3,
+      //       offset: "20%",
+      //       shadeClose : false,
+      //       content: '<p>sdfjsldfjljsdljsdkljadsflksjad</p>'//'传入任意的文本或html' //这里content
+      //       //是一个普通的String 比如："<div>哈哈</div>"
+      //   });
       this.$createDiyLayer({
         $props: {
           overLay:this.overLay
@@ -240,9 +256,11 @@ export default {
           }
         })
         var url=`/${moduleName}/saveModule`;
+        let loading = layer.load(2);
         this.that.$http.post(url,{
             aa
         }).then(d=>{
+            layer.close(loading);
             if (d.code == 0) {
                 layui.layer.msg("添加成功")
                 window.location.reload();

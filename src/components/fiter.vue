@@ -87,9 +87,10 @@
 			z-index:10000000;
 		}
 		.fiter-box{
-			padding:30px;
-			width:300px;
-			height:200px;
+			padding: 20px;
+			width: 220px;
+			height: 100px;
+			border-radius: 5px;
 			position:absolute;
 			left:0;
 			right:0;
@@ -100,6 +101,7 @@
 			z-index:10000001;
 			.buttons{
 				margin-bottom:0px;
+				bottom:10px;
 				.button{
 					cursor: pointer;
 					border:1px solid #ddd;

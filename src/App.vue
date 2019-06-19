@@ -84,7 +84,7 @@
 								<img @click.stop="changeName(item,index)" src="./img/edit.png" alt="" style="margin-right:6px;" />
 								<img @click="poperDetail(item,index)" src="./img/detail.png" alt="" style="width:17px;margin-right:5px;"/>
 								<img src="./img/earth.png" alt="" />
-								<img @click="deleteLayer(item,index)" src="./img/hsz.png" alt="" style="width: 15px;" />
+								<img @click.stop="deleteLayer(item,index)" src="./img/hsz.png" alt="" style="width: 15px;" />
 							</div>
 						</div>
 						<div class="b">
@@ -316,6 +316,7 @@
 					this.setCenterMap();
 				}else{
 					var tempstr = '/' + this.d[index].moduleName + '/' + 'queryModule';
+					let loading = layer.load(2);
 					this.$http.post(tempstr, {}).then(d => {
 						this.d[index].datas = d.data;
 						if(d.data){
@@ -332,28 +333,29 @@
 						}
 						this.jeye(index);  // 点 线 面 显示切换
 						this.setCenterMap();
+						layer.close(loading);
 					});
 					
 				}
 			},
 			requestCity() {
+				let loading = layer.load(2);
 				this.$http.post('gis/queryByCode', {
 					dictionaryCode: '行政区划及代码'
 				}).then(d => {
 					this.cityAry = d;
+					layer.close(loading);
 				})
 			},
 			firstSearch() {
+				let loading = layer.load(2);
 				this.$http.post('gis/queryByCode', {
 					dictionaryCode: '部件分类代码'
 				}).then(d => {
-					// console.log('d=='+d);
 					this.bigLei = d;
 					localStorage.setItem('localAry', this.bigLei);
 					var get = localStorage.getItem('localAry');
-					// console.log('get=='+get);
-					// this.d=d.data;
-					// this.makeData(d.data)
+					layer.close(loading);
 				})
 			},
 			searchlei() {
@@ -361,10 +363,16 @@
 				//layui.layer.msg('22')
 
 				//大类搜索
+				let loading = layer.load(2);
 				this.$http.post('/layer/findLayer', {
 					name: this.xl,
 					artTypeName: this.dl
 				}).then(dd => {
+					if(!dd.datas){
+						layui.layer.msg("暂时没有图层");
+						layer.close(loading);
+						return false;
+					}
 					dd.datas.forEach((item,index)=>{
 						item.datas=null;  // 先添加属性，后面存放属性表格数据
 					})
@@ -374,6 +382,7 @@
 					this.tlayer=[]; // 换了大类就清空图层的点
 					this.map.clearOverLays(); // 清除所有地图上的覆盖物
 					this.eye=[]; // 清除眼睛选中效果
+					layer.close(loading);
 				}) 
 			},
 			// makeData(d) {
@@ -430,6 +439,7 @@
 							} else {
 								tempStr = "面";
 							}
+							let loading = layer.load(2);
 							that.$http.post('/layer/findLayer', {
 								name: that.xl,
 								artTypeName: that.dl,
@@ -444,6 +454,7 @@
 								that.d = d.datas;
 								that.map.clearOverLays(); // 清除所有地图上的覆盖物
 								that.eye=[]; // 清除眼睛选中效果
+								layer.close(loading);
 							})
 						}
 					}
@@ -459,6 +470,7 @@
 					$events: {
 						confirm(data) {
 							item.tname = data;
+							let loading = layer.load(2);
 							that.$http.post('/layer/modifyLayer', {
 								id: item.tid,
 								name: data
@@ -466,6 +478,7 @@
 								if(res.code==-1){
 									layui.layer.msg(res.msg)
 								}
+								layer.close(loading);
 							})
 						}
 					}
@@ -676,19 +689,24 @@
 			cksxb(item,index) {
 				if(!item.datas){
 					let tempstr = '/' + item.moduleName + '/' + 'queryModule';
+					let loading = layer.load(2);
 					this.$http.post(tempstr, {}).then(d => {
 						this.d[index].datas = d.data;
 						this.cksxbd = true;
+						layer.close(loading);
 					});
 				}else{
 					this.cksxbd = true;
 				}
 			},
 			contenteditable(item) {
+				let loading = layer.load(2);
 				this.$http.post('/changeName', {
 					tname: item.tname,
 					tid: item.tid
-				}).then(d => {})
+				}).then(d => {
+					layer.close(loading);
+				})
 			},
 			btna() {
 				var markers = this.markerTool.getMarkers();
@@ -813,6 +831,7 @@
 								bigCode:'',
 								minCode:''
 							* */
+							let loading = layer.load(2);
 							that.$http.post('/layer/saveLayer', {
 								name: poperData.tname,
 								type: poperData.tleixing,
@@ -823,6 +842,7 @@
 								artSubTypeCode: poperData.minCode,
 								detail: poperData.miaoshu
 							}).then(d => {
+								layer.close(loading);
 								if(d.responseCode == 0) {
 									layui.layer.msg('保存成功');
 									window.location.reload();
@@ -856,40 +876,56 @@
 			 * 删除单个图层
 			 */
 			deleteLayer(item,index){
-				let idStr=item.tid;
-				//let that=this;
-				this.$http.post('/layer/delLayer', {
-					ids:idStr
-				}).then(d => {
-					this.d.splice(index,1);
-					this.tlayer.forEach((outItem,outIndex)=>{
-						outItem.tlayers.forEach((innerItem,innerIndex)=>{
-							if(innerItem.tid==idStr){
-								this.map.removeOverLay(innerItem); // 删除对应图层的覆盖物
-							}
+				let that=this;
+				layer.confirm('确定要删除该图层吗？', {
+					btn: ['确定','取消'] //按钮
+				}, function(){ // 确定 回调
+					let idStr=item.tid;
+					let loading = layer.load(2);
+					that.$http.post('/layer/delLayer', {
+						ids:idStr
+					}).then(d => {
+						that.d.splice(index,1);
+						that.tlayer.forEach((outItem,outIndex)=>{
+							outItem.tlayers.forEach((innerItem,innerIndex)=>{
+								if(innerItem.tid==idStr){
+									that.map.removeOverLay(innerItem); // 删除对应图层的覆盖物
+								}
+							})
 						})
+						that.tlayer.splice(index,1);  // 删除对应图层的缓存
+						layer.closeAll();
 					})
-					this.tlayer.splice(index,1);  // 删除对应图层的缓存
-				})
+				}, function(){ // 取消 回调
+					// nothing
+				});
 			},
 			/**
 			 * 删除全部图层
 			 */
 			deleteAllLayer(){
-				let idStr='';
-				let arr=[];
-				this.d.forEach((item,index)=>{
-					arr.push(item.tid)
-				})
-				idStr=arr.join(",");
-				//let that=this;
-				this.$http.post('/layer/delLayer', {
-					ids:idStr
-				}).then(d => {
-					this.d=[];
-					this.tlayer=[];
-					this.map.clearOverLays(); // 清除所有覆盖物
-				})
+				let that=this;
+				layer.confirm('确定要删除所有图层吗？', {
+					btn: ['确定','取消'] //按钮
+				}, function(){ // 确定 回调
+					let idStr='';
+					let arr=[];
+					that.d.forEach((item,index)=>{
+						arr.push(item.tid)
+					})
+					idStr=arr.join(",");
+					let loading = layer.load(2);
+					that.$http.post('/layer/delLayer', {
+						ids:idStr
+					}).then(d => {
+						that.d=[];
+						that.tlayer=[];
+						that.map.clearOverLays(); // 清除所有覆盖物
+						layer.closeAll();
+					})
+				}, function(){ // 取消 回调
+					// nothing
+				});
 			},
 		}
 	}

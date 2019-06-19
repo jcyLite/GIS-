@@ -82,6 +82,11 @@
 		mounted(){
 			this.currentData=this.data1;
 		},
+		watch:{
+			data1 (newV){
+				this.currentData=newV;
+			}
+		},
 		methods:{
 			show(){
 				this.isShow=true;
