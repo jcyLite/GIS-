@@ -43,7 +43,9 @@
 				isShow:true
 			}
 		},
-		mounted(){console.log(this.data)},
+		mounted(){
+			console.log(this.data)
+		},
 		methods:{
 			show(){
 				this.isShow=true;

@@ -1,5 +1,5 @@
 .dialog{
-    padding: 15px 0 50px;
+    padding: 10px 0 50px;
 }
 .box{
     width:350px;
@@ -12,28 +12,28 @@
    width:100%;
    overflow-y: scroll;
    padding-left: 15px;
-    .addrow{
-        //background: red;
-        .info{
-            width: auto;
-            padding:0 10px 10px 0;
-            .layui-select-title{
-                .layui-input{
-                    width:80px;
-                    height:35px;
-                    line-height:35px;
-                }
-            }
-            div{
-                text-align: left;
-                display: inline-block;
+}
+.row{
+    min-height:35px;
+    width:100%;
+    font-size: 13px;
+    margin-bottom: 5px;
+    .layui-form-select{
+        width: auto;
+        text-align: left;
+        .layui-select-title{
+            width: 100%;
+            .layui-input{
+                height:35px;
+                line-height:35px;
             }
         }
     }
-}
-.row{
+    div{
+        text-align: left;
+        display: inline-block;
+    }
     .addSelect{
-        //background: cyan;
         width: 4rem;
         border: 1px solid #e5e5e5;
 
@@ -42,7 +42,7 @@
         width: 130px;
         height: 34px;
         line-height: 34px;
-        text-align: center;
+        text-align: left;
     }
     .col{
         float:left;
@@ -67,8 +67,6 @@
     &::after{
         clear:both;
     }
-    min-height:35px;
-    width:100%;
 }
 .buttons{
     position:absolute;
