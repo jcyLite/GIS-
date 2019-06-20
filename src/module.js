@@ -2,9 +2,16 @@ export function markerClick(marker,obj,isHistory){//点击标注时触发事件 
     var that=this;
 	var lnglat=obj.lnglat;
 	var sContent = require('./components/dialog.tpl')();
-	var InfoContent=new T.InfoWindow();
-	InfoContent.setContent(sContent);
-	marker.openInfoWindow(InfoContent,lnglat);
+    var InfoContent=new T.InfoWindow();
+    that.infoWindowObj=InfoContent;
+    InfoContent.setContent(sContent);
+    if(that.$el.id =='poper-bottom'){  // 如果用户在poperBottom.vue组件点击的覆盖物（即属性表里点击的时候）
+        marker.openInfoWindow(InfoContent);
+        alert(111)
+    }else{
+        that.map.openInfoWindow(InfoContent,lnglat);
+        alert(222)
+    }
 	$(()=>{
         // if(that.$el.id=='app'){  // 如果用户在app.vue组件点击的标注点（即地图上点击的时候）
         //     that.$children.forEach((item,index) => {  // 选择poperBottom组件实例传到dialog.vue
@@ -31,7 +38,7 @@ import dialog from './components/dialog.vue'
  */
 export function scbc(overLay,isHistory){  // editBool--true：编辑弹框  false：新增弹框
     var that=this;
-    // 请求地区数据，然后初始化弹框组件
+    console.log(that.map.getOverlays())
     new Vue({
         el:'#dialogCont',
         data(){

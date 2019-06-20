@@ -165,7 +165,6 @@
 				markerTool: null,
 				handler: null,
 				lineTool: null,
-				infoWin1: null,
 				polygonTool: null,
 				searchShow: false,
 				d: [], // 左边图层信息
@@ -178,6 +177,7 @@
 				bigLei: [],
 				cityAry: [],
 				overLayObj:null, // 地图图层对象
+				infoWindowObj:null, // 地图信息框 对象
 			}
 		},
 		watch:{
@@ -205,22 +205,25 @@
 			this.control = new T.Control.Zoom();
 			//添加缩放平移控件
 			//		this.map.addControl(this.control);
-			this.infoWin1 = new T.InfoWindow();
+			this.infoWindowObj = new T.InfoWindow();
 			this.markerTool = new T.MarkTool(this.map, {
 				follow: true
 			});
 			this.firstSearch();
 			this.requestCity();
-			var infoWin1 = this.infoWin1;
+			var infoWindowObj = this.infoWindowObj;
 			var sContent = require('./components/dialog.tpl')();
 			var that = this;
 			this.markerTool.addEventListener('mouseup', function() {
 				// 点击标注一个点的时候触发，线和面的触发是其他方法
 				var markers = that.markerTool.getMarkers();
-				infoWin1.setContent(sContent);
+				//alert(111111)
+				console.log(markers)
+				console.log(markers[0].getLngLat())
+				infoWindowObj.setContent(sContent);
 				for(var i = 0; i < markers.length; i++) {
 					let marker = markers[i];
-					marker.openInfoWindow(infoWin1);
+					marker.openInfoWindow(infoWindowObj,{closeButton:false});
 					that.scbc(marker,false);
 					// 点击新增标注点的时候触发，区别于点击上次增加的标注点
 					marker.tid=$(".leftBox .bottom .box.active").attr("tid");
@@ -574,6 +577,7 @@
 						var lnglat = obj.lnglat;
 						var sContent = require('./components/dialog.tpl')();
 						var InfoContent = new T.InfoWindow();
+						that.infoWindowObj=InfoContent;
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
 						that.scbc(this,true); // true 代表是历史数据线
@@ -632,6 +636,7 @@
 						var lnglat = obj.lnglat;
 						var sContent = require('./components/dialog.tpl')();
 						var InfoContent = new T.InfoWindow();
+						that.infoWindowObj=InfoContent;
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
 						that.scbc(this,true) // true 代表是历史数据面
@@ -739,8 +744,9 @@
 					var currentLnglats = obj.currentLnglats;
 					var lnglat = currentLnglats[currentLnglats.length - 1];
 					var sContent = require('./components/dialog.tpl')();
-					var InfoContent = new T.InfoWindow();
-					InfoContent.setContent(sContent);
+					var InfoContent = new T.InfoWindow(sContent,{closeButton:false});
+					that.infoWindowObj=InfoContent;
+					//InfoContent.setContent(sContent);
 					that.map.openInfoWindow(InfoContent, lnglat);
 					obj.currentPolyline.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
 					that.scbc(obj.currentPolyline,false);
@@ -748,6 +754,7 @@
 					console.log(obj.currentPolyline)
 					obj.currentPolyline.addEventListener('click', () => {
 						var InfoContent = new T.InfoWindow();
+						that.infoWindowObj=InfoContent;
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
 					})
@@ -763,13 +770,15 @@
 					var currentLnglats = obj.currentLnglats;
 					var lnglat = currentLnglats[currentLnglats.length - 1];
 					var sContent = require('./components/dialog.tpl')();
-					var InfoContent = new T.InfoWindow();
-					InfoContent.setContent(sContent);
+					var InfoContent = new T.InfoWindow(sContent,{closeButton:false});
+					that.infoWindowObj=InfoContent;
+					//InfoContent.setContent(sContent);
 					that.map.openInfoWindow(InfoContent, lnglat);
 					obj.currentPolygon.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
 					that.scbc(obj.currentPolygon,false);
 					obj.currentPolygon.addEventListener('click', () => {
 						var InfoContent = new T.InfoWindow();
+						that.infoWindowObj=InfoContent;
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
 					})

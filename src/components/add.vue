@@ -1,7 +1,7 @@
 <template>
 	<div v-if="poper" class="poper ">
 		<div @click="poper=false" class="shade"></div>
-		<div class="box">
+		<div class="box layui-form">
 			<div style="overflow: hidden;" class="scroller">
 				<div class="row">
 					<div class="col">图层名称：</div>
@@ -9,20 +9,20 @@
 				</div>
 				<div class="row">
 					<div class="col">部件大类：</div>
-					<select v-model="poperData.bigType" placeholder="请选择" class="col" name="" >
-						<option v-for="item in tempAry"  :value='item.value'>{{item.value}}</option>
+					<select v-model="poperData.bigType" placeholder="请选择" class="col" name="" lay-filter="bigType" >
+						<option v-for="(item,index) in tempAry" :key="index"  :value='item.value'>{{item.value}}</option>
 					</select>
 				</div>
 				<div class="row">
 					<div class="col">部件小类：</div>
-					<select v-model="poperData.minType" placeholder="请选择" class="col" name="" id="">
-						<option v-for="item in secondAry"  :value='item.value'>{{item.value}}</option>
+					<select v-model="poperData.minType" placeholder="请选择" class="col" name="" id="" lay-filter="minType">
+						<option v-for="(item,index) in secondAry" :key="index"  :value='item.value'>{{item.value}}</option>
 
 					</select>
 				</div>
 				<div class="row">
 					<div class="col">图层类型：</div>
-					<select v-model="poperData.tleixing" placeholder="请选择" class="col" name="" id="">
+					<select v-model="poperData.tleixing" placeholder="请选择" class="col" name="" id=""  lay-filter="tleixing">
 						<option value="点">点</option>
 						<option value="线">线</option>
 						<option value="面">面</option>
@@ -75,10 +75,41 @@
 		},
 		name:'add',
 		mounted() {
+			let that=this;
             this.tempAry = this.abc;
             // this.secondAry =  this.abc[0].sub;
 	        console.log("sstempAryssss=="+this.tempAry);
 			console.log("this.secondAry=="+this.secondAry);
+			layui.form.on('select(bigType)', function(data){
+				//console.log(data.elem); //得到select原始DOM对象
+				//console.log(data.value); //得到被选中的值
+				//console.log(data.othis); //得到美化后的DOM对象
+				that.poperData.bigType=data.value;
+				that.$nextTick(() => {
+					that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
+					layui.form.render(); // 重载一下layui的表单元素
+				});
+			});
+			layui.form.on('select(minType)', function(data){
+				//console.log(data.elem); //得到select原始DOM对象
+				//console.log(data.value); //得到被选中的值
+				//console.log(data.othis); //得到美化后的DOM对象
+				that.poperData.minType=data.value;
+				that.$nextTick(() => {
+					that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
+					layui.form.render(); // 重载一下layui的表单元素
+				});
+			});
+			layui.form.on('select(tleixing)', function(data){
+				//console.log(data.elem); //得到select原始DOM对象
+				//console.log(data.value); //得到被选中的值
+				//console.log(data.othis); //得到美化后的DOM对象
+				that.poperData.tleixing=data.value;
+				that.$nextTick(() => {
+					that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
+					layui.form.render(); // 重载一下layui的表单元素
+				});
+			});
 			layui.form.render(); // 重载一下layui的表单元素
 		},
 		updated(){
@@ -89,7 +120,6 @@
                 handler(newName,oldName){
                     console.log('newName='+newName);
                     console.log('oldName='+oldName);
-
                     this.tempAry.forEach((item,index)=>{
                         if(item.value == newName){
                             this.secondAry=item.sub;
@@ -123,5 +153,22 @@
 	}
 </script>
 
-<style>
+<style lang="less">
+	.poper{
+		.box{
+			height: 350px;
+			.layui-form-select{
+				dl {
+					max-height:160px!important; 
+				}
+			}
+			.scroller{
+				height: 270px;
+				padding: 20px 0;
+			}
+			.buttons{
+				bottom:20px;
+			}
+		}
+	}
 </style>

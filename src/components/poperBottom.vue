@@ -37,6 +37,7 @@
 				background-color: rgba(221, 221, 221, 1);
 				border-top-left-radius: 5px;
 				border-top-right-radius: 5px;
+				cursor:s-resize;
 			}
 			height:30px;
 			width:186%;
@@ -124,7 +125,7 @@
 			<img src="../img/closebtn.png" alt="">
 		</div>
 		<div class="box">
-			<div class="row title">
+			<div class="row title" id="box-title">
 				<span class="a">{{d.tname}}</span>
 				<div class="right">
 					<span @click="deleteModul" class="b">删除所选</span>
@@ -174,7 +175,7 @@
 						>
 							<td></td>
 							<td>{{index+1}}</td>
-							<td>{{item.id}}</td>
+							<td >{{item.id}}</td>
 							<td>{{item.name}}</td>
 							<td>{{item.code}}</td>
 							<td>{{item.regionName}}</td>
@@ -464,18 +465,56 @@
 
 				
 			});
+
+			
 		},
 		updated(){
 			this.$nextTick(() => {
 				/**
 				 * 根据全屏展示按钮，就重新初始化table高度
 				 */
-				var hei=this.bactive?document.documentElement.clientHeight:160;
+				var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+				var hei=this.bactive?(h-41):160;  
 				this.initTable(hei)
 			})
 		},
 		methods:{
+			/**
+			 * 拖拽调整表格高度
+			 */
+			dragTable() {
+				var that=this;
+				var targetDom = document.getElementById('box-title');
+				var oBox = document.getElementById('poper-bottom');
+				targetDom.onmousedown = function (e) {
+					e = e || event;
+					var x = e.clientX;
+					var y = e.clientY;
+					var oBoxH = oBox.offsetHeight;
+					document.onmousemove = function (e) {
+						e = e || event;
+						var xx = e.clientX;
+						var yy = e.clientY;
+						oBox.style.height = oBoxH + y - yy + 'px';
+						return false;
+					}
+					document.onmouseup = function () {
+						document.onmousemove = null;
+						document.onmouseup = null;
+						let hei=parseInt(oBox.style.height);
+						that.initTable(hei)
+						oBox.style.height="auto";
+					}
+					if (e.preventDefault) {
+						e.preventDefault();
+					}
+				}
+			},
+			/**
+			 * 初始化table
+			 */
 			initTable(hei){
+				let that=this;
 				var table = layui.table;
 				var hei=hei||160
 				table.init('gis-table', {
@@ -486,6 +525,7 @@
 						// 为了点击复选框获取到id 必须把id列写入表格，但是不能展示出来
 						// 结合lay-data="{field:'id', style:'display:none;'}"
 						$("[data-field='id']").css('display','none');
+						that.dragTable();
 					}
 				}); 
 				layui.form.render(); // 重载一下layui的表单元素
