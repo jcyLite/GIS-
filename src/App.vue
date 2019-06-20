@@ -134,8 +134,9 @@
 </template>
 
 <script>
-	import 'layui-src/dist/layui.all.js';
+	
 	import 'layui-src/src/css/modules/layer/default/layer.css';
+	import 'layui-src/dist/layui.all.js';
 	import 'layui-src/src/css/layui.css';
 	import './components/dialog.less';
 	import poperBottom from './components/poperBottom.vue';
@@ -193,6 +194,7 @@
 			// }
 		},
 		mounted() {
+			import('layui-src/dist/layui.all.js');
 			window.uu = this;
 			var that = this;
 			//读取后台数据
@@ -616,6 +618,7 @@
 						that.infoWindowObj=InfoContent;
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
+						alert("历史的线")
 						that.scbc(this,true); // true 代表是历史数据线
 						// 同步一下poperbottom组件的两个属性
 						let subIndex=this.subIndex;
@@ -792,6 +795,7 @@
 					obj.currentPolyline.addEventListener('click', () => {
 						var InfoContent = new T.InfoWindow();
 						that.infoWindowObj=InfoContent;
+						alert("新的的线")
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
 					})
