@@ -501,7 +501,7 @@
 					document.onmouseup = function () {
 						document.onmousemove = null;
 						document.onmouseup = null;
-						let hei=parseInt(oBox.style.height);
+						let hei=parseInt(oBox.style.height)-40; // 这个40是title的高度
 						that.initTable(hei)
 						oBox.style.height="auto";
 					}
