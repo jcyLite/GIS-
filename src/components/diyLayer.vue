@@ -61,7 +61,7 @@
 	}
 </style>
 <template>
-	<div v-show="isShow" class="poperDetail" id='diyPoper'>
+	<div v-show="isShow" class="poperDetail diyLngLat" :id="'diyPoper'+timeStr">
 		<div class="shade">
 			
 		</div>
@@ -116,7 +116,7 @@
 				lngLatArrNew:this.lngLatArr
 			}
 		},
-		props:['lngLatArr','isDian'],
+		props:['lngLatArr','isDian','timeStr'],
 		mounted(){
 			let that=this;
 			this.$nextTick(()=>{   // 必须放在nextTick里面，否则获取不到dom元素
@@ -126,12 +126,12 @@
 				 */
 				if(!that.isDian){  // 线  面
 					that.lngLatArrNew.forEach((item,index)=>{
-						$("#diyPoper .layui-table tbody tr").eq(index).find(".lat-input").val(item.lat);
-						$("#diyPoper .layui-table tbody tr").eq(index).find(".lng-input").val(item.lng);
+						$(`#diyPoper${that.timeStr} .layui-table tbody tr`).eq(index).find(".lat-input").val(item.lat);
+						$(`#diyPoper${that.timeStr} .layui-table tbody tr`).eq(index).find(".lng-input").val(item.lng);
 					})
 				}else{  // 点
-					$("#diyPoper .layui-table tbody tr .lat-input").val(that.lngLatArrNew.lat);
-					$("#diyPoper .layui-table tbody tr .lng-input").val(that.lngLatArrNew.lng);
+					$(`#diyPoper${that.timeStr} .layui-table tbody tr .lat-input`).val(that.lngLatArrNew.lat);
+					$(`#diyPoper${that.timeStr} .layui-table tbody tr .lng-input`).val(that.lngLatArrNew.lng);
 				}
 			})
 			/**
@@ -181,7 +181,7 @@
 				let that=this;
 				if(that.lngLatArrNew instanceof Array){  // 线  面
 					that.lngLatArrNew=[];
-					$("#diyPoper .layui-table tbody tr").each(function(){
+					$(`#diyPoper${that.timeStr} .layui-table tbody tr`).each(function(){
 						let latV=$(this).find(".lat-input").val();
 						let lngV=$(this).find(".lng-input").val();
 						that.lngLatArrNew.push({
@@ -190,8 +190,8 @@
 						})
 					})
 				}else{  // 点
-					let latV=$("#diyPoper .layui-table tbody tr .lat-input").val();
-					let lngV=$("#diyPoper .layui-table tbody tr .lng-input").val();
+					let latV=$(`#diyPoper${that.timeStr} .layui-table tbody tr .lat-input`).val();
+					let lngV=$(`#diyPoper${that.timeStr} .layui-table tbody tr .lng-input`).val();
 					that.$set(that.lngLatArrNew,'lat',latV);
 					that.$set(that.lngLatArrNew,'lng',lngV);
 				}
