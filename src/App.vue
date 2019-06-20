@@ -193,7 +193,15 @@
 			// }
 		},
 		mounted() {
-			import('layui-src/dist/layui.all.js');
+			import('layui-src/dist/layui.all.js').then(d=>{
+				layui.form.on('select(bigLei)', function(data){
+					//console.log(data.elem); //得到select原始DOM对象
+					//console.log(data.value); //得到被选中的值
+					//console.log(data.othis); //得到美化后的DOM对象
+					that.dl=data.value;
+				});  
+				layui.form.render(); // 重载一下layui的表单元素
+			});
 			window.uu = this;
 			var that = this;
 			//读取后台数据
@@ -250,16 +258,13 @@
 				var method = $(this).attr('click');
 				that[method] ? that[method].call(this, e) : '';
 			})
-			layui.form.on('select(bigLei)', function(data){
-				//console.log(data.elem); //得到select原始DOM对象
-				//console.log(data.value); //得到被选中的值
-				//console.log(data.othis); //得到美化后的DOM对象
-				that.dl=data.value;
-			});  
-			layui.form.render(); // 重载一下layui的表单元素
+			
 		},
 		updated(){
-			layui.form.render(); // 重载一下layui的表单元素
+			if(window.layui){
+				layui.form.render(); // 重载一下layui的表单元素
+			}
+			
 		},
 		methods: {
 			/**

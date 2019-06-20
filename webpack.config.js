@@ -8,10 +8,7 @@ module.exports = {
     "static": true,
     "compress": false,
     "proxy": [{
-        "api": ["/jdzzw"],
-        "target": "http://172.16.4.5:8081"
-    }, {
-        "api": ["/simpleWeather"],
-        "target": "http://apis.juhe.cn"
+        "api": ["/czcgnl"],
+        "target": "http://202.102.101.92:20001"
     }]
 }
