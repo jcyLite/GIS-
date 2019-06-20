@@ -484,6 +484,8 @@
 			 */
 			dragTable() {
 				var that=this;
+				var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
+				var maxHei=h-41;
 				var targetDom = document.getElementById('box-title');
 				var oBox = document.getElementById('poper-bottom');
 				targetDom.onmousedown = function (e) {
@@ -502,6 +504,7 @@
 						document.onmousemove = null;
 						document.onmouseup = null;
 						let hei=parseInt(oBox.style.height)-40; // 这个40是title的高度
+						hei=hei>=maxHei?maxHei:hei; // 限制最大高度
 						that.initTable(hei)
 						oBox.style.height="auto";
 					}

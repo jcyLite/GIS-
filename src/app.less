@@ -12,6 +12,12 @@ body {
         -webkit-line-clamp: 2;
         overflow: hidden;
     }
+    .fl{
+        float: left!important;
+    }
+    .fr{
+        float: right!important;
+    }
 }
 /**
  *清除浮动
@@ -28,6 +34,7 @@ body {
 }
 .leftBox {
     width: 270px;
+    max-width: calc(30%);
     height: 100%;
     float: left;
     .top {
@@ -57,6 +64,8 @@ body {
             }
         }
         .container{
+            height: calc(100vh - 157px);
+            overflow: auto;
             padding-top: 10px;
             background: #fbfbfb;
         }
@@ -131,6 +140,7 @@ body {
     float: left;
     position: relative;
     width:calc(100% - 270px);
+    min-width:calc(70%);
     height:100vh;
     #mapDiv {
         width: 100%;

@@ -5,29 +5,29 @@
 		</div>
 		<div class="midbox">
 			<div class="inner">
-				<div>
-					<div>图层名称：</div>
-					<div>{{data.tname}}</div>
+				<div class="floor clearfix">
+					<div class="fl">图层名称：</div>
+					<div class="fl">{{data.tname}}</div>
 				</div>
-				<div>
-					<div>图层类型：</div>
-					<div>{{data.tleixing}}</div>
+				<div class="floor clearfix">
+					<div class="fl">图层类型：</div>
+					<div class="fl">{{data.tleixing}}</div>
 				</div>
-				<div>
-					<div>基础数据类型：</div>
-					<div>{{data.jcsjlx}}</div>
+				<div class="floor clearfix">
+					<div class="fl">基础数据类型：</div>
+					<div class="fl">{{data.jcsjlx}}</div>
 				</div>
-				<div>
-					<div>所属部件大类：</div>
-					<div>{{data.bleixingd}}</div>
+				<div class="floor clearfix">
+					<div class="fl">所属部件大类：</div>
+					<div class="fl">{{data.bleixingd}}</div>
 				</div>
-				<div>
-					<div>所属部件小类：</div>
-					<div>{{data.bleixingx}}</div>
+				<div class="floor clearfix">
+					<div class="fl">所属部件小类：</div>
+					<div class="fl">{{data.bleixingx}}</div>
 				</div>
-				<div>
-					<div>描述：</div>
-					<div>{{data.miaoshu}}</div>
+				<div class="floor clearfix">
+					<div class="fl">描述：</div>
+					<div class="fl">{{data.miaoshu}}</div>
 				</div>
 			</div>
 		</div>
@@ -89,12 +89,9 @@
 			overflow: auto;
 			z-index:10000000000001;
 			.inner{
-				>div{
-					height:40px;
-					>div{
-							float:left;
-						}
-					}
+				.floor{
+					margin-bottom: 10px;
+				}
 			}
 		}
 	}
