@@ -134,7 +134,7 @@
 </template>
 
 <script>
-	import 'layui-src/dist/layui.all.js';
+	
 	import 'layui-src/src/css/modules/layer/default/layer.css';
 	import 'layui-src/src/css/layui.css';
 	import './components/dialog.less';
@@ -193,6 +193,7 @@
 			// }
 		},
 		mounted() {
+			import('layui-src/dist/layui.all.js');
 			window.uu = this;
 			var that = this;
 			//读取后台数据
