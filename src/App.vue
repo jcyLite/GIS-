@@ -43,7 +43,7 @@
 <template>
 	<div id="app">
 		<leftSearch v-model="noSearch" class="leftBox"></leftSearch>
-		<div v-show="noSearch" class="leftBox layui-form">
+		<div v-show="noSearch" class="leftBox layui-form" id="drag-left">
 			<div class="top">
 				<div class="floor">
 					<span class="left-span">部件大类：</span>
@@ -104,7 +104,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="rightBox">
+		<div class="rightBox" id=right-box>
 			<div class="topTool">
 				<div class="toola">
 					<img @click="editMarker" v-show="layerType=='点'" src="./img/position.png" alt="" />
@@ -214,16 +214,18 @@
 			var infoWindowObj = this.infoWindowObj;
 			var sContent = require('./components/dialog.tpl')();
 			var that = this;
-			this.markerTool.addEventListener('mouseup', function() {
+			this.markerTool.addEventListener('mouseup', function(obj) {
 				// 点击标注一个点的时候触发，线和面的触发是其他方法
+				console.log(obj)
 				var markers = that.markerTool.getMarkers();
-				//alert(111111)
+				console.log(12121212222222222)
+				console.log(that.map.getOverlays())
 				console.log(markers)
 				console.log(markers[0].getLngLat())
 				infoWindowObj.setContent(sContent);
 				for(var i = 0; i < markers.length; i++) {
 					let marker = markers[i];
-					marker.openInfoWindow(infoWindowObj,{closeButton:false});
+					marker.openInfoWindow(infoWindowObj);
 					that.scbc(marker,false);
 					// 点击新增标注点的时候触发，区别于点击上次增加的标注点
 					marker.tid=$(".leftBox .bottom .box.active").attr("tid");
@@ -254,13 +256,47 @@
 				//console.log(data.value); //得到被选中的值
 				//console.log(data.othis); //得到美化后的DOM对象
 				that.dl=data.value;
-			});  
+			}); 
+			//that.dragLeft(); 
 			layui.form.render(); // 重载一下layui的表单元素
 		},
 		updated(){
 			layui.form.render(); // 重载一下layui的表单元素
 		},
 		methods: {
+			/**
+			 * 拖拽调整左侧操作栏宽度---同时要调整相关div的尺寸
+			 */
+			dragLeft() {
+				var that=this;
+				var windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+				var targetDom = document.getElementById('drag-left');
+				var rightBox = document.getElementById('right-box');
+				var oBox = document.getElementById('drag-left');
+				targetDom.onmousedown = function (e) {
+					e = e || event;
+					var x = e.clientX;
+					var y = e.clientY;
+					var oBoxW = oBox.offsetWidth;
+					document.onmousemove = function (e) {
+						e = e || event;
+						var xx = e.clientX;
+						var yy = e.clientY;
+						oBox.style.width = oBoxW + xx -x + 'px';
+						let _width=parseInt(oBox.style.width);
+						rightBox.style.width=windowWidth-_width+'px';
+						return false;
+					}
+					document.onmouseup = function () {
+						document.onmousemove = null;
+						document.onmouseup = null;
+						
+					}
+					if (e.preventDefault) {
+						e.preventDefault();
+					}
+				}
+			},
 			/**
 			 * 点击单个图层眼睛
 			 */
@@ -338,6 +374,7 @@
 						this.setCenterMap();
 						layer.close(loading);
 					});
+					
 				}
 			},
 			requestCity() {
@@ -712,11 +749,11 @@
 					layer.close(loading);
 				})
 			},
-			btna() {
-				var markers = this.markerTool.getMarkers();
-				this.map.removeOverLay(markers[markers.length - 1]);
-				this.map.closeInfoWindow()
-			},
+			// btna() {
+			// 	var markers = this.markerTool.getMarkers();
+			// 	this.map.removeOverLay(markers[markers.length - 1]);
+			// 	this.map.closeInfoWindow()
+			// },
 			shadea() {
 				$('.cpt-add').remove()
 			},
@@ -727,11 +764,11 @@
 				this.polygonTool.open();
 			},
 			editMarker() {
-				var markers = this.markerTool.getMarkers();
-				for(var i = 0; i < markers.length; i++) {
-					let marker = markers[i];
-					markers[i].disableDragging();
-				}
+				// var markers = this.markerTool.getMarkers();
+				// for(var i = 0; i < markers.length; i++) {
+				// 	let marker = markers[i];
+				// 	markers[i].disableDragging();
+				// }
 				this.markerTool.open();  // 开启标注点功能
 			},
 			openPolylineTool() {
@@ -739,16 +776,19 @@
 				var handler = this.handler;
 				if(handler) handler.close();
 				handler = new T.PolylineTool(this.map);
+				console.log("lineeeee")
 				handler.addEventListener('draw', function(obj) {
 					var currentLnglats = obj.currentLnglats;
 					var lnglat = currentLnglats[currentLnglats.length - 1];
 					var sContent = require('./components/dialog.tpl')();
-					var InfoContent = new T.InfoWindow(sContent,{closeButton:false});
+					var InfoContent = new T.InfoWindow();
 					that.infoWindowObj=InfoContent;
-					//InfoContent.setContent(sContent);
+					InfoContent.setContent(sContent);
 					that.map.openInfoWindow(InfoContent, lnglat);
 					obj.currentPolyline.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
 					that.scbc(obj.currentPolyline,false);
+					console.log(8888888)
+					console.log(obj.currentPolyline)
 					obj.currentPolyline.addEventListener('click', () => {
 						var InfoContent = new T.InfoWindow();
 						that.infoWindowObj=InfoContent;
@@ -767,9 +807,9 @@
 					var currentLnglats = obj.currentLnglats;
 					var lnglat = currentLnglats[currentLnglats.length - 1];
 					var sContent = require('./components/dialog.tpl')();
-					var InfoContent = new T.InfoWindow(sContent,{closeButton:false});
+					var InfoContent = new T.InfoWindow();
 					that.infoWindowObj=InfoContent;
-					//InfoContent.setContent(sContent);
+					InfoContent.setContent(sContent);
 					that.map.openInfoWindow(InfoContent, lnglat);
 					obj.currentPolygon.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
 					that.scbc(obj.currentPolygon,false);
@@ -827,6 +867,16 @@
 								layer.msg('未填写图层名称');
 								return;
 							}
+							/*
+							*   tname:'',
+								tleixing:'',
+								jcsjlx:'',
+								miaoshu:'',
+								bigType:'',
+								minType:'',
+								bigCode:'',
+								minCode:''
+							* */
 							let loading = layer.load(2);
 							that.$http.post('/layer/saveLayer', {
 								name: poperData.tname,

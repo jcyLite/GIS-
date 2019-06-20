@@ -7,10 +7,11 @@ export function markerClick(marker,obj,isHistory){//点击标注时触发事件 
     InfoContent.setContent(sContent);
     if(that.$el.id =='poper-bottom'){  // 如果用户在poperBottom.vue组件点击的覆盖物（即属性表里点击的时候）
         marker.openInfoWindow(InfoContent);
-        alert(111)
+       // alert(111)
     }else{
-        that.map.openInfoWindow(InfoContent,lnglat);
-        alert(222)
+        marker.openInfoWindow(InfoContent);
+       // that.map.openInfoWindow(InfoContent,lnglat);
+       // alert(222)
     }
 	$(()=>{
         // if(that.$el.id=='app'){  // 如果用户在app.vue组件点击的标注点（即地图上点击的时候）
