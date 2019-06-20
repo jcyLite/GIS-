@@ -1,0 +1,78 @@
+{
+    "total": 9,
+    "code": 0,
+    "message": "查询成功",
+    "rows": [{
+            "AGENT_NAME": "景德镇市民宗局",
+            "ITEM_CODE": "360200-000201026000-XK-014-01",
+            "TYPE": "XK",
+            "AGENT_CODE": "360201000201026000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAG",
+            "NAME": "少数民族高考生民族成份认定的审核转报"
+        },
+        {
+            "AGENT_NAME": "景德镇市卫生和计划生育委员会",
+            "ITEM_CODE": "360200-000201021000-QR-020-01",
+            "TYPE": "QR",
+            "AGENT_CODE": "360201000201021000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAD",
+            "NAME": "乡村医生跨市、县变更执业机构或执业地点审核"
+        },
+        {
+            "AGENT_NAME": "景德镇市民宗局",
+            "ITEM_CODE": "360200-000201026000-XK-004-02",
+            "TYPE": "XK",
+            "AGENT_CODE": "360201000201026000",
+            "ROW_ID": "AAB97pAAMAAAAFPAAB",
+            "NAME": "公民变更民族成份的审核转报"
+        },
+        {
+            "AGENT_NAME": "景德镇市民政局",
+            "ITEM_CODE": "360200-000201010000-QR-001-02-02",
+            "TYPE": "QR",
+            "AGENT_CODE": "360201000201010000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAB",
+            "NAME": "香港居民中的中国公民申请办理成立收养关系的登记"
+        },
+        {
+            "AGENT_NAME": "景德镇市卫生和计划生育委员会",
+            "ITEM_CODE": "360200-000201021000-QT-025-01",
+            "TYPE": "QT",
+            "AGENT_CODE": "360201000201021000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAF",
+            "NAME": "计划外生育举报调查"
+        },
+        {
+            "AGENT_NAME": "景德镇市民政局",
+            "ITEM_CODE": "360200-000201010000-QR-001-01-01",
+            "TYPE": "QR",
+            "AGENT_CODE": "360201000201010000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAC",
+            "NAME": "澳门居民中的中国公民申请办理"
+        },
+        {
+            "AGENT_NAME": "景德镇市政府金融工作办公室",
+            "ITEM_CODE": "360200-000201068000-QT-006-06",
+            "TYPE": "QT",
+            "AGENT_CODE": "360201000201068000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAE",
+            "NAME": "交易场所日常监管"
+        },
+        {
+            "AGENT_NAME": "景德镇市民宗局",
+            "ITEM_CODE": "360200-000201026000-XK-010-01",
+            "TYPE": "XK",
+            "AGENT_CODE": "360201000201026000",
+            "ROW_ID": "AAB97pAAMAAAAFPAAA",
+            "NAME": "权限内穆斯林出国朝觐名额空缺备案"
+        },
+        {
+            "AGENT_NAME": "景德镇市公积金管理中心",
+            "ITEM_CODE": "360200-000201058000-QT-002-01",
+            "TYPE": "QT",
+            "AGENT_CODE": "360201000201058000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAA",
+            "NAME": "市直单位职工住房公积金提取审批"
+        }
+    ]
+}

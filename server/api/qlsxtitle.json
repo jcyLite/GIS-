@@ -1,0 +1,21 @@
+{
+    "total": 3,
+    "code": 0,
+    "message": "查询成功",
+    "rows": [{
+            "CODE": "9AEF82CACAFC4B04A0CF06BC192FA0FB",
+            "CLASS_TYPE": "0",
+            "NAME": "生育收养"
+        },
+        {
+            "CODE": "290D122194F04DCD85D8EEF4542FF435",
+            "CLASS_TYPE": "0",
+            "NAME": "户籍办理"
+        },
+        {
+            "CODE": "D87E95FDA7F24D42890EFD7176188E36",
+            "CLASS_TYPE": "0",
+            "NAME": "民族宗教"
+        }
+    ]
+}

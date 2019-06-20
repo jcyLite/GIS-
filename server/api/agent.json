@@ -1,0 +1,31 @@
+{
+    "total": 5,
+    "code": 0,
+    "message": "查询成功",
+    "rows": [{
+            "AGENT_NAME": "景德镇市民政局",
+            "AGENT_CODE": "360201000201010000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAB"
+        },
+        {
+            "AGENT_NAME": "景德镇市卫生和计划生育委员会",
+            "AGENT_CODE": "360201000201021000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAD"
+        },
+        {
+            "AGENT_NAME": "景德镇市政府金融工作办公室",
+            "AGENT_CODE": "360201000201068000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAE"
+        },
+        {
+            "AGENT_NAME": "景德镇市民宗局",
+            "AGENT_CODE": "360201000201026000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAG"
+        },
+        {
+            "AGENT_NAME": "景德镇市公积金管理中心",
+            "AGENT_CODE": "360201000201058000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAA"
+        }
+    ]
+}

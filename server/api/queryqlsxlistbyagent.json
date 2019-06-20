@@ -1,0 +1,22 @@
+{
+    "total": 2,
+    "code": 0,
+    "message": "查询成功",
+    "rows": [{
+            "AGENT_NAME": "景德镇市民政局",
+            "ITEM_CODE": "360200-000201010000-QR-001-02-02",
+            "TYPE": "QR",
+            "AGENT_CODE": "360201000201010000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAB",
+            "NAME": "香港居民中的中国公民申请办理成立收养关系的登记"
+        },
+        {
+            "AGENT_NAME": "景德镇市民政局",
+            "ITEM_CODE": "360200-000201010000-QR-001-01-01",
+            "TYPE": "QR",
+            "AGENT_CODE": "360201000201010000",
+            "ROW_ID": "AAB97pAAMAAAAFBAAC",
+            "NAME": "澳门居民中的中国公民申请办理"
+        }
+    ]
+}
