@@ -136,7 +136,7 @@
 <script>
 	
 	import 'layui-src/src/css/modules/layer/default/layer.css';
-	import 'layui-src/dist/layui.all.js';
+	// import 'layui-src/dist/layui.all.js';
 	import 'layui-src/src/css/layui.css';
 	import './components/dialog.less';
 	import poperBottom from './components/poperBottom.vue';
@@ -194,7 +194,18 @@
 			// }
 		},
 		mounted() {
-			import('layui-src/dist/layui.all.js');
+			import('layui-src/dist/layui.all.js').then(d=>{
+				window.layer=layui.layer;
+				layui.form.on('select(bigLei)', function(data){
+					//console.log(data.elem); //得到select原始DOM对象
+					//console.log(data.value); //得到被选中的值
+					//console.log(data.othis); //得到美化后的DOM对象
+					that.dl=data.value;
+				});  
+				this.firstSearch();
+				this.requestCity();
+				layui.form.render(); // 重载一下layui的表单元素
+			});
 			window.uu = this;
 			var that = this;
 			//读取后台数据
@@ -211,8 +222,8 @@
 			this.markerTool = new T.MarkTool(this.map, {
 				follow: true
 			});
-			this.firstSearch();
-			this.requestCity();
+			
+			
 			var infoWindowObj = this.infoWindowObj;
 			var sContent = require('./components/dialog.tpl')();
 			var that = this;
@@ -253,14 +264,6 @@
 				var method = $(this).attr('click');
 				that[method] ? that[method].call(this, e) : '';
 			})
-			layui.form.on('select(bigLei)', function(data){
-				//console.log(data.elem); //得到select原始DOM对象
-				//console.log(data.value); //得到被选中的值
-				//console.log(data.othis); //得到美化后的DOM对象
-				that.dl=data.value;
-			}); 
-			//that.dragLeft(); 
-			layui.form.render(); // 重载一下layui的表单元素
 		},
 		updated(){
 			layui.form.render(); // 重载一下layui的表单元素
@@ -389,7 +392,7 @@
 				})
 			},
 			firstSearch() {
-				let loading = layer.load(2);
+				let loading = layui.layer.load(2);
 				this.$http.post('gis/queryByCode', {
 					dictionaryCode: '部件分类代码'
 				}).then(d => {

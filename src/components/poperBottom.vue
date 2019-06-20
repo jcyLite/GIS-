@@ -365,106 +365,111 @@
 			},
 		},
 		mounted(){
-			window.poper=this;
-			let table = layui.table;
 			let that=this;
+			window.poper=this;
+			import('layui-src/dist/layui.all.js').then(d=>{
+				let table = layui.table;
+				table.on('checkbox(gis-table)', function(obj){
+					//console.log(obj.checked); //当前是否选中状态
+					console.log(obj.data); //选中行的相关数据
+					//console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
+					if(obj.type=='all'){  // 全选
+						if(obj.checked){
+							that.active=[];
+							that.idsDelete=[];
+							that.d.datas.forEach((item,index)=>{
+								that.active.push(index);
+								that.idsDelete.push(item.id);
+							})
+						}else{
+							that.active=[];
+							that.idsDelete=[];
+						}
+					}else if(obj.type=='one'){ // 单选
+						if(obj.checked){
+							that.active.push(obj.data.index);
+							that.idsDelete.push(obj.data.id);
+						}else{
+							let subIndex=that.active.indexOf(obj.data.index)
+							let subIndex2=that.active.indexOf(obj.data.id)
+							that.active.splice(subIndex,1)
+							that.idsDelete.splice(subIndex2,1)
+						}
+					}
+				});
+				/**
+				 * 监听行 单击 事件 如果要 ‘双击’ 就用rowDouble
+				 */
+				table.on('rowDouble(gis-table)', function(obj){
+					console.log(obj.tr) //得到当前行元素对象
+					console.log(obj.data) //得到当前行数据
+					that.oactive=parseInt(obj.data.index)-1;
+					that.dingwei(that.d.datas[that.oactive],that.oactive)
+					that.moduleId=obj.data.id;
+					// let parentObj=that.$parent;
+					// // 获取地图中心坐标
+					// let lnglat=null;
+					// let centerLnglat=null;
+					// let id=obj.data.id;
+					// that.d.datas.forEach((item,index)=>{
+					// 	if(item.id==id){
+					// 		lnglat=item.lnglat
+					// 	}
+					// })
+					// if(lnglat instanceof Array){  // 代表是线或者面
+
+					// }else {
+					// 	centerLnglat.lng=lnglat.
+					// }
+					// //重新设置显示地图的中心点和级别
+					// parentObj.map.centerAndZoom(new T.LngLat(119.55, 31.47), parentObj.zoom);
+					// // 显示弹框
+					// var type1='线'
+					// var sContent = require('./dialog.tpl')();
+					// if(type1=='点'){
+					// 	var lngLat=new T.LngLat(119.55, 31.47) // 坐标对象
+					// 	var infoWin = new T.InfoWindow();  // 创建信息窗口对象
+					// 	infoWin.setContent(sContent);  // 插入内容
+					// 	infoWin.setLngLat(lngLat); // 设置弹框坐标
+					// 	parentObj.map.openInfoWindow(infoWin);  // 打开弹框
+					// 	parentObj.scbc([],true); 
+					// }else if(type1=='线'){
+					// 	var lngLat=new T.LngLat(119.55, 31.47) // 坐标对象
+					// 	var infoWin = new T.InfoWindow();  // 创建信息窗口对象
+					// 	infoWin.setContent(sContent);  // 插入内容
+					// 	infoWin.setLngLat(lngLat); // 设置弹框坐标
+					// 	parentObj.map.openInfoWindow(infoWin);  // 打开弹框
+					// 	parentObj.scbc([],true);
+					// 	// 根据历史坐标绘制
+					// 	let arrXy=[];
+					// 	arrXy.push(new T.LngLat(119.58, 31.41));
+					// 	arrXy.push(new T.LngLat(119.55, 31.42));
+					// 	parentObj.drawHistory(arrXy);
+					// }else if(type1=='面'){
+					// 	var lngLat=new T.LngLat(119.55, 31.47) // 坐标对象
+					// 	var infoWin = new T.InfoWindow();  // 创建信息窗口对象
+					// 	infoWin.setContent(sContent);  // 插入内容
+					// 	infoWin.setLngLat(lngLat); // 设置弹框坐标
+					// 	parentObj.map.openInfoWindow(infoWin);  // 打开弹框
+					// 	parentObj.scbc([],true);
+					// 	// 根据历史坐标绘制
+					// 	let arrXy=[];
+					// 	arrXy.push(new T.LngLat(119.58, 31.41));
+					// 	arrXy.push(new T.LngLat(119.55, 31.42));
+					// 	parentObj.drawHistory(arrXy);
+					// }
+					
+					// // 绘制范围
+
+					
+				});
+			})
+			
+			
 			/**
 			 * 复选框
 			 */
-			table.on('checkbox(gis-table)', function(obj){
-				//console.log(obj.checked); //当前是否选中状态
-				console.log(obj.data); //选中行的相关数据
-				//console.log(obj.type); //如果触发的是全选，则为：all，如果触发的是单选，则为：one
-				if(obj.type=='all'){  // 全选
-					if(obj.checked){
-						that.active=[];
-						that.idsDelete=[];
-						that.d.datas.forEach((item,index)=>{
-							that.active.push(index);
-							that.idsDelete.push(item.id);
-						})
-					}else{
-						that.active=[];
-						that.idsDelete=[];
-					}
-				}else if(obj.type=='one'){ // 单选
-					if(obj.checked){
-						that.active.push(obj.data.index);
-						that.idsDelete.push(obj.data.id);
-					}else{
-						let subIndex=that.active.indexOf(obj.data.index)
-						let subIndex2=that.active.indexOf(obj.data.id)
-						that.active.splice(subIndex,1)
-						that.idsDelete.splice(subIndex2,1)
-					}
-				}
-			});
-			/**
-			 * 监听行 单击 事件 如果要 ‘双击’ 就用rowDouble
-			 */
-			table.on('rowDouble(gis-table)', function(obj){
-				console.log(obj.tr) //得到当前行元素对象
-				console.log(obj.data) //得到当前行数据
-				that.oactive=parseInt(obj.data.index)-1;
-				that.dingwei(that.d.datas[that.oactive],that.oactive)
-				that.moduleId=obj.data.id;
-				// let parentObj=that.$parent;
-				// // 获取地图中心坐标
-				// let lnglat=null;
-				// let centerLnglat=null;
-				// let id=obj.data.id;
-				// that.d.datas.forEach((item,index)=>{
-				// 	if(item.id==id){
-				// 		lnglat=item.lnglat
-				// 	}
-				// })
-				// if(lnglat instanceof Array){  // 代表是线或者面
-
-				// }else {
-				// 	centerLnglat.lng=lnglat.
-				// }
-				// //重新设置显示地图的中心点和级别
-				// parentObj.map.centerAndZoom(new T.LngLat(119.55, 31.47), parentObj.zoom);
-				// // 显示弹框
-				// var type1='线'
-				// var sContent = require('./dialog.tpl')();
-				// if(type1=='点'){
-				// 	var lngLat=new T.LngLat(119.55, 31.47) // 坐标对象
-				// 	var infoWin = new T.InfoWindow();  // 创建信息窗口对象
-				// 	infoWin.setContent(sContent);  // 插入内容
-				// 	infoWin.setLngLat(lngLat); // 设置弹框坐标
-				// 	parentObj.map.openInfoWindow(infoWin);  // 打开弹框
-				// 	parentObj.scbc([],true); 
-				// }else if(type1=='线'){
-				// 	var lngLat=new T.LngLat(119.55, 31.47) // 坐标对象
-				// 	var infoWin = new T.InfoWindow();  // 创建信息窗口对象
-				// 	infoWin.setContent(sContent);  // 插入内容
-				// 	infoWin.setLngLat(lngLat); // 设置弹框坐标
-				// 	parentObj.map.openInfoWindow(infoWin);  // 打开弹框
-				// 	parentObj.scbc([],true);
-				// 	// 根据历史坐标绘制
-				// 	let arrXy=[];
-				// 	arrXy.push(new T.LngLat(119.58, 31.41));
-				// 	arrXy.push(new T.LngLat(119.55, 31.42));
-				// 	parentObj.drawHistory(arrXy);
-				// }else if(type1=='面'){
-				// 	var lngLat=new T.LngLat(119.55, 31.47) // 坐标对象
-				// 	var infoWin = new T.InfoWindow();  // 创建信息窗口对象
-				// 	infoWin.setContent(sContent);  // 插入内容
-				// 	infoWin.setLngLat(lngLat); // 设置弹框坐标
-				// 	parentObj.map.openInfoWindow(infoWin);  // 打开弹框
-				// 	parentObj.scbc([],true);
-				// 	// 根据历史坐标绘制
-				// 	let arrXy=[];
-				// 	arrXy.push(new T.LngLat(119.58, 31.41));
-				// 	arrXy.push(new T.LngLat(119.55, 31.42));
-				// 	parentObj.drawHistory(arrXy);
-				// }
-				
-				// // 绘制范围
-
-				
-			});
+			
 
 			
 		},
