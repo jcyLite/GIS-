@@ -12,9 +12,8 @@ const readFile = (fs, file) => {
     } catch (e) {}
 }
 
-module.exports = function setupDevServer(app, templatePath, cb) {
+module.exports = function setupDevServer(app, template, cb) {
     let bundle
-    let template
     let clientManifest
 
     let ready
@@ -30,12 +29,6 @@ module.exports = function setupDevServer(app, templatePath, cb) {
     }
 
     // read template from disk and watch
-    template = fs.readFileSync(templatePath, 'utf-8')
-    chokidar.watch(templatePath).on('change', () => {
-        template = fs.readFileSync(templatePath, 'utf-8')
-        console.log('index.html template updated.')
-        update()
-    })
 
     // modify client config to work with hot middleware
     clientConfig.entry.app = ['webpack-hot-middleware/client', clientConfig.entry.app]

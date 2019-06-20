@@ -1,5 +1,5 @@
 module.exports = {
-    "rem": false,
+    "rem": false, //是否修改px为rem
     "auto_open_browser": false,
     "postCss": true,
     "entry": "index",
