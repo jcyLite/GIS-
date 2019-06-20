@@ -338,7 +338,6 @@
 						this.setCenterMap();
 						layer.close(loading);
 					});
-					
 				}
 			},
 			requestCity() {
@@ -750,8 +749,6 @@
 					that.map.openInfoWindow(InfoContent, lnglat);
 					obj.currentPolyline.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
 					that.scbc(obj.currentPolyline,false);
-					console.log(8888888)
-					console.log(obj.currentPolyline)
 					obj.currentPolyline.addEventListener('click', () => {
 						var InfoContent = new T.InfoWindow();
 						that.infoWindowObj=InfoContent;
@@ -830,16 +827,6 @@
 								layer.msg('未填写图层名称');
 								return;
 							}
-							/*
-							*   tname:'',
-								tleixing:'',
-								jcsjlx:'',
-								miaoshu:'',
-								bigType:'',
-								minType:'',
-								bigCode:'',
-								minCode:''
-							* */
 							let loading = layer.load(2);
 							that.$http.post('/layer/saveLayer', {
 								name: poperData.tname,
