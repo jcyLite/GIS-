@@ -5,7 +5,7 @@
 		right:0;
 		bottom:0;
 		left:0;
-		z-index:10000000000000;
+		z-index:997;
 		.layui-table{
 			width: 100%;
 			.layui-table-grid-down{
@@ -28,7 +28,7 @@
 			bottom:0;
 			left:0;
 			background:rgba(0,0,0,.2);
-			z-index:10000000000000;
+			z-index:998;
 		}
 		.midbox{
 			padding:10px 20px;
@@ -43,7 +43,7 @@
 			margin:auto;
 			background: #fff;
 			overflow: auto;
-			z-index:10000000000001;
+			z-index:999;
 			.inner{
 				>div{
 					height:auto;
@@ -68,7 +68,7 @@
 		<div class="midbox">
 			<div class="inner">
 				<div class="top-cont">
-					<button class="layui-btn layui-btn-normal layui-btn-sm" @click="addTr" v-if="!isDian">
+					<button class="layui-btn layui-btn-normal layui-btn-sm" @click="addTr" v-if="overLayType!=2">
 						新增
 					</button>
 				</div>
@@ -78,18 +78,18 @@
 							<th lay-data="{field:'index', width:70}">序号</th>
 							<th lay-data="{field:'lat', width:115}">经度</th>
 							<th lay-data="{field:'lng', width:115}">纬度</th>
-							<th lay-data="{field:'operate', width:80}" v-if="!isDian">操作</th>
+							<th lay-data="{field:'operate', width:80}" v-if="overLayType!=2">操作</th>
 						</tr> 
 					</thead>
-					<tbody  v-if="isDian">
+					<tbody  v-if="overLayType==2">
 						<tr>
 							<td>1</td>
 							<td><input type="text" class="layui-input lat-input" v-model="lngLatArr.lat"></td>
 							<td><input type="text" class="layui-input lng-input" v-model="lngLatArr.lng"></td>
-							<td v-if="!isDian"><button class="layui-btn layui-btn-sm layui-btn-danger delete-btn">删除</button></td>
+							<td v-if="overLayType!=2"><button class="layui-btn layui-btn-sm layui-btn-danger delete-btn">删除</button></td>
 						</tr>
 					</tbody>
-					<tbody  v-if="!isDian">
+					<tbody  v-if="overLayType!=2">
 						<tr v-for="(item,index) of lngLatArr" :key="index">
 							<td>{{index+1}}</td>
 							<td><input type="text" class="layui-input lat-input" v-model="item.lat"></td>
@@ -116,24 +116,10 @@
 				lngLatArrNew:this.lngLatArr
 			}
 		},
-		props:['lngLatArr','isDian','timeStr'],
+		props:['lngLatArr','overLayType','timeStr'],
 		mounted(){
 			let that=this;
-			this.$nextTick(()=>{   // 必须放在nextTick里面，否则获取不到dom元素
-				this.initTable();
-				/**
-				 * 由于layui table的某种限制，导致input的默认数据显示不出来，只能用jq把数据塞进去
-				 */
-				if(!that.isDian){  // 线  面
-					that.lngLatArrNew.forEach((item,index)=>{
-						$(`#diyPoper${that.timeStr} .layui-table tbody tr`).eq(index).find(".lat-input").val(item.lat);
-						$(`#diyPoper${that.timeStr} .layui-table tbody tr`).eq(index).find(".lng-input").val(item.lng);
-					})
-				}else{  // 点
-					$(`#diyPoper${that.timeStr} .layui-table tbody tr .lat-input`).val(that.lngLatArrNew.lat);
-					$(`#diyPoper${that.timeStr} .layui-table tbody tr .lng-input`).val(that.lngLatArrNew.lng);
-				}
-			})
+			that.setData();
 			/**
 			 * 删除一行---由于layui的table组件的限制，导致vue的点击事件绑定不上，所以这里只能用jq了
 			 */
@@ -145,11 +131,34 @@
 		watch:{
 			lngLatArrNew(newV) {
 				this.$nextTick(()=>{
-					this.initTable();
+					this.setData();
 				})
 			}
 		},
 		methods:{
+			/**
+			 * 赛入经纬度数据
+			 */
+			setData() {
+				let that=this;
+				this.$nextTick(()=>{   // 必须放在nextTick里面，否则获取不到dom元素
+					this.initTable(function(){
+						/**
+						 * 由于layui table的某种限制，导致input的默认数据显示不出来，只能用jq把数据塞进去
+						 */
+						if(that.overLayType==4||that.overLayType==5){  // 线  面
+							that.lngLatArrNew.forEach((item,index)=>{
+								$(`#diyPoper${that.timeStr} .layui-table tbody tr`).eq(index).find(".lat-input").val(item.lat);
+								$(`#diyPoper${that.timeStr} .layui-table tbody tr`).eq(index).find(".lng-input").val(item.lng);
+							})
+						}else{  // 点
+							$(`#diyPoper${that.timeStr} .layui-table tbody tr .lat-input`).val(that.lngLatArrNew.lat);
+							$(`#diyPoper${that.timeStr} .layui-table tbody tr .lng-input`).val(that.lngLatArrNew.lng);
+						}
+					});
+					
+				})
+			},
 			/**
 			 * 新增一行
 			 */
@@ -162,7 +171,7 @@
 			/**
 			 * 转换静态表格--layui-table   并塞入数据
 			 */
-			initTable(){
+			initTable(callBack){
 				let that=this;
 				let table = layui.table;
 				table.init('lnglat-table', {
@@ -170,7 +179,7 @@
 					,limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
 					//支持所有基础参数
 					,done: function () {
-						
+						callBack();
 					}
 				}); 
 			},
@@ -189,11 +198,28 @@
 							lng:lngV
 						})
 					})
+					for(let i=0;i<that.lngLatArrNew.length;i++){
+						let callbackFlag=that.testFun(that.lngLatArrNew[i]);
+						if(callbackFlag!=-1){
+							return false;
+						}
+					}
+					if(that.overLayType==4&&that.lngLatArrNew.length<2){ // 线
+						layer.msg("线类型请至少设置两个坐标点");
+						return false;
+					}else if(that.overLayType==5&&that.lngLatArrNew.length<3){  // 面
+						layer.msg("面类型请至少设置三个坐标点");
+						return false;
+					}
 				}else{  // 点
 					let latV=$(`#diyPoper${that.timeStr} .layui-table tbody tr .lat-input`).val();
 					let lngV=$(`#diyPoper${that.timeStr} .layui-table tbody tr .lng-input`).val();
 					that.$set(that.lngLatArrNew,'lat',latV);
 					that.$set(that.lngLatArrNew,'lng',lngV);
+					let callbackFlag=that.testFun(that.lngLatArrNew);
+					if(callbackFlag!=-1){
+						return false;
+					}
 				}
 				// $("#diyPoper .layui-table tbody tr").each(function(){
 				// 	let latV=$(this).find(".lat-input").val();
@@ -210,6 +236,40 @@
 				// })
 				that.$emit("setLngLatFun",that.lngLatArrNew);	
 				that.isShow=false;			
+			},
+			/**
+			 * 验证  判断输入数据是否合法
+			 */
+			testFun(item) {
+				let that=this;
+				let flag=-1;  // 不同数值代表不同的报错类型  -1 代表通过了
+				let regNum=/^\d+(\.\d{1,5})?$/;
+				if(item.lng==""||item.lat==""){
+					flag=1;
+				}
+				if(item.lng.substr(-1,1)=="."||item.lat.substr(-1,1)=="."){
+					flag=2;
+				}
+				if(item.lng.substr(0,1)=="."||item.lat.substr(0,1)=="."){
+					flag=2;
+				}
+				if(item.lng*1==0||item.lat*1==0){
+					flag=2;
+				}
+				if(!regNum.test(item.lng*1)||!regNum.test(item.lat*1)){
+					flag=2;
+				}
+				if(item.lng.split(".")[1].length<5||item.lat.split(".")[1].length<5){
+					flag=2;
+				}
+				if(flag==1){
+					layer.msg("经纬度不能为空值");
+					return false;
+				}else if(flag==2){
+					layer.msg("经纬度必须保留五位小数");
+					return false;
+				}
+				return flag;
 			},
 			show(){
 				this.isShow=true;
