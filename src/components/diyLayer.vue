@@ -1,4 +1,23 @@
 <style lang='less'>
+	@time:.35s;
+	.diyLngLat-enter,.diyLngLat-leave-active{
+		.shade{
+			opacity:0;
+		}
+		.midbox{
+			opacity:0;
+			transform:scale(0);
+		}
+	}
+	.diyLngLat{
+		transition: @time all;
+		.shade{
+			transition: @time all;
+		}
+		.midbox{
+			transition: @time all;
+		}
+	}
 	.poperDetail{
 		position:fixed;
 		top:0;
@@ -61,6 +80,7 @@
 	}
 </style>
 <template>
+<transition name="diyLngLat">
 	<div v-show="isShow" class="poperDetail diyLngLat" :id="'diyPoper'+timeStr">
 		<div class="shade">
 			
@@ -105,6 +125,7 @@
 			</div>
 		</div>
 	</div>
+</transition>
 </template>
 
 <script>
@@ -238,7 +259,7 @@
 				that.isShow=false;			
 			},
 			/**
-			 * 验证  判断输入数据是否合法
+			 * 验证  判断输入数据是否合法  
 			 */
 			testFun(item) {
 				let that=this;

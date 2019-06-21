@@ -156,7 +156,7 @@
 </script>
 
 <style lang="less">
-@time:.5s;
+	@time:.35s;
 	.poper-enter,.poper-leave-active{
 		.shade{
 			opacity:0;

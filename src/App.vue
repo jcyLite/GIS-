@@ -231,7 +231,7 @@
 					document.onmousemove=()=>{}
 				}
 			}
-			window.uu = this;
+			window.App = this;
 			var that = this;
 			//读取后台数据
 			window.$ = require('jquery');  // 引入jq
@@ -461,7 +461,7 @@
 					layer.close(loading);
 				})
 			},
-			searchlei() {
+			searchlei(callback) {
 				// 添加验证
 				//layui.layer.msg('22')
 
@@ -488,6 +488,9 @@
 					// 删除掉所有的“手动输入经纬度弹框”
 					$(".poperDetail.diyLngLat").remove();
 					layer.close(loading);
+					this.$nextTick(()=>{
+						typeof(callback)=="function"&&callback()
+					})
 				}) 
 			},
 			// makeData(d) {

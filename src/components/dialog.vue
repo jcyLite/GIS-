@@ -356,7 +356,15 @@ export default {
             layer.close(loading);
             if (d.code == 0) {
                 layui.layer.msg("添加成功")
-                window.location.reload();
+                var arr=window.App.eye.concat([]);
+                arr.splice(arr.indexOf(App.active),1);
+                var active=window.App.active;
+                window.App.searchlei(function(){
+                  arr.forEach((item,index)=>{
+                    $(".leftBox .bottom .container>.box").eq(item).click()
+                  })
+                  $(".leftBox .bottom .container>.box").eq(active).click()
+                });
             } else if(d.code == -1){
                 layui.layer.msg("部件名称已存在")
             }else{
