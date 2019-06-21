@@ -586,6 +586,7 @@
 								}
 							})
 						})
+						that.$emit("deleteModel",that.idsDelete);
 						that.cksxbd = true;
 						that.active=[];
 						that.idsDelete=[];

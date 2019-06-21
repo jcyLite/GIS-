@@ -127,7 +127,7 @@
 			</div>
 			<div id="mapDiv"></div>
 			<div id="poper-bottom-cont">
-				<poper-bottom :d="d[active]" v-model=cksxbd></poper-bottom>
+				<poper-bottom :d="d[active]" v-model=cksxbd @deleteModel="deleteModel"></poper-bottom>
 			</div>
 		</div>
 	</div>
@@ -287,6 +287,18 @@
 			layui.form.render(); // 重载一下layui的表单元素
 		},
 		methods: {
+			/**
+			 * 删除属性对应的覆盖物
+			 */
+			deleteModel(idsDelete) {
+				idsDelete.forEach((item,index)=>{
+					this.tlayer.tlayers.forEach((innerItem,innerIndex)=>{
+						if(item==innerItem.tlayers)	{
+							
+						}
+					})		
+				})
+			},
 			/**
 			 * 拖拽调整左侧操作栏宽度---同时要调整相关div的尺寸
 			 */
