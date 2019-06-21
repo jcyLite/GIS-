@@ -491,8 +491,9 @@
 				var that=this;
 				var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 				var maxHei=h-41;
-				var targetDom = document.getElementById('box-title');
-				var oBox = document.getElementById('poper-bottom');
+				var oBox = $("#poper-bottom")[0];
+				var targetDom =$(oBox).find("#box-title")[0];
+				var tableBox = $(oBox).find(".layui-table-body.layui-table-main")[0];
 				targetDom.onmousedown = function (e) {
 					e = e || event;
 					var x = e.clientX;
@@ -503,6 +504,7 @@
 						var xx = e.clientX;
 						var yy = e.clientY;
 						oBox.style.height = oBoxH + y - yy + 'px';
+						tableBox.style.height=oBoxH + y - yy + 'px';
 						return false;
 					}
 					document.onmouseup = function () {

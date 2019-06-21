@@ -291,11 +291,15 @@
 			 * 删除属性对应的覆盖物
 			 */
 			deleteModel(idsDelete) {
+				let overLay=null;
 				idsDelete.forEach((item,index)=>{
-					this.tlayer.tlayers.forEach((innerItem,innerIndex)=>{
-						if(item==innerItem.tlayers)	{
-							
-						}
+					this.tlayer.forEach((innerItem,innerIndex)=>{
+						innerItem.tlayers.forEach((innerItem2,innerIndex2)=>{
+							if(item==innerItem2.id)	{
+								this.map.removeOverLay(innerItem2); // 移除覆盖物 
+								innerItem.tlayers.splice(innerIndex2,1);
+							}
+						})
 					})		
 				})
 			},
@@ -643,6 +647,7 @@
 					});
 					var pointers = new T.Polyline(points);
 					pointers.bid = item.bid;
+					pointers.id = item.id;
 					pointers.tid = tid;
 					pointers.subIndex=index;
 					// 点击上次增加的标注点的时候触发，区别于点击新增标注点
@@ -703,6 +708,7 @@
 						fillOpacity: 0.5
 					});
 					polygons.bid = item.bid;
+					polygons.id = item.id;
 					polygons.tid = tid;
 					polygons.subIndex=index;
 					// 点击上次增加的标注点的时候触发，区别于点击新增标注点

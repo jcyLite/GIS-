@@ -209,13 +209,11 @@ export default {
      */
     diyFun() {
       let that=this;
-      let isDian=true;
+      let overLayType=this.overLay.getType(); // 覆盖物类型  点 ==2  线==4  面==5
       let lngLatArr=null;
       if(this.overLay.getLngLat){
-				isDian=true;
 				lngLatArr=this.overLay.getLngLat();
 			}else{
-				isDian=false;
 				lngLatArr=this.overLay.getLngLats();
       }
       if(lngLatArr[0] instanceof Array){  // 面的数据 多包了一层数组
@@ -224,7 +222,7 @@ export default {
       let timeStr=new Date().getTime(); // 获取字符串
       this.$createDiyLayer({
         $props: {
-          isDian,
+          overLayType,
           lngLatArr,
           timeStr
         },
