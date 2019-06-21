@@ -4,6 +4,7 @@ const LRU = require('lru-cache')
 const portIsOccupied = require('./config/portIsOccupied.js')
 const express = require('express')
 const microcache = require('route-cache')
+const opn = require('opn')
 const resolve = file => path.resolve(__dirname, file)
 const { createBundleRenderer } = require('vue-server-renderer')
 const proxy = require('http-proxy-middleware')
@@ -120,5 +121,10 @@ var port = conf.port;
 portIsOccupied(port, function(err, port) {
     app.listen(port, () => {
         console.log(`server started at http://localhost:${port}`)
+        if (conf.auto_open_browser) {
+            opn('http://localhost:' + port, {
+                app: ['chrome']
+            })
+        }
     })
 })

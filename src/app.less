@@ -33,10 +33,19 @@ body {
     zoom:1;
 }
 .leftBox {
-    width: 270px;
-    max-width: calc(30%);
+    box-sizing:border-box;
     height: 100%;
     float: left;
+    position: relative;
+    .right{
+        position: absolute;
+        right:-2px;
+        top:0;
+        cursor:e-resize;
+        // background:red;
+        width:8px;
+        height:100vh;
+    }
     .top {
         border-bottom:1px solid #ddd;
         padding:12px 10px 15px;
@@ -137,10 +146,9 @@ body {
 }
 
 .rightBox {
+    box-sizing: border-box;
     float: left;
     position: relative;
-    width:calc(100% - 270px);
-    min-width:calc(70%);
     height:100vh;
     #mapDiv {
         width: 100%;

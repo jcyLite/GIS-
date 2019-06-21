@@ -33,8 +33,9 @@ class developBase {
         this.useMiddleware();
         this.makeStatic(src);
         var port = this.conf.port;
-        portIsOccupied(port, (err, port) => {
-            this.app.listen(port)
+        portIsOccupied(port, (err, p) => {
+            port = p;
+            this.app.listen(p);
         })
 
         this.devMiddleware.waitUntilValid(() => {

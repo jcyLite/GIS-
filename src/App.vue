@@ -43,7 +43,7 @@
 <template>
 	<div id="app">
 		<leftSearch v-model="noSearch" class="leftBox"></leftSearch>
-		<div v-show="noSearch" class="leftBox layui-form" id="drag-left">
+		<div :style="{width:leftwidth+'px'}" ref="leftBox" v-show="noSearch" class="leftBox layui-form" id="drag-left">
 			<div class="top">
 				<div class="floor">
 					<span class="left-span">部件大类：</span>
@@ -103,8 +103,11 @@
 					</div>
 				</div>
 			</div>
+			<div ref="toright" class="right">
+
+			</div>
 		</div>
-		<div class="rightBox" id=right-box>
+		<div :style="{width:`calc(100% - ${leftwidth}px)`}" class="rightBox" id=right-box>
 			<div class="topTool">
 				<div class="toola">
 					<img @click="editMarker" v-show="layerType=='点'" src="./img/position.png" alt="" />
@@ -155,6 +158,7 @@
 		},
 		data() {
 			return {
+				leftwidth:270,
 				noSearch: true,
 				poperChangeName: false,
 				active: -1,
@@ -206,6 +210,19 @@
 				this.requestCity();
 				layui.form.render(); // 重载一下layui的表单元素
 			});
+			var that=this;
+			this.$refs.toright.onmousedown=function(e){
+				var x = e.clientX;
+				var width=that.leftwidth;
+				document.onmousemove=function(e){
+					var b=e.clientX-x;
+					that.leftwidth=width+b;
+					console.log(b);
+				}
+				document.onmouseup=function(e){
+					document.onmousemove=()=>{}
+				}
+			}
 			window.uu = this;
 			var that = this;
 			//读取后台数据
