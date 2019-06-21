@@ -641,7 +641,7 @@
 						that.infoWindowObj=InfoContent;
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
-						alert("历史的线")
+						//alert("历史的线")
 						that.scbc(this,true); // true 代表是历史数据线
 						// 同步一下poperbottom组件的两个属性
 						let subIndex=this.subIndex;

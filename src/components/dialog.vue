@@ -8,21 +8,21 @@
       <div class="row">
         <div class="col">区：</div>
         <select class="addSelect" id="pro" lay-filter='pro'>
-          <option>请选择</option>
+          <option value="">请选择</option>
           <option v-for="(item,index) in countySelect" :key="index" :value="item.code">{{item.name}}</option>
         </select>      
       </div>
       <div class="row">
         <div class="col">街道：</div>
         <select class="addSelect" id="city" lay-filter='city'>
-            <option>请选择</option>
+            <option value="">请选择</option>
             <option v-for="(item,index) in streetSelect" :key="index" :value="item.code">{{item.name}}</option>
         </select>  
       </div>
       <div class="row">
         <div class="col">社区：</div>
         <select class="addSelect" id="dis" >
-            <option>请选择</option>
+            <option value="">请选择</option>
             <option v-for="(item,index) in communitySelect" :key="index" :value="item.code">{{item.name}}</option>
         </select>    
       </div>
@@ -82,15 +82,6 @@ export default {
   },
   mounted() {
     let that=this;
-    if(!this.countySelect){
-      let loading = layer.load(2);
-      this.that.$http.post('gis/queryByCode',{
-          dictionaryCode:'行政区划及代码'
-      }).then(res=>{
-        this.countySelect=res;
-        layer.close(loading);
-      })
-    }
     //如果是修改 则渲染数据
     if(this.isHistory){
       //this.mainData=this.that.d.datas[this.that.oactive];
@@ -99,9 +90,57 @@ export default {
            this.mainData=item.datas[this.overLay.subIndex];
         }
       })
+      console.log('mainData')
+      console.log(this.mainData)
     }else{
       this.mainData=null;
     }
+    if(!that.countySelect){
+      let loading = layer.load(2);
+      that.that.$http.post('gis/queryByCode',{
+          dictionaryCode:'行政区划及代码'
+      }).then(res=>{
+        that.countySelect=res;
+        if(this.mainData==null){
+          this.$nextTick(()=>{
+            layui.form.render(); // 重载一下layui的表单元素
+          })
+          layer.close(loading);
+          return false;
+        }
+        that.countySelect.forEach((item,index)=>{
+          if(item.code==that.mainData.districtCode){
+            that.streetSelect=item.sub;
+            item.sub.forEach((innerItem,innerIndex)=>{
+              if(innerItem.code==that.mainData.streetCode){
+                that.communitySelect=innerItem.sub;
+              }
+            })
+          }
+        })
+        this.$nextTick(()=>{
+          // 初始化select选中效果
+          $("#pro option").each(function(){
+            if($(this).val()==that.mainData.districtCode){
+              $(this).prop("selected","selected");
+            }
+          })
+          $("#city option").each(function(){
+            if($(this).val()==that.mainData.streetCode){
+              $(this).prop("selected","selected");
+            }
+          })
+          $("#dis option").each(function(){
+            if($(this).val()==that.mainData.communityCode){
+              $(this).prop("selected","selected");
+            }
+          })
+          layui.form.render(); // 重载一下layui的表单元素
+        })
+        layer.close(loading);
+      })
+    }
+
     //获取当前省份的城市。通过选取省份触发change()事件
     // $("body").on("change","#pro",function(){
     //   let val=$(this).val();
@@ -124,10 +163,8 @@ export default {
           that.communitySelect=null;
         }
       })
-      console.log(888888)
-      console.log(that.streetSelect)
       that.$nextTick(() => {
-        that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
+        $("#city").val("");  // 默认第二个下拉框未选择，否则无法触发第三个下拉框change事件
         layui.form.render(); // 重载一下layui的表单元素
       });
     });
@@ -152,16 +189,16 @@ export default {
             that.communitySelect=item.sub;
           }
       })
-      console.log(888888)
-      console.log(that.communitySelect)
       that.$nextTick(() => {
-        that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
         layui.form.render(); // 重载一下layui的表单元素
       });
     });
   },
   updated(){
-  	layui.form.render(); // 重载一下layui的表单元素
+  	// this.$nextTick(() => {
+    //   alert(999)
+    //     layui.form.render(); // 重载一下layui的表单元素
+    // });
   },
   watch: {
     
@@ -174,8 +211,6 @@ export default {
       let that=this;
       let isDian=true;
       let lngLatArr=null;
-      console.log(8888)
-      console.log(this.overLay)
       if(this.overLay.getLngLat){
 				isDian=true;
 				lngLatArr=this.overLay.getLngLat();
