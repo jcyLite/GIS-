@@ -8,6 +8,7 @@ const HOT_MID = require("webpack-hot-middleware");
 const express = require('express');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
+const portIsOccupied = require('./portIsOccupied');
 const path = require('path');
 const opn = require('opn');
 const ora = require('ora');
@@ -31,8 +32,11 @@ class developBase {
         this.compiler = webpack(this.base);
         this.useMiddleware();
         this.makeStatic(src);
-        var port = this.findPort();
-        this.app.listen(port)
+        var port = this.conf.port;
+        portIsOccupied(port, (err, port) => {
+            this.app.listen(port)
+        })
+
         this.devMiddleware.waitUntilValid(() => {
             spinner.stop()
             console.log('> Listening at localhost:' + port)
@@ -58,23 +62,6 @@ class developBase {
             entry[key].unshift('./config/development.client.js')
         }
     }
-    findPort() {
-            developBase.defPort = developBase.defPort || 3000;
-            developBase.ports = developBase.ports || [];
-            if (this.conf.port) {
-                developBase.ports.push(this.conf.port);
-                return this.conf.port;
-            } else if (developBase.ports.length == 0) {
-                return developBase.defPort;
-            } else {
-                return developBase.defPort++;
-            }
-        }
-        /*
-         * if a project hava a static resource,
-         * you should make a express static src to run it in development,
-         * and in production way , this static will copy to the dist
-         */
     makeStatic(src) {
             if (this.conf.static) {
                 this.app.use(

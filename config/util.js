@@ -1,4 +1,4 @@
-const isProd = process.env.NODE_ENV === 'production';
+const isProd = process.env.NODE_ENV !== 'development';
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const conf = require('../webpack.config.js');
 exports.cssLoaders = function(options) {
@@ -49,7 +49,7 @@ exports.cssLoaders = function(options) {
         } else {
             return ExtractTextPlugin.extract({
                 use: loaders,
-                publicPath: '../',
+                // publicPath: '../',
                 fallback: 'vue-style-loader'
             })
         }
