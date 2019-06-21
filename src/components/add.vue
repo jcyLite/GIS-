@@ -156,21 +156,23 @@
 </script>
 
 <style lang="less">
+@time:.5s;
 	.poper-enter,.poper-leave-active{
 		.shade{
 			opacity:0;
 		}
 		.box{
+			opacity:0;
 			transform:scale(0);
 		}
 	}
 	.poper{
-		transition: .3s all;
+		transition: @time all;
 		.shade{
-			transition: .3s all;
+			transition: @time all;
 		}
 		.box{
-			transition: .3s all;
+			transition: @time all;
 			height: 350px;
 			.layui-form-select{
 				dl {
