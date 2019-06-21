@@ -1,56 +1,58 @@
 <template>
-	<div v-if="poper" class="poper ">
-		<div @click="poper=false" class="shade"></div>
-		<div class="box layui-form">
-			<div style="overflow: hidden;" class="scroller">
-				<div class="row">
-					<div class="col">图层名称：</div>
-					<input v-model="poperData.tname" class="col layui-input" type="text" />
-				</div>
-				<div class="row">
-					<div class="col">部件大类：</div>
-					<select v-model="poperData.bigType" placeholder="请选择" class="col" name="" lay-filter="bigType" >
-						<option v-for="(item,index) in tempAry" :key="index"  :value='item.value'>{{item.value}}</option>
-					</select>
-				</div>
-				<div class="row">
-					<div class="col">部件小类：</div>
-					<select v-model="poperData.minType" placeholder="请选择" class="col" name="" id="" lay-filter="minType">
-						<option v-for="(item,index) in secondAry" :key="index"  :value='item.value'>{{item.value}}</option>
+	<transition name="poper">
+		<div v-if="poper" class="poper ">
+			<div @click="poper=false" class="shade"></div>
+			<div class="box layui-form">
+				<div style="overflow: hidden;" class="scroller">
+					<div class="row">
+						<div class="col">图层名称：</div>
+						<input v-model="poperData.tname" class="col layui-input" type="text" />
+					</div>
+					<div class="row">
+						<div class="col">部件大类：</div>
+						<select v-model="poperData.bigType" placeholder="请选择" class="col" name="" lay-filter="bigType" >
+							<option v-for="(item,index) in tempAry" :key="index"  :value='item.value'>{{item.value}}</option>
+						</select>
+					</div>
+					<div class="row">
+						<div class="col">部件小类：</div>
+						<select v-model="poperData.minType" placeholder="请选择" class="col" name="" id="" lay-filter="minType">
+							<option v-for="(item,index) in secondAry" :key="index"  :value='item.value'>{{item.value}}</option>
 
-					</select>
+						</select>
+					</div>
+					<div class="row">
+						<div class="col">图层类型：</div>
+						<select v-model="poperData.tleixing" placeholder="请选择" class="col" name="" id=""  lay-filter="tleixing">
+							<option value="点">点</option>
+							<option value="线">线</option>
+							<option value="面">面</option>
+						</select>
+					</div>
+					<div class="row">
+						<div class="col">基础数据类型：</div>
+						<!--<input class="col" type="text" />-->
+						<div v-model="poperData.jcsjlx" class="col">部件数据</div>
+					</div>
+					<!--<div class="row">-->
+						<!--<div class="col">所属网格类型：</div>-->
+						<!--<select v-model="poperData.sswglx" placeholder="请选择" class="col" name="" id="">-->
+							<!--<option value="请选择">行政区划网格</option>-->
+							<!--<option value="请选择">考评工作网格</option>-->
+						<!--</select>-->
+					<!--</div>-->
+					<div class="row">
+						<div class="col">描述：</div>
+						<input v-model="poperData.miaoshu" class="col layui-input" type="text" />
+					</div>
 				</div>
-				<div class="row">
-					<div class="col">图层类型：</div>
-					<select v-model="poperData.tleixing" placeholder="请选择" class="col" name="" id=""  lay-filter="tleixing">
-						<option value="点">点</option>
-						<option value="线">线</option>
-						<option value="面">面</option>
-					</select>
+				<div class="buttons">
+					<div @click="poper=false" click="btna" class="button-1">取消</div>
+					<div @click="addbtuceng" class="button-2">确定</div>
 				</div>
-				<div class="row">
-					<div class="col">基础数据类型：</div>
-					<!--<input class="col" type="text" />-->
-					<div v-model="poperData.jcsjlx" class="col">部件数据</div>
-				</div>
-				<!--<div class="row">-->
-					<!--<div class="col">所属网格类型：</div>-->
-					<!--<select v-model="poperData.sswglx" placeholder="请选择" class="col" name="" id="">-->
-						<!--<option value="请选择">行政区划网格</option>-->
-						<!--<option value="请选择">考评工作网格</option>-->
-					<!--</select>-->
-				<!--</div>-->
-				<div class="row">
-					<div class="col">描述：</div>
-					<input v-model="poperData.miaoshu" class="col layui-input" type="text" />
-				</div>
-			</div>
-			<div class="buttons">
-				<div @click="poper=false" click="btna" class="button-1">取消</div>
-				<div @click="addbtuceng" class="button-2">确定</div>
 			</div>
 		</div>
-	</div>
+	</transition>
 </template>
 
 <script>
@@ -154,8 +156,21 @@
 </script>
 
 <style lang="less">
-	.poper{
+	.poper-enter,.poper-leave-active{
+		.shade{
+			opacity:0;
+		}
 		.box{
+			transform:scale(0);
+		}
+	}
+	.poper{
+		transition: .3s all;
+		.shade{
+			transition: .3s all;
+		}
+		.box{
+			transition: .3s all;
 			height: 350px;
 			.layui-form-select{
 				dl {
