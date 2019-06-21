@@ -230,23 +230,41 @@
 			this.markerTool.addEventListener('mouseup', function(obj) {
 				// 点击标注一个点的时候触发，线和面的触发是其他方法
 				console.log(obj)
+				var lnglat = obj.currentLnglat;
 				var markers = that.markerTool.getMarkers();
 				console.log(12121212222222222)
-				console.log(that.map.getOverlays())
+				//console.log(that.map.getOverlays())
 				console.log(markers)
-				console.log(markers[0].getLngLat())
 				infoWindowObj.setContent(sContent);
+				//let makersArr=[];  // 存储所有的点 后面按照图层tid 来设置suIndex
+				let currentTid=$(".leftBox .bottom .box.active").attr("tid"); // 当前的图层id
 				for(var i = 0; i < markers.length; i++) {
 					let marker = markers[i];
-					marker.openInfoWindow(infoWindowObj);
+					that.map.openInfoWindow(infoWindowObj, lnglat);
 					that.scbc(marker,false);
 					// 点击新增标注点的时候触发，区别于点击上次增加的标注点
-					marker.tid=$(".leftBox .bottom .box.active").attr("tid");
+					if(!marker.tid){  // 如果不存在，就肯定是新标注的点
+						marker.tid=currentTid;
+					}
 					marker.addEventListener('click', function(obj) {
 						that.markerClick(this, obj,false)
+						//alert("xindedian")
 					});
 					marker.enableDragging();
+					// if(marker.tid==currentTid){
+					// 	makersArr.push(marker);
+					// }
 				}
+				// let num=0;  // 根据图层id获取该图层已有多少点
+				// that.tlayer.forEach((item,index)=>{
+				// 	if(item.tlayers[0].tid==currentTid){
+				// 		num=item.tlayers.length;
+				// 	}
+				// })
+				// alert(num);
+				// makersArr.forEach((item,index)=>{
+				// 	item.subIndex=index+num;
+				// })
 			});
 			var config = {
 				showLabel: true,
@@ -426,6 +444,8 @@
 					this.tlayer=[]; // 换了大类就清空图层的点
 					this.map.clearOverLays(); // 清除所有地图上的覆盖物
 					this.eye=[]; // 清除眼睛选中效果
+					// 删除掉所有的“手动输入经纬度弹框”
+					$(".poperDetail.diyLngLat").remove();
 					layer.close(loading);
 				}) 
 			},
@@ -783,25 +803,26 @@
 				if(handler) handler.close();
 				handler = new T.PolylineTool(this.map);
 				console.log("lineeeee")
-				handler.addEventListener('draw', function(obj) {
+				handler.addEventListener('draw', function(obj) {  // 画线 双击确定后 触发
 					var currentLnglats = obj.currentLnglats;
 					var lnglat = currentLnglats[currentLnglats.length - 1];
 					var sContent = require('./components/dialog.tpl')();
 					var InfoContent = new T.InfoWindow();
 					that.infoWindowObj=InfoContent;
 					InfoContent.setContent(sContent);
-					that.map.openInfoWindow(InfoContent, lnglat);
+					//obj.currentPolyline.openInfoWindow(InfoContent);
+					that.map.openInfoWindow(InfoContent,lnglat);
 					obj.currentPolyline.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
 					that.scbc(obj.currentPolyline,false);
-					console.log(8888888)
-					console.log(obj.currentPolyline)
-					obj.currentPolyline.addEventListener('click', () => {
-						var InfoContent = new T.InfoWindow();
-						that.infoWindowObj=InfoContent;
-						alert("新的的线")
-						InfoContent.setContent(sContent);
-						that.map.openInfoWindow(InfoContent, lnglat);
-					})
+					(function(th_){
+						th_.addEventListener('click', (obj) => {
+							var InfoContent = new T.InfoWindow();
+							that.infoWindowObj=InfoContent;
+							InfoContent.setContent(sContent);
+							that.map.openInfoWindow(InfoContent, lnglat);
+							that.scbc(th_,false);
+						})
+					})(obj.currentPolyline)
 				});
 				handler.open();
 			},
@@ -817,15 +838,23 @@
 					var InfoContent = new T.InfoWindow();
 					that.infoWindowObj=InfoContent;
 					InfoContent.setContent(sContent);
-					that.map.openInfoWindow(InfoContent, lnglat);
+					//obj.currentPolygon.openInfoWindow(InfoContent);
+					that.map.openInfoWindow(InfoContent,lnglat);
 					obj.currentPolygon.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
 					that.scbc(obj.currentPolygon,false);
-					obj.currentPolygon.addEventListener('click', () => {
-						var InfoContent = new T.InfoWindow();
-						that.infoWindowObj=InfoContent;
-						InfoContent.setContent(sContent);
-						that.map.openInfoWindow(InfoContent, lnglat);
-					})
+					(function(th_){
+						th_.addEventListener('click', (objInner) => {
+							var InfoContent = new T.InfoWindow();
+							that.infoWindowObj=InfoContent;
+							InfoContent.setContent(sContent);
+							that.map.openInfoWindow(InfoContent, lnglat);
+							console.log("dianle11111111")
+							console.log(obj.currentPolygon)
+							console.log(objInner)
+							console.log(this)
+							that.scbc(th_,false);
+						})
+					})(obj.currentPolygon)
 				});
 				handler.open();
 			},

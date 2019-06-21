@@ -6,11 +6,12 @@ export function markerClick(marker,obj,isHistory){//点击标注时触发事件 
     that.infoWindowObj=InfoContent;
     InfoContent.setContent(sContent);
     if(that.$el.id =='poper-bottom'){  // 如果用户在poperBottom.vue组件点击的覆盖物（即属性表里点击的时候）
-        marker.openInfoWindow(InfoContent);
+        //marker.openInfoWindow(InfoContent);  // 如果用这个会报“lat” undefinded???？????？？？
+        that.$parent.map.openInfoWindow(InfoContent,lnglat);
        alert(111)
     }else{
-        marker.openInfoWindow(InfoContent);
-       // that.map.openInfoWindow(InfoContent,lnglat);
+       // marker.openInfoWindow(InfoContent);  // 如果用这个会报“lat” undefinded???
+        that.map.openInfoWindow(InfoContent,lnglat);
       alert(222)
     }
 	$(()=>{
@@ -39,7 +40,8 @@ import dialog from './components/dialog.vue'
  */
 export function scbc(overLay,isHistory){  // editBool--true：编辑弹框  false：新增弹框
     var that=this;
-    console.log(that.map.getOverlays())
+    console.log(777)
+    console.log(overLay)
     new Vue({
         el:'#dialogCont',
         data(){
