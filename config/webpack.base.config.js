@@ -4,7 +4,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader');
 const loaders = require('./loaders.js');
-const isProd = process.env.NODE_ENV === 'production'
+const isProd = process.env.NODE_ENV !== 'development'
 
 module.exports = {
     devtool: isProd ?
