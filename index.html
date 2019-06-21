@@ -12,8 +12,10 @@
 </head>
 
 <body>
-    <div id="app"></div>
-    <!--vue-ssr-outlet-->
+    <% if(process.env.VUE_ENV=='spa'){ %>
+        <div id="app"></div>
+        <% } %>
+            <!--vue-ssr-outlet-->
 </body>
 
 </html>

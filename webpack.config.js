@@ -4,7 +4,7 @@ module.exports = {
     "postCss": true,
     "entry": "index",
     "commonJs": "base",
-    "port": 1004,
+    "port": 8080,
     "static": true,
     "compress": false,
     "proxy": [{
