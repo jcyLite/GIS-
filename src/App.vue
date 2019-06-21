@@ -130,7 +130,7 @@
 			</div>
 			<div id="mapDiv"></div>
 			<div id="poper-bottom-cont">
-				<poper-bottom :d="d[active]" v-model=cksxbd></poper-bottom>
+				<poper-bottom :d="d[active]" v-model=cksxbd @deleteModel="deleteModel"></poper-bottom>
 			</div>
 		</div>
 	</div>
@@ -304,6 +304,18 @@
 			layui.form.render(); // 重载一下layui的表单元素
 		},
 		methods: {
+			/**
+			 * 删除属性对应的覆盖物
+			 */
+			deleteModel(idsDelete) {
+				idsDelete.forEach((item,index)=>{
+					this.tlayer.tlayers.forEach((innerItem,innerIndex)=>{
+						if(item==innerItem.tlayers)	{
+							
+						}
+					})		
+				})
+			},
 			/**
 			 * 拖拽调整左侧操作栏宽度---同时要调整相关div的尺寸
 			 */
@@ -658,7 +670,7 @@
 						that.infoWindowObj=InfoContent;
 						InfoContent.setContent(sContent);
 						that.map.openInfoWindow(InfoContent, lnglat);
-						alert("历史的线")
+						//alert("历史的线")
 						that.scbc(this,true); // true 代表是历史数据线
 						// 同步一下poperbottom组件的两个属性
 						let subIndex=this.subIndex;

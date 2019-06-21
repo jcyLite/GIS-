@@ -5,14 +5,19 @@ export function markerClick(marker,obj,isHistory){//点击标注时触发事件 
     var InfoContent=new T.InfoWindow();
     that.infoWindowObj=InfoContent;
     InfoContent.setContent(sContent);
+    let type_=marker.getType(); // 覆盖物类型  点 ==2  线==4  面==5
     if(that.$el.id =='poper-bottom'){  // 如果用户在poperBottom.vue组件点击的覆盖物（即属性表里点击的时候）
-        //marker.openInfoWindow(InfoContent);  // 如果用这个会报“lat” undefinded???？????？？？
-        that.$parent.map.openInfoWindow(InfoContent,lnglat);
-       alert(111)
+        if(type_==2){
+            that.$parent.map.openInfoWindow(InfoContent,lnglat);  // 如果点 使用该方式，否则Cannot read property 'lat' of undefined
+        }else if(type_==4||type_==5){
+            marker.openInfoWindow(InfoContent);  // 如果线和面 使用该方式 ，否则Cannot read property 'lat' of undefined
+        }
     }else{
-       // marker.openInfoWindow(InfoContent);  // 如果用这个会报“lat” undefinded???
-        that.map.openInfoWindow(InfoContent,lnglat);
-      alert(222)
+        if(type_==2){
+            that.map.openInfoWindow(InfoContent,lnglat);  // 如果点 使用该方式，否则Cannot read property 'lat' of undefined
+        }else if(type_==4||type_==5){
+            marker.openInfoWindow(InfoContent);  // 如果线和面 使用该方式 ，否则Cannot read property 'lat' of undefined
+        }
     }
 	$(()=>{
         // if(that.$el.id=='app'){  // 如果用户在app.vue组件点击的标注点（即地图上点击的时候）
