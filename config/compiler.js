@@ -7,6 +7,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const isDev = process.env.NODE_ENV === 'development';
 const PostCompilePlugin = require('webpack-post-compile-plugin')
 const isProd = process.env.NODE_ENV === 'production'
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 function dist(odist) {
     if (odist) {
@@ -64,6 +65,8 @@ module.exports = function(src, odist) {
             new CleanWebpackPlugin(['dist', 'build'], {
                 verbose: false
             })
-        ]
+        ].concat(isProd ? [new ExtractTextPlugin({
+            filename: 'common.[chunkhash].css'
+        })] : [])
     }
 }

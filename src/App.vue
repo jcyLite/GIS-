@@ -18,13 +18,16 @@
 			&:nth-child(1){
 				margin-bottom: 10px;
 			}
+			.shuru.layui-input{
+				width:calc(100% - 100px);
+			}
 			.left-span{
 				float: left;
 				width: 70px;
 			}
 			.layui-form-select{
 				float: left;
-    			width: 150px;
+    				width: calc(100% - 70px);
 			}
 			select {
 				font-size: 12px;
@@ -217,7 +220,12 @@
 				document.onmousemove=function(e){
 					var b=e.clientX-x;
 					that.leftwidth=width+b;
-					console.log(b);
+					if(that.leftwidth<270){
+						that.leftwidth=270;
+					}
+					if(that.leftwidth>800){
+						that.leftwidth=800;
+					}
 				}
 				document.onmouseup=function(e){
 					document.onmousemove=()=>{}

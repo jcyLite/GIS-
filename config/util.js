@@ -1,4 +1,4 @@
-const isProd = process.env.NODE_ENV !== 'development';
+const isProd = process.env.NODE_ENV === 'production';
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const conf = require('../webpack.config.js');
 exports.cssLoaders = function(options) {
@@ -44,7 +44,7 @@ exports.cssLoaders = function(options) {
 
         // Extract CSS when that option is specified
         // (which is the case during production build)
-        if (isProd) {
+        if (!isProd) {
             return ['vue-style-loader'].concat(loaders)
         } else {
             return ExtractTextPlugin.extract({
