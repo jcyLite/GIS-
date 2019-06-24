@@ -11,11 +11,13 @@ import add from './components/add.vue'
 import filter from './components/fiter.vue'
 import poperDetail from './components/poperDetail.vue'
 import diyLayer from './components/diyLayer.vue'
+import sortTable from './components/sortTable.vue'
 Vue.createAPI(changeName,true)
 Vue.createAPI(add,true)
 Vue.createAPI(filter,true)
 Vue.createAPI(poperDetail,true)
 Vue.createAPI(diyLayer,true)
+Vue.createAPI(sortTable,true)
 
 
 export function createApp () {

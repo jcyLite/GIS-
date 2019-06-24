@@ -140,9 +140,9 @@
 				<div class="right">
 					<span @click="deleteModul" class="b">删除所选</span>
 					|
-					<span class="c">筛选</span>
+					<span @click="sortFun" class="c">筛选</span>
 					|
-					<input v-model="searchVal" type="text" class="layui-input right-input" />
+					<input v-model="searchVal" type="text" placeholder="请输入搜索内容" class="layui-input right-input" />
 					<span @click="bactive=!bactive" class="d">
 						<img v-show="!bactive" src="../img/fullScreen.png" class="screen-img"/>
 						<img v-show="bactive" src="../img/smallScreen.png" class="screen-img" />
@@ -209,143 +209,7 @@
 						</template>
 					</tbody>
 				</table>	
-
-
-				<!-- <div class="row">
-					<div class="col">
-						<div
-								:class="{active:allActive}"
-								@click="allSelect"
-								class="select-input"></div>
-					</div>
-					<div class="col">
-						序号
-					</div>
-					<div class="col">
-						部件名称
-					</div>
-					<div class="col">
-						部件标识码
-					</div>
-					<div class="col">
-						所在行政区
-					</div>
-					<div class="col">
-						部件状态
-					</div>
-					<div class="col">
-						地址描述
-					</div>
-					<div class="col">
-						主管部门
-					</div>
-					<div class="col">
-						权属单位
-					</div>
-					<div class="col">
-						养护单位
-					</div>
-					<div class="col">
-						数据状态
-					</div>
-					<div class="col">
-						数据来源
-					</div>
-					<div class="col">
-						创建时间
-					</div>
-					<div class="col">
-						更新时间
-					</div>
-					<div class="col">
-						数据录入人
-					</div>
-					<div class="col">
-						审批状态
-					</div>
-					<div class="col">
-						审批时间
-					</div>
-					<div class="col">
-						数据审批人
-					</div>
-					<div class="col">
-						备注
-					</div>
-
-				</div> -->
-
-				<!-- <div 
-					:class="{active:oactive==index}" 
-					@click="oactive=index,dingwei(item,index)" 
-					v-for="(item,index) of d.datas" 
-					:key="index"
-					class="row"
-				>
-					<div class="col">
-						<div
-							@click="(active.indexOf(index)!=-1)?active.splice(active.indexOf(index),1):active.push(index)"
-							:class="{active:active.indexOf(index)!=-1}" class="select-input"
-						>
-						</div>
-					</div>
-					<div class="col">
-						{{index+1}}
-					</div>
-					<div class="col">
-						{{item.name}}
-					</div>
-					<div class="col">
-						{{item.code}}
-					</div>
-					<div class="col">
-						{{item.regionName}}
-					</div>
-					<div class="col">
-						{{item.state}}
-					</div>
-					<div class="col">
-						{{item.address}}
-					</div>
-					<div class="col">
-						{{item.adminDept}}
-					</div>
-					<div class="col">
-						{{item.ownerDept}}
-					</div>
-					<div class="col">
-						{{item.guardDept}}
-					</div>
-					<div class="col">
-						{{item.status}}
-					</div>
-					<div class="col">
-						{{item.source}}
-					</div>
-					<div class="col">
-						{{item.createDate}}
-					</div>
-					<div class="col">
-						{{item.updateDate}}
-					</div>
-					<div class="col">
-						{{item.recorder}}
-					</div>
-					<div class="col">
-						{{item.checkStatus}}
-					</div>
-					<div class="col">
-						{{item.checkDate}}
-					</div>
-					<div class="col">
-						{{item.checker}}
-					</div>
-					<div class="col">
-						{{item.remark}}
-					</div>
-				</div> -->
 			</div>
-
 		</div>
 	</div>
 </template>
@@ -511,6 +375,22 @@
 			})
 		},
 		methods:{
+			/**
+			 * 筛选---多属性筛选
+			 */
+			sortFun() {
+				let that=this;
+				// Object.assign({},obj)和concat都只是深拷贝第一层，而JSON.parse结合JSON.stringify只能深拷贝属性，不能拷贝方法
+				let attrbuteArr=that.d.datas.concat([]);
+				this.$createSortTable({
+					$props: {
+						attrbuteArr
+					},
+					$events:{
+
+					}
+				}).show();
+			},
 			/**
 			 * 拖拽调整表格高度
 			 */

@@ -356,7 +356,7 @@ export default {
             layer.close(loading);
             if (d.code == 0) {
                 layui.layer.msg("添加成功")
-                var arr=window.App.eye.concat([]);
+                var arr=window.App.eye.concat([]); //  Object.assign({},obj)和concat都只是深拷贝第一层，而JSON.parse结合JSON.stringify只能深拷贝属性，不能拷贝方法
                 arr.splice(arr.indexOf(App.active),1);
                 var active=window.App.active;
                 window.App.searchlei(function(){
