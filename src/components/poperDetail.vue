@@ -1,4 +1,5 @@
 <template>
+<transition name="poperDetail">
 	<div v-show="isShow" class="poperDetail">
 		<div @click=hide class="shade">
 			
@@ -32,6 +33,7 @@
 			</div>
 		</div>
 	</div>
+</transition>
 </template>
 
 <script>
@@ -40,7 +42,7 @@
 		props:['data'],
 		data(){
 			return {
-				isShow:true
+				isShow:false
 			}
 		},
 		mounted(){
@@ -58,6 +60,25 @@
 </script>
 
 <style lang=less>
+	@time:.35s;
+	.poperDetail-enter,.poperDetail-leave-active{
+		.shade{
+			opacity:0;
+		}
+		.midbox{
+			opacity:0;
+			transform:scale(0);
+		}
+	}
+	.poperDetail{
+		transition: @time all;
+		.shade{
+			transition: @time all;
+		}
+		.midbox{
+			transition: @time all;
+		}
+	}
 	.poperDetail{
 		position:fixed;
 		top:0;

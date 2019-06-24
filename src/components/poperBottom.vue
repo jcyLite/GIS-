@@ -8,6 +8,7 @@
 			position:absolute;
 			right:10px;
 			top:6px;
+			z-index: 1;
 			cursor: pointer;
 			img{
 				width: 24px;
@@ -32,12 +33,20 @@
 				background:#eee;
 			}
 			&.title{
+				position: relative;
 				width:100%;
 				line-height: 31px;
 				background-color: rgba(221, 221, 221, 1);
 				border-top-left-radius: 5px;
 				border-top-right-radius: 5px;
-				cursor:s-resize;
+				.drag-div{
+					position: absolute;
+					top: -10px;
+					left: 0;
+					height: 15px;
+					width: 100%;
+					cursor:s-resize;
+				}
 			}
 			height:30px;
 			width:186%;
@@ -126,6 +135,7 @@
 		</div>
 		<div class="box">
 			<div class="row title" id="box-title">
+				<div class="drag-div"></div>
 				<span class="a">{{d.tname}}</span>
 				<div class="right">
 					<span @click="deleteModul" class="b">删除所选</span>
@@ -133,7 +143,6 @@
 					<span class="c">筛选</span>
 					|
 					<input v-model="searchVal" type="text" class="layui-input right-input" />
-					<!--<img @click="sxsearch" class="sxsearch" src="../img/search.png" alt="" />-->
 					<span @click="bactive=!bactive" class="d">
 						<img v-show="!bactive" src="../img/fullScreen.png" class="screen-img"/>
 						<img v-show="bactive" src="../img/smallScreen.png" class="screen-img" />
@@ -145,6 +154,7 @@
 					<thead>
 						<tr>
 							<th lay-data="{type: 'checkbox', fixed: 'left'}"></th>
+							<th lay-data="{field:'trueIndex', width:80,fixed: 'left',style:'display:none'}">隐藏的真实序号</th>
 							<th lay-data="{field:'index', width:80,fixed: 'left'}">序号</th>
 							<th lay-data="{field:'id', width:0,style:'display:none;'}"></th>
 							<th lay-data="{field:'name', width:160}">部件名称</th>
@@ -167,33 +177,36 @@
 						</tr> 
 					</thead>
 					<tbody>
-						<tr 
-							:class="{active:oactive==index}" 
-							@click="oactive=index,dingwei(item,index)" 
-							v-for="(item,index) of d.datas" 
-							:key="index"
-						>
-							<td></td>
-							<td>{{index+1}}</td>
-							<td >{{item.id}}</td>
-							<td>{{item.name}}</td>
-							<td>{{item.code}}</td>
-							<td>{{item.regionName}}</td>
-							<td>{{item.state}}</td>
-							<td>{{item.address}}</td>
-							<td>{{item.adminDept}}</td>
-							<td>{{item.ownerDept}}</td>
-							<td>{{item.guardDept}}</td>
-							<td>{{item.status}}</td>
-							<td>{{item.source}}</td>
-							<td>{{item.createDate}}</td>
-							<td>{{item.updateDate}}</td>
-							<td>{{item.recorder}}</td>
-							<td>{{item.checkStatus}}</td>
-							<td>{{item.checkDate}}</td>
-							<td>{{item.checker}}</td>
-							<td>{{item.remark}}</td>
-						</tr>
+						<template v-for="(item,index) of d.datas">
+							<tr 
+								:class="{active:oactive==index}" 
+								@click="oactive=index,dingwei(item,index)" 
+								:key="index"
+								v-if="!item.hideTr"
+							>
+								<td></td>
+								<td>{{index+1}}</td>
+								<td>{{index+1}}</td>
+								<td >{{item.id}}</td>
+								<td>{{item.name}}</td>
+								<td>{{item.code}}</td>
+								<td>{{item.regionName}}</td>
+								<td>{{item.state}}</td>
+								<td>{{item.address}}</td>
+								<td>{{item.adminDept}}</td>
+								<td>{{item.ownerDept}}</td>
+								<td>{{item.guardDept}}</td>
+								<td>{{item.status}}</td>
+								<td>{{item.source}}</td>
+								<td>{{item.createDate}}</td>
+								<td>{{item.updateDate}}</td>
+								<td>{{item.recorder}}</td>
+								<td>{{item.checkStatus}}</td>
+								<td>{{item.checkDate}}</td>
+								<td>{{item.checker}}</td>
+								<td>{{item.remark}}</td>
+							</tr>
+						</template>
 					</tbody>
 				</table>	
 
@@ -363,6 +376,19 @@
 			acksxbd(newVal){
 				this.$emit('input', newVal)
 			},
+			/**
+			 * 筛选的内容
+			 */
+			searchVal(newVal) {
+				// 筛选 只修改了是否展示 并不操作数据，一般不会产生bug
+				this.d.datas.forEach((item,index)=>{
+					if(item.name.indexOf(newVal)==-1){
+						item.hideTr=true;
+					}else{
+						item.hideTr=false;
+					}
+				})
+			}
 		},
 		mounted(){
 			let that=this;
@@ -403,7 +429,8 @@
 				table.on('rowDouble(gis-table)', function(obj){
 					console.log(obj.tr) //得到当前行元素对象
 					console.log(obj.data) //得到当前行数据
-					that.oactive=parseInt(obj.data.index)-1;
+					//that.oactive=parseInt(obj.data.index)-1;
+					that.oactive=parseInt(obj.data.trueIndex)-1;  // 筛选修改
 					that.dingwei(that.d.datas[that.oactive],that.oactive)
 					that.moduleId=obj.data.id;
 					// let parentObj=that.$parent;
@@ -492,7 +519,7 @@
 				var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 				var maxHei=h-41;
 				var oBox = $("#poper-bottom")[0];
-				var targetDom =$(oBox).find("#box-title")[0];
+				var targetDom =$(oBox).find(".drag-div")[0];
 				var tableBox = $(oBox).find(".layui-table-body.layui-table-main")[0];
 				targetDom.onmousedown = function (e) {
 					e = e || event;
@@ -535,6 +562,7 @@
 						// 为了点击复选框获取到id 必须把id列写入表格，但是不能展示出来
 						// 结合lay-data="{field:'id', style:'display:none;'}"
 						$("[data-field='id']").css('display','none');
+						$("[data-field='trueIndex']").css('display','none');
 						that.dragTable();
 					}
 				}); 

@@ -81,8 +81,8 @@
 </style>
 <template>
 <transition name="diyLngLat">
-	<div v-show="isShow" class="poperDetail diyLngLat" :id="'diyPoper'+timeStr">
-		<div class="shade">
+	<div v-if="isShow" class="poperDetail diyLngLat" :id="'diyPoper'+timeStr">
+		<div  class="shade">
 			
 		</div>
 		<div class="midbox">
@@ -133,14 +133,16 @@
 		name:'diyLayer',
 		data(){
 			return {
-				isShow:true,
+				isShow:false,
 				lngLatArrNew:this.lngLatArr
 			}
 		},
 		props:['lngLatArr','overLayType','timeStr'],
 		mounted(){
 			let that=this;
-			that.setData();
+			this.$nextTick(()=>{
+				that.setData();
+			})
 			/**
 			 * 删除一行---由于layui的table组件的限制，导致vue的点击事件绑定不上，所以这里只能用jq了
 			 */
@@ -169,16 +171,38 @@
 						 */
 						if(that.overLayType==4||that.overLayType==5){  // 线  面
 							that.lngLatArrNew.forEach((item,index)=>{
+								// 如果数据是31.26000 传来的数据可能是31.26，这样通不过验证，要补一下“0”
+								item.lng=that.addZero(item.lng);
+								item.lat=that.addZero(item.lat);
 								$(`#diyPoper${that.timeStr} .layui-table tbody tr`).eq(index).find(".lat-input").val(item.lat);
 								$(`#diyPoper${that.timeStr} .layui-table tbody tr`).eq(index).find(".lng-input").val(item.lng);
 							})
 						}else{  // 点
-							$(`#diyPoper${that.timeStr} .layui-table tbody tr .lat-input`).val(that.lngLatArrNew.lat);
-							$(`#diyPoper${that.timeStr} .layui-table tbody tr .lng-input`).val(that.lngLatArrNew.lng);
+							let lng=that.addZero(that.lngLatArrNew.lng);
+							let lat=that.addZero(that.lngLatArrNew.lat);
+							if(lat.split(".")[1].length==4){
+								lat=lat+"0";
+							}
+							if(lng.split(".")[1].length==4){
+								lng=lng+"0";
+							}
+							$(`#diyPoper${that.timeStr} .layui-table tbody tr .lat-input`).val(lat);
+							$(`#diyPoper${that.timeStr} .layui-table tbody tr .lng-input`).val(lng);
 						}
 					});
 					
 				})
+			},
+			/**
+			 * 数据如果是31.23000，那么后台传过来的则是31.23，这样通不过后面的五位小数验证，要补充“0”
+			 */
+			addZero(item) {
+				item=item+""; // 转字符串
+				let len_=5-item.split(".")[1].length;
+				for(let i=0;i<len_;i++){
+					item=item+"0";
+				}
+				return item;
 			},
 			/**
 			 * 新增一行
@@ -220,10 +244,16 @@
 						})
 					})
 					for(let i=0;i<that.lngLatArrNew.length;i++){
+						// 验证判断
 						let callbackFlag=that.testFun(that.lngLatArrNew[i]);
 						if(callbackFlag!=-1){
 							return false;
 						}
+						// 判断经纬度范围
+						let bool_=that.judgeRange(that.lngLatArrNew[i]);
+						if(!bool_){
+							return bool_;
+						} 
 					}
 					if(that.overLayType==4&&that.lngLatArrNew.length<2){ // 线
 						layer.msg("线类型请至少设置两个坐标点");
@@ -237,11 +267,18 @@
 					let lngV=$(`#diyPoper${that.timeStr} .layui-table tbody tr .lng-input`).val();
 					that.$set(that.lngLatArrNew,'lat',latV);
 					that.$set(that.lngLatArrNew,'lng',lngV);
+					// 验证判断
 					let callbackFlag=that.testFun(that.lngLatArrNew);
 					if(callbackFlag!=-1){
 						return false;
 					}
+					// 判断经纬度范围
+					let bool_=that.judgeRange(that.lngLatArrNew);
+					if(!bool_){
+						return bool_;
+					} 
 				}
+
 				// $("#diyPoper .layui-table tbody tr").each(function(){
 				// 	let latV=$(this).find(".lat-input").val();
 				// 	let lngV=$(this).find(".lng-input").val();
@@ -257,6 +294,19 @@
 				// })
 				that.$emit("setLngLatFun",that.lngLatArrNew);	
 				that.isShow=false;			
+			},
+			/**
+			 * 判断是否超出常州范围
+			 */
+			judgeRange(item) {
+				if(item.lng<119.135||item.lng>120.193){
+					layer.msg("经度超出常州市范围(119.135-120.193)");
+					return false;
+				}else if(item.lat<31.153||item.lat>32.06){
+					layer.msg("纬度超出常州市范围(31.153-32.06)");
+					return false;
+				}
+				return true;
 			},
 			/**
 			 * 验证  判断输入数据是否合法  
