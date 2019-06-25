@@ -16,21 +16,20 @@ axios.defaults.transformRequest = [
         return Qs.stringify(d)
     }
 ];
-
+let loadingInstance=null;
 axios.interceptors.request.use(
     request => {
+        loadingInstance=layui.layer.load(2);
         return request
     }
 )
 axios.interceptors.response.use(
     res => {
-        // console.log('接口：')
-        // console.log(res.config.url)
-        // console.log('数据：')
-        // console.log(res.data)
+        layui.layer.close(loadingInstance);
         return res.data
     },
     err => {
+        layui.layer.close(loadingInstance);
         layui.layer.msg("系统异常提示")
     }
 )
