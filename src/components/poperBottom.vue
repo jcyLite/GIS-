@@ -403,15 +403,16 @@
 				let lxType=this.$parent.layerType;
 				var lnglat=null;
 				if(lxType=='点'){
-					markerClick.call(this,activeMarkers[index],item,true); // 定位 点
+					//markerClick.call(this,activeMarkers[index],item,true); // 定位 点
+					markerClick(activeMarkers[index],item,true,this); // 定位 点
 					lnglat=item.lnglat;
 				}else if(lxType=='线'){
-					markerClick.call(this,xianLayers[index],item,true); // 定位 线
+					//markerClick.call(this,xianLayers[index],item,true); // 定位 线
+					markerClick(xianLayers[index],item,true,this); // 定位 线
 					lnglat=item.lnglat[0];
 				}else if(lxType=='面'){
-					console.log(777)
-					console.log(mianLayers[index])
-					markerClick.call(this,mianLayers[index],item,true); // 定位 面
+					//markerClick.call(this,mianLayers[index],item,true); // 定位 面
+					markerClick(mianLayers[index],item,true,this); // 定位 面
 					lnglat=item.lnglat[0];
 				}
 				//定位到显示弹窗的中心位置

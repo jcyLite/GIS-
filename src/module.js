@@ -1,39 +1,31 @@
-export function markerClick(marker,obj,isHistory){//点击标注时触发事件 isHistory：true--是上次标记的点
-    var that=this;
-	var lnglat=obj.lnglat;
+export function markerClick(marker,obj,isHistory,that){//点击标注时触发事件 isHistory：true--是上次标记的点
+    //var that=this;
+    var lnglat=obj.lnglat;
 	var sContent = require('./components/dialog.tpl')();
     var InfoContent=new T.InfoWindow();
     that.infoWindowObj=InfoContent;
     InfoContent.setContent(sContent);
-    let type_=marker.getType(); // 覆盖物类型  点 ==2  线==4  面==5
-    if(that.$el.id =='poper-bottom'){  // 如果用户在poperBottom.vue组件点击的覆盖物（即属性表里点击的时候）
-        if(type_==2){
-            that.$parent.map.openInfoWindow(InfoContent,lnglat);  // 如果点 使用该方式，否则Cannot read property 'lat' of undefined
-        }else if(type_==4||type_==5){
-            marker.openInfoWindow(InfoContent);  // 如果线和面 使用该方式 ，否则Cannot read property 'lat' of undefined
-        }
-    }else{
-        if(type_==2){
-            that.map.openInfoWindow(InfoContent,lnglat);  // 如果点 使用该方式，否则Cannot read property 'lat' of undefined
-        }else if(type_==4||type_==5){
-            marker.openInfoWindow(InfoContent);  // 如果线和面 使用该方式 ，否则Cannot read property 'lat' of undefined
-        }
-    }
+    // let type_=marker.getType(); // 覆盖物类型  点 ==2  线==4  面==5
+    // if(that.$el.id =='poper-bottom'){  // 如果用户在poperBottom.vue组件点击的覆盖物（即属性表里点击的时候）
+    //     if(type_==2){
+    //         that.$parent.map.openInfoWindow(InfoContent,lnglat);  // 如果点 使用该方式，否则Cannot read property 'lat' of undefined
+    //     }else if(type_==4||type_==5){
+    //         marker.openInfoWindow(InfoContent);  // 如果线和面 使用该方式 ，否则Cannot read property 'lat' of undefined
+    //     }
+    // }else{
+    //     if(type_==2){
+    //         that.map.openInfoWindow(InfoContent,lnglat);  // 如果点 使用该方式，否则Cannot read property 'lat' of undefined
+    //     }else if(type_==4||type_==5){
+    //         marker.openInfoWindow(InfoContent);  // 如果线和面 使用该方式 ，否则Cannot read property 'lat' of undefined
+    //     }
+    // }
+    marker.openInfoWindow(InfoContent);
 	$(()=>{
-        // if(that.$el.id=='app'){  // 如果用户在app.vue组件点击的标注点（即地图上点击的时候）
-        //     that.$children.forEach((item,index) => {  // 选择poperBottom组件实例传到dialog.vue
-        //         if(item.$el.parentNode.id=='poper-bottom-cont'){
-        //             scbc.call(item,marker,isHistory)
-        //         }
-        //     });
-        // }else{
-        //     scbc.call(that,marker,isHistory)
-        // }
         if(that.$el.id =='poper-bottom'){  // 如果用户在poperBottom.vue组件点击的覆盖物（即地图上点击的时候）
             // 把app.vue组件实例传到dialog.vue
-            scbc.call(that.$parent,marker,isHistory)
+            scbc(marker,isHistory,that.$parent)
         }else{
-            scbc.call(that,marker,isHistory)
+            scbc(marker,isHistory,that)
         }
 	})
 };
@@ -41,12 +33,189 @@ export function markerClick(marker,obj,isHistory){//点击标注时触发事件 
 import Vue from 'vue'
 import dialog from './components/dialog.vue'
 /**
+ * 加载历史点
+ */
+export function jzdian(data,tid,that) { // data是属性表里面的数据; tid 是整个图层的id
+    // that如果是通过.call传过来，则会有bug，地图的点只能加载出阴影部分
+    if(!data){
+        return false;
+    }
+    var lx = 0,
+        ly = 0;
+   // var that = this;
+    var tlayers = [];
+    window.activeMarkers = [];
+    data&&data.forEach((item,index) => {
+        var x = item.lnglat.lng;
+        var y = item.lnglat.lat;
+        lx += parseFloat(x);
+        ly += parseFloat(y);
+        var marker = new T.Marker(new T.LngLat(parseFloat(x), parseFloat(y)));
+        marker.id=item.id;
+        marker.subIndex=index;
+        marker.addEventListener('mouseup',function(param){
+            let subIndex=this.subIndex;
+            that.$children.forEach((item,index) => {  // 选择poperBottom组件实例,修改oactive
+                if(item.$el.parentNode.id=='poper-bottom-cont'){
+                    item.oactive=subIndex;
+                }
+            });
+            this.enableDragging(); // 让用户拖动 点 （ 但是需要先点击一下才能拖动 ）
+        })
+        marker.addEventListener('dragend',function(param){  // 拖拽事件
+            console.log('发生了拖拽事件完毕')
+            this.setLngLat(new T.LngLat(param.lnglat.lng,param.lnglat.lat));
+        })
+        marker.bid = item.bid;
+        marker.tid = tid;
+        // 点击上次增加的标注点的时候触发，区别于点击新增标注点
+        marker.addEventListener('click', function(obj) {  // 点击事件
+            markerClick(this, obj,true,that);   // 触发弹框
+            //alert(222)
+        });
+        
+        activeMarkers.push(marker);
+        window.map.addOverLay(marker);
+        marker.hide(); // 隐藏 点
+        tlayers.push(marker)
+    });
+    var px = lx / data.length;
+    var py = ly / data.length;
+    return {
+        tlayers,
+        p: {
+            px,
+            py
+        }
+    };
+} 
+/**
+ * 加载历史线
+ */
+export function jzxian(data,tid,that) { // data是属性表里面的数据; tid 是整个图层的id
+    if(!data){
+        return false;
+    }
+    //var that = this;
+    var lx = 0,
+        ly = 0,
+        bb = 0;
+    var tlayers = [];
+    data && data.forEach((item,index) => {
+        var points = [];
+        item.lnglat.forEach(ii => {
+            lx += parseFloat(ii.lng);
+            ly += parseFloat(ii.lat);
+            bb++;
+            points.push(new T.LngLat(parseFloat(ii.lng), parseFloat(ii.lat)))
+        });
+        var pointers = new T.Polyline(points);
+        pointers.bid = item.bid;
+        pointers.id = item.id;
+        pointers.tid = tid;
+        pointers.subIndex=index;
+        // 点击上次增加的标注点的时候触发，区别于点击新增标注点
+        pointers.addEventListener('click', function(obj) {
+            var lnglat = obj.lnglat;
+            var sContent = require('./components/dialog.tpl')();
+            var InfoContent = new T.InfoWindow();
+            that.infoWindowObj=InfoContent;
+            InfoContent.setContent(sContent);
+            that.map.openInfoWindow(InfoContent, lnglat);
+            //alert("历史的线")
+            scbc(this,true,that); // true 代表是历史数据线
+            // 同步一下poperbottom组件的两个属性
+            let subIndex=this.subIndex;
+            that.$children.forEach((item,index) => {  // 选择poperBottom组件实例,修改oactive
+                if(item.$el.parentNode.id=='poper-bottom-cont'){
+                    item.oactive=subIndex;
+                }
+            });
+        });
+        that.map.addOverLay(pointers);
+        pointers.hide();
+        tlayers.push(pointers)
+    });
+    window.xianLayers=tlayers
+    var px = lx / bb;
+    var py = ly / bb;
+    return {
+        tlayers,
+        p: {
+            px,
+            py
+        }
+    };
+}
+/**
+ * 加载历史面
+ */
+export function jzmian(data,tid,that) { // data是属性表里面的数据; tid 是整个图层的id
+    if(!data){
+        return false;
+    }
+    //var that = this;
+    var lx = 0,
+        ly = 0,
+        bb = 0;
+    var tlayers = [];
+    data&&data.forEach((item,index) => {
+        var points = [];
+        item.lnglat.forEach(ii => {
+            lx += parseFloat(ii.lng);
+            ly += parseFloat(ii.lat);
+            bb++;
+            points.push(new T.LngLat(parseFloat(ii.lng), parseFloat(ii.lat)))
+        });
+        var polygons = new T.Polygon(points, {
+            color: "blue",
+            weight: 3,
+            opacity: 0.5,
+            fillColor: "#FFFFFF",
+            fillOpacity: 0.5
+        });
+        polygons.bid = item.bid;
+        polygons.id = item.id;
+        polygons.tid = tid;
+        polygons.subIndex=index;
+        // 点击上次增加的标注点的时候触发，区别于点击新增标注点
+        polygons.addEventListener('click', function(obj) {
+            var lnglat = obj.lnglat;
+            var sContent = require('./components/dialog.tpl')();
+            var InfoContent = new T.InfoWindow();
+            that.infoWindowObj=InfoContent;
+            InfoContent.setContent(sContent);
+            that.map.openInfoWindow(InfoContent, lnglat);
+            //that.scbc(this,true) // true 代表是历史数据面
+            scbc(this,true,that) // true 代表是历史数据面
+            // 同步一下poperbottom组件的两个属性
+            let subIndex=this.subIndex;
+            that.$children.forEach((item,index) => {  // 选择poperBottom组件实例,修改oactive
+                if(item.$el.parentNode.id=='poper-bottom-cont'){
+                    item.oactive=subIndex;
+                }
+            });
+        });
+        that.map.addOverLay(polygons);
+        polygons.hide();
+        tlayers.push(polygons)
+    });
+    window.mianLayers=tlayers
+    var px = lx / bb;
+    var py = ly / bb;
+    return {
+        tlayers,
+        p: {
+            px,
+            py
+        }
+    };
+}
+/**
  * 绘制点 线 面 的时候触发， 并弹框
  */
-export function scbc(overLay,isHistory){  // editBool--true：编辑弹框  false：新增弹框
-    var that=this;
-    console.log(777)
-    console.log(overLay)
+export function scbc(overLay,isHistory,that){  // editBool--true：编辑弹框  false：新增弹框
+    //var that=this;
     new Vue({
         el:'#dialogCont',
         data(){
