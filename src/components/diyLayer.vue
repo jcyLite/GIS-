@@ -82,7 +82,7 @@
 <template>
 <transition name="diyLngLat">
 	<div v-if="isShow" class="poperDetail diyLngLat" :id="'diyPoper'+timeStr">
-		<div  class="shade">
+		<div @click="hide"  class="shade">
 			
 		</div>
 		<div class="midbox">
@@ -129,6 +129,7 @@
 </template>
 
 <script>
+import { setTimeout } from 'timers';
 	export default {
 		name:'diyLayer',
 		data(){
@@ -146,10 +147,17 @@
 			/**
 			 * 删除一行---由于layui的table组件的限制，导致vue的点击事件绑定不上，所以这里只能用jq了
 			 */
-			$("body").on('click',".delete-btn", function(obj){
+			$("body").on('click',`#diyPoper${that.timeStr} .delete-btn`, function(obj){
 				let index=$(this).closest("tr").find("td").eq(0).text()*1-1;
+				console.log("删除")
+				console.log(that.lngLatArrNew)
 				that.lngLatArrNew.splice(index,1);
 			});
+		},
+		updated() {
+			this.$nextTick(()=>{
+				this.setData();
+			})
 		},
 		watch:{
 			lngLatArrNew(newV) {
@@ -197,6 +205,9 @@
 			 * 数据如果是31.23000，那么后台传过来的则是31.23，这样通不过后面的五位小数验证，要补充“0”
 			 */
 			addZero(item) {
+				if(item==""){
+					return "";
+				}
 				item=item+""; // 转字符串
 				let len_=5-item.split(".")[1].length;
 				for(let i=0;i<len_;i++){

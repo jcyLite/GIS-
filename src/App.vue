@@ -333,39 +333,6 @@
 				})
 			},
 			/**
-			 * 拖拽调整左侧操作栏宽度---同时要调整相关div的尺寸
-			 */
-			dragLeft() {
-				var that=this;
-				var windowWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-				var targetDom = document.getElementById('drag-left');
-				var rightBox = document.getElementById('right-box');
-				var oBox = document.getElementById('drag-left');
-				targetDom.onmousedown = function (e) {
-					e = e || event;
-					var x = e.clientX;
-					var y = e.clientY;
-					var oBoxW = oBox.offsetWidth;
-					document.onmousemove = function (e) {
-						e = e || event;
-						var xx = e.clientX;
-						var yy = e.clientY;
-						oBox.style.width = oBoxW + xx -x + 'px';
-						let _width=parseInt(oBox.style.width);
-						rightBox.style.width=windowWidth-_width+'px';
-						return false;
-					}
-					document.onmouseup = function () {
-						document.onmousemove = null;
-						document.onmouseup = null;
-						
-					}
-					if (e.preventDefault) {
-						e.preventDefault();
-					}
-				}
-			},
-			/**
 			 * 点击单个图层眼睛
 			 */
 			clickEye(item,index) {
@@ -641,7 +608,7 @@
 				var py = ly / data.length;
 				return {
 					tlayers,
-					p: {  // ???????????做什么的
+					p: {
 						px,
 						py
 					}
@@ -835,7 +802,6 @@
 				var handler = this.handler;
 				if(handler) handler.close();
 				handler = new T.PolylineTool(this.map);
-				console.log("lineeeee")
 				handler.addEventListener('draw', function(obj) {  // 画线 双击确定后 触发
 					var currentLnglats = obj.currentLnglats;
 					var lnglat = currentLnglats[currentLnglats.length - 1];
@@ -881,10 +847,6 @@
 							that.infoWindowObj=InfoContent;
 							InfoContent.setContent(sContent);
 							that.map.openInfoWindow(InfoContent, lnglat);
-							console.log("dianle11111111")
-							console.log(obj.currentPolygon)
-							console.log(objInner)
-							console.log(this)
 							that.scbc(th_,false);
 						})
 					})(obj.currentPolygon)
@@ -921,7 +883,10 @@
 				else if(controlPositionStr == "leftBOTTOM") controlPosition = T_ANCHOR_BOTTOM_LEFT;
 				else if(controlPositionStr == "rightBOTTOM") controlPosition = T_ANCHOR_BOTTOM_RIGHT;
 				this.control.setPosition(controlPosition);
-			}, //添加一个图层
+			},
+			/**
+			 * 添加一个图层
+			 */
 			addatuceng() {
 				var abc = this.bigLei;
 				var that = this;

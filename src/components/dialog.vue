@@ -217,7 +217,7 @@ export default {
         lngLatArr=lngLatArr[0];
       }
       let timeStr=new Date().getTime(); // 获取字符串
-      this.$createDiyLayer({
+      const instance=this.$createDiyLayer({
         $props: {
           overLayType,
           lngLatArr,

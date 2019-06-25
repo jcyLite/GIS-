@@ -24,10 +24,10 @@ axios.interceptors.request.use(
 )
 axios.interceptors.response.use(
     res => {
-        console.log('接口：')
-        console.log(res.config.url)
-        console.log('数据：')
-        console.log(res.data)
+        // console.log('接口：')
+        // console.log(res.config.url)
+        // console.log('数据：')
+        // console.log(res.data)
         return res.data
     },
     err => {

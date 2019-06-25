@@ -299,6 +299,7 @@
 			 */
 			confirmFun() {
 				let that=this;
+				let flag=true;
 				let obj=[];
 				let json_={};
 				$(".poperDetail .midbox .table-cont .table-tr").each(function(){
@@ -308,19 +309,22 @@
 					let value_=$(this).find(".input-fl .sort-input").val();
 					if(name_=="请选择"||!name_){
 						layer.msg("请完善筛选字段名");
-						return false;
+						flag=false;
 					}else if(condition_=="请选择"||!condition_){
 						layer.msg("请完善筛选条件");
-						return false;
+						flag=false;
 					}else if(value_=="请选择"||!value_){
 						layer.msg("请完善筛选值");
-						return false;
+						flag=false;
 					}
 					json_.name_=name_;
 					json_.condition_=condition_;
 					json_.value_=value_;
 					obj.push(json_)
 				})
+				if(!flag){
+					return false;
+				}
 				this.isShow=false;
 				this.$emit("sortTable",obj);
 			},
@@ -383,7 +387,6 @@
 				$(".select-menu").each(function(index){
 					let dom=this;
 					selectMenu({
-						$,
 						fatherDom:$(this)[0],
 						index,
 						callback:function (th_) {
@@ -403,7 +406,9 @@
 				let arr=[];
 				$("table[lay-filter='gis-table'] thead tr th").each(function(){
 					let val=$(this).text();
-					val&&arr.push(val);
+					if(val!="序号"&&val!="隐藏的真实序号"){
+						val&&arr.push(val);
+					}
 				})
 				return arr;
 			},

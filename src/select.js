@@ -1,5 +1,5 @@
 export function selectMenu(obj) {
-    let $=obj.$;
+    let $=window.$;
     let fatherDom=obj.fatherDom;
     let index=obj.index;
     $(fatherDom).find(".select-menu-input").val($(fatherDom).find(".select-this").html());//在输入框中自动填充第一个选项的值
