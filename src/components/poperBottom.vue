@@ -387,7 +387,33 @@
 						attrbuteArr
 					},
 					$events:{
-
+						sortTable(obj) {  // 只写了一部分。。。。。。。还有很多判断。。。。。。
+							let indexArr=[];
+							obj.forEach((item,index)=>{
+								if(item.name_=="部件名称"){
+									that.d.datas.forEach((innerItem,innerIndex)=>{
+										if(that.d.datas[innerIndex].hideTr==false||!that.d.datas[innerIndex].hideTr){
+											if(!innerItem.name||innerItem.name.indexOf(item.value_)==-1){
+												that.$set(that.d.datas[innerIndex],"hideTr",true)
+											}else{
+												
+												that.$set(that.d.datas[innerIndex],"hideTr",false)
+											}	
+										}
+									})	
+								}else if(item.name_=="主管部门"){
+									that.d.datas.forEach((innerItem,innerIndex)=>{
+										if(that.d.datas[innerIndex].hideTr==false||!that.d.datas[innerIndex].hideTr){
+											if(!innerItem.adminDept||innerItem.adminDept.indexOf(item.value_)==-1){
+												that.$set(that.d.datas[innerIndex],"hideTr",true)
+											}else{
+												that.$set(that.d.datas[innerIndex],"hideTr",false)
+											}
+										}
+									})	
+								}
+							})
+						}
 					}
 				}).show();
 			},

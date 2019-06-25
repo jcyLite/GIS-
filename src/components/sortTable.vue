@@ -230,7 +230,7 @@
 								</div>
 							</div>
 							<div class="fl input-fl">
-								<input type="text" class="layui-input sort-input">
+								<input type="text" class="layui-input sort-input" id="test1">
 							</div>
 							<div class="fl">
 								<button class="layui-btn layui-btn-sm layui-btn-danger delete-btn">删除</button>
@@ -254,7 +254,7 @@
 		data(){
 			return {
 				isShow:false,
-				tableArr:[],
+				tableArr:[{}],
 				typeArr:[],
 				canInit:true, // 只准初始化一次table，否则影响select的选项的隐藏
 			}
@@ -262,9 +262,9 @@
 		props:['attrbuteArr'],
 		mounted(){
 			let that=this;
-			that.attrbuteArr.forEach(item => {
-				that.tableArr.push({});
-			});
+			// that.attrbuteArr.forEach(item => {
+			// 	that.tableArr.push({});
+			// });
 			that.typeArr=that.getTypeArr();
 			/**
 			 * 删除一行---由于layui的table组件的限制，导致vue的点击事件绑定不上，所以这里只能用jq了
@@ -275,7 +275,6 @@
 				that.initSelect();
 				that.hideOption();
 			});
-			
 		},
 		updated() {
 			this.$nextTick(()=>{
@@ -306,13 +305,24 @@
 					json_={};
 					let name_=$(this).find(".first-fl .select-menu-input").val();
 					let condition_=$(this).find(".condition-fl .select-menu-input").val();
-					let value_=$(this).find(".input-fl .select-menu-input").val();
+					let value_=$(this).find(".input-fl .sort-input").val();
+					if(name_=="请选择"||!name_){
+						layer.msg("请完善筛选字段名");
+						return false;
+					}else if(condition_=="请选择"||!condition_){
+						layer.msg("请完善筛选条件");
+						return false;
+					}else if(value_=="请选择"||!value_){
+						layer.msg("请完善筛选值");
+						return false;
+					}
 					json_.name_=name_;
 					json_.condition_=condition_;
 					json_.value_=value_;
-					obj.push(json_);
+					obj.push(json_)
 				})
-				console.log(obj)
+				this.isShow=false;
+				this.$emit("sortTable",obj);
 			},
 			/**
 			 * 隐藏已选项
@@ -383,6 +393,7 @@
 						}
 					});
 				})
+				
 			},
 			/**
 			 *	获取table头部标题集合
@@ -403,10 +414,10 @@
 			addTr() {
 				//this.canInit=true;
 				this.tableArr.push({})
-					this.$nextTick(()=>{
+				this.$nextTick(()=>{
 					this.initSelect();
 				})
-				that.hideOption();
+				this.hideOption();
 			},
 			show(){
 				this.isShow=true;
