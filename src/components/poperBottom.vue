@@ -485,7 +485,6 @@
 				}, function(){ // 确定 回调
 					let tempstr = '/' + that.d.moduleName + '/' + 'delModule';
 					let idStr=that.idsDelete.join(",");
-					let loading = layer.load(2);
 					that.$http.post(tempstr, {
 						ids:idStr
 					}).then(d => {

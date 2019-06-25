@@ -96,7 +96,6 @@ export default {
       this.mainData=null;
     }
     if(!that.countySelect){
-      let loading = layer.load(2);
       that.that.$http.post('gis/queryByCode',{
           dictionaryCode:'行政区划及代码'
       }).then(res=>{
@@ -105,7 +104,6 @@ export default {
           this.$nextTick(()=>{
             layui.form.render(); // 重载一下layui的表单元素
           })
-          layer.close(loading);
           return false;
         }
         that.countySelect.forEach((item,index)=>{
@@ -137,7 +135,6 @@ export default {
           })
           layui.form.render(); // 重载一下layui的表单元素
         })
-        layer.close(loading);
       })
     }
 
@@ -349,11 +346,9 @@ export default {
           }
         })
         var url=`/${moduleName}/saveModule`;
-        let loading = layer.load(2);
         this.that.$http.post(url,{
             aa
         }).then(d=>{
-            layer.close(loading);
             if (d.code == 0) {
                 layui.layer.msg("添加成功")
                 var arr=window.App.eye.concat([]); //  Object.assign({},obj)和concat都只是深拷贝第一层，而JSON.parse结合JSON.stringify只能深拷贝属性，不能拷贝方法

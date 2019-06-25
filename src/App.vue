@@ -153,7 +153,10 @@
 	}
 
 	from './module.js'
+	import {selectMenu} from './select.js';
+
 	var $ = require('jquery');
+	
 	export default {
 		components: {
 			poperBottom,
@@ -203,6 +206,7 @@
 		mounted() {
 			import('layui-src/dist/layui.all.js').then(d=>{
 				window.layer=layui.layer;
+				window.selectMenu=selectMenu;
 				layui.form.on('select(bigLei)', function(data){
 					//console.log(data.elem); //得到select原始DOM对象
 					//console.log(data.value); //得到被选中的值
@@ -419,7 +423,6 @@
 					this.setCenterMap();
 				}else{
 					var tempstr = '/' + this.d[index].moduleName + '/' + 'queryModule';
-					let loading = layer.load(2);
 					this.$http.post(tempstr, {}).then(d => {
 						this.d[index].datas = d.data;
 						if(d.data){
@@ -436,29 +439,24 @@
 						}
 						this.jeye(index);  // 点 线 面 显示切换
 						this.setCenterMap();
-						layer.close(loading);
 					});
 					
 				}
 			},
 			requestCity() {
-				let loading = layer.load(2);
 				this.$http.post('gis/queryByCode', {
 					dictionaryCode: '行政区划及代码'
 				}).then(d => {
 					this.cityAry = d;
-					layer.close(loading);
 				})
 			},
 			firstSearch() {
-				let loading = layui.layer.load(2);
 				this.$http.post('gis/queryByCode', {
 					dictionaryCode: '部件分类代码'
 				}).then(d => {
 					this.bigLei = d;
 					localStorage.setItem('localAry', this.bigLei);
 					var get = localStorage.getItem('localAry');
-					layer.close(loading);
 				})
 			},
 			searchlei(callback) {
@@ -466,14 +464,12 @@
 				//layui.layer.msg('22')
 
 				//大类搜索
-				let loading = layer.load(2);
 				this.$http.post('/layer/findLayer', {
 					name: this.xl,
 					artTypeName: this.dl
 				}).then(dd => {
 					if(!dd.datas){
 						layui.layer.msg("暂时没有图层");
-						layer.close(loading);
 						return false;
 					}
 					dd.datas.forEach((item,index)=>{
@@ -487,7 +483,6 @@
 					this.eye=[]; // 清除眼睛选中效果
 					// 删除掉所有的“手动输入经纬度弹框”
 					$(".poperDetail.diyLngLat").remove();
-					layer.close(loading);
 					this.$nextTick(()=>{
 						typeof(callback)=="function"&&callback()
 					})
@@ -547,7 +542,6 @@
 							} else {
 								tempStr = "面";
 							}
-							let loading = layer.load(2);
 							that.$http.post('/layer/findLayer', {
 								name: that.xl,
 								artTypeName: that.dl,
@@ -562,7 +556,6 @@
 								that.d = d.datas;
 								that.map.clearOverLays(); // 清除所有地图上的覆盖物
 								that.eye=[]; // 清除眼睛选中效果
-								layer.close(loading);
 							})
 						}
 					}
@@ -578,7 +571,6 @@
 					$events: {
 						confirm(data) {
 							item.tname = data;
-							let loading = layer.load(2);
 							that.$http.post('/layer/modifyLayer', {
 								id: item.tid,
 								name: data
@@ -586,7 +578,6 @@
 								if(res.code==-1){
 									layui.layer.msg(res.msg)
 								}
-								layer.close(loading);
 							})
 						}
 					}
@@ -802,23 +793,19 @@
 			cksxb(item,index) {
 				if(!item.datas){
 					let tempstr = '/' + item.moduleName + '/' + 'queryModule';
-					let loading = layer.load(2);
 					this.$http.post(tempstr, {}).then(d => {
 						this.d[index].datas = d.data;
 						this.cksxbd = true;
-						layer.close(loading);
 					});
 				}else{
 					this.cksxbd = true;
 				}
 			},
 			contenteditable(item) {
-				let loading = layer.load(2);
 				this.$http.post('/changeName', {
 					tname: item.tname,
 					tid: item.tid
 				}).then(d => {
-					layer.close(loading);
 				})
 			},
 			// btna() {
@@ -959,7 +946,6 @@
 								bigCode:'',
 								minCode:''
 							* */
-							let loading = layer.load(2);
 							that.$http.post('/layer/saveLayer', {
 								name: poperData.tname,
 								type: poperData.tleixing,
@@ -970,7 +956,6 @@
 								artSubTypeCode: poperData.minCode,
 								detail: poperData.miaoshu
 							}).then(d => {
-								layer.close(loading);
 								if(d.responseCode == 0) {
 									layui.layer.msg('保存成功');
 									window.location.reload();
@@ -1009,7 +994,6 @@
 					btn: ['确定','取消'] //按钮
 				}, function(){ // 确定 回调
 					let idStr=item.tid;
-					let loading = layer.load(2);
 					that.$http.post('/layer/delLayer', {
 						ids:idStr
 					}).then(d => {
@@ -1042,7 +1026,6 @@
 						arr.push(item.tid)
 					})
 					idStr=arr.join(",");
-					let loading = layer.load(2);
 					that.$http.post('/layer/delLayer', {
 						ids:idStr
 					}).then(d => {

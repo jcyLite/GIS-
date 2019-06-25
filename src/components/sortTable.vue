@@ -47,7 +47,7 @@
 			height: auto;
 		}
 		.layui-input{
-			height:28px;
+			height:31px;
 		}
 		.top-cont{
 			text-align: right;
@@ -83,6 +83,51 @@
 						}
 					}
 			}
+			.top-cont{
+				margin-bottom: 10px;
+			}
+			.table-cont{
+				color:#666;
+				.table-header{
+					background-color: #f2f2f2;
+					border-top: 1px solid #ddd;
+					border-left: 1px solid #ddd;
+					border-right: 1px solid #ddd;
+					.fl{
+						height: 30px;
+						line-height: 30px;
+					}
+				}
+				.table-body{
+					height: 200px;
+					overflow: auto;
+				}
+				.table-tr{
+					padding:2px;
+					border-top: 1px solid #ddd;
+					border-left: 1px solid #ddd;
+					border-right: 1px solid #ddd;
+				}
+				.table-tr:first-child{
+					padding-top: 5px;
+					border-top: none;
+				}
+				.table-tr:last-child{
+					border-bottom: 1px solid #ddd;
+				}
+				.fl{
+					width: 120px;
+					text-align: center;
+					padding: 5px 7px;
+				}
+				.fl:last-child{
+					width:60px;
+				}
+				.select-menu-input{
+					height: 28px;
+					line-height: 28px;
+				}
+			}
 			.bottom-cont{
 				position: absolute;
 				bottom: 10px;
@@ -105,13 +150,13 @@
 						新增
 					</button>
 				</div>
-				<table lay-filter="sort-table">
+				<!-- <table class="layui-table">
 					<thead>
 						<tr>
-							<th lay-data="{field:'index', width:150}">字段名</th>
-							<th lay-data="{field:'lat', width:130}">条件</th>
-							<th lay-data="{field:'lng', width:130}">值</th>
-							<th lay-data="{field:'operate', width:80}">操作</th>
+							<th>字段名</th>
+							<th>条件</th>
+							<th>值</th>
+							<th>操作</th>
 						</tr> 
 					</thead>
 					<tbody>
@@ -123,22 +168,76 @@
 								</select>
 							</td>
 							<td>
-								<select name="" id="" lay-filter="condition-select">
-									<option value="">请选择</option>
-									<option value="包含" class="not-number">包含</option>
-									<option value="等于" class="is-number">等于</option>
-									<option value="不等于" class="is-number">不等于</option>
-									<option value="小于" class="is-number">小于</option>
-									<option value="小于或等于" class="is-number">小于或等于</option>
-									<option value="大于" class="is-number">大于</option>
-									<option value="大于或等于" class="is-number">大于或等于</option>
-								</select>
+								<div class="select-menu">
+									<div class="select-menu-div">
+										<input readonly class="select-menu-input" />
+										<i class="layui-icon layui-icon-triangle-d"></i>  
+									</div>
+									<ul class="select-menu-ul">
+										<li diyValue="">请选择</li>
+										<li diyValue="包含" class="not-number">包含</li>
+										<li diyValue="等于" class="not-number">等于</li>
+										<li diyValue="不等于" class="not-number">不等于</li>
+										<li diyValue="小于" class="not-number">小于</li>
+										<li diyValue="小于或等于" class="not-number">小于或等于</li>
+										<li diyValue="大于" class="not-number">大于</li>
+										<li diyValue="大于或等于" class="not-number">大于或等于</li>
+									</ul>
+								</div>
 							</td>
 							<td><input type="text" class="layui-input sort-input"></td>
 							<td><button class="layui-btn layui-btn-sm layui-btn-danger delete-btn">删除</button></td>
 						</tr>
 					</tbody>
-				</table>	
+				</table> -->
+				<div class="table-cont">
+					<div class="table-header clearfix">
+						<div class="fl">字段名</div>
+						<div class="fl">条件</div>
+						<div class="fl">值</div>
+						<div class="fl">操作</div>
+					</div>
+					<div class="table-body">
+						<div class="table-tr clearfix" v-for="(item,index) in tableArr" :key="index">
+							<div class="fl first-fl">
+								<div class="select-menu">
+									<div class="select-menu-div">
+										<input readonly class="select-menu-input"  placeholder="请选择"/>
+										<i class="layui-icon layui-icon-triangle-d"></i>  
+									</div>
+									<ul class="select-menu-ul">
+										<li diyValue="">请选择</li>
+										<li :diyValue="item" v-for="(item,index) in typeArr" :key="index">{{item}}</li>
+									</ul>
+								</div>
+							</div>
+							<div class="fl condition-fl">
+								<div class="select-menu">
+									<div class="select-menu-div">
+										<input readonly class="select-menu-input" placeholder="请选择" />
+										<i class="layui-icon layui-icon-triangle-d"></i>  
+									</div>
+									<ul class="select-menu-ul">
+										<li diyValue="">请选择</li>
+										<li diyValue="包含" class="not-number">包含</li>
+										<li diyValue="等于" class="is-number">等于</li>
+										<li diyValue="不等于" class="is-number">不等于</li>
+										<li diyValue="小于" class="is-number">小于</li>
+										<li diyValue="小于或等于" class="is-number">小于或等于</li>
+										<li diyValue="大于" class="is-number">大于</li>
+										<li diyValue="大于或等于" class="is-number">大于或等于</li>
+									</ul>
+								</div>
+							</div>
+							<div class="fl input-fl">
+								<input type="text" class="layui-input sort-input">
+							</div>
+							<div class="fl">
+								<button class="layui-btn layui-btn-sm layui-btn-danger delete-btn">删除</button>
+							</div>
+						</div>
+					</div>
+				</div>
 				<div class="bottom-cont">
 					<div @click="confirmFun" class="layui-btn layui-btn-normal layui-btn-sm">确定</div>
 					<div @click="hide" class="layui-btn layui-btn-sm layui-btn-primary">取消</div>
@@ -168,67 +267,123 @@
 			});
 			that.typeArr=that.getTypeArr();
 			/**
-			 * 字段名选择
-			 */
-			layui.form.on('select(name-select)', function(data){
-				console.log(data.elem); //得到select原始DOM对象
-				console.log(data.value); //得到被选中的值
-				console.log(data.othis); //得到美化后的DOM对象
-				let val=data.value;
-				let dom=data.elem;
-				let fatherTd=$(dom).closest("tr").find("td").eq(1);
- 				if(val.indexOf('时间')==-1){
-					fatherTd.find(".layui-anim .not-number").show();
-					fatherTd.find(".layui-anim .is-number").hide();
-				}else{
-					fatherTd.find(".layui-anim .not-number").hide();
-					fatherTd.find(".layui-anim .is-number").show();
-				}
-				// 已经选过的name就不展示在select中
-				that.typeArr=that.getTypeArr();  // 重新获取所有的表格头部type数组
-				let selectedArr=[]; // 已选的下拉框选项
-				$(".layui-table-box select[lay-filter='name-select']").each(function(){
-					let val=$(this).val();
-					val&&selectedArr.push(val);
-				})
-				// 隐藏掉已选项
-				$(".sortTable .layui-anim dd").each(function(){
-					let val=$(this).text();
-					let flag=false;
-					selectedArr.forEach((item,index)=>{
-						if(val==item){
-							flag=true;
-							return false;
-						}
-					})
-					if(flag){
-						$(this).hide();
-					}else{
-						$(this).show();
-					}
-				})
-			})
-			/**
 			 * 删除一行---由于layui的table组件的限制，导致vue的点击事件绑定不上，所以这里只能用jq了
 			 */
 			$("body").on('click',".delete-btn", function(obj){
-				let index=$(this).closest("tr").find("td").eq(0).text()*1-1;
-				that.tableArr.splice(index,1);
+				let index=$(this).closest(".table-tr").index();
+				$(this).closest(".table-tr").remove();
+				that.initSelect();
+				that.hideOption();
 			});
 			
 		},
 		updated() {
-			if(!this.canInit){
-				return false;
-			}
 			this.$nextTick(()=>{
-				this.initTable();
-				this.canInit=false;
+				this.initSelect();
 			})
+			// if(!this.canInit){
+			// 	return false;
+			// }
+			// this.$nextTick(()=>{
+			// 	this.initTable();
+			// 	this.canInit=false;
+			// 	console.log(222222)
+			// 	console.log($(".select-menu"))
+				
+			// })
 		},
 		watch:{
 		},
 		methods:{
+			/**
+			 * 最终确定
+			 */
+			confirmFun() {
+				let that=this;
+				let obj=[];
+				let json_={};
+				$(".poperDetail .midbox .table-cont .table-tr").each(function(){
+					json_={};
+					let name_=$(this).find(".first-fl .select-menu-input").val();
+					let condition_=$(this).find(".condition-fl .select-menu-input").val();
+					let value_=$(this).find(".input-fl .select-menu-input").val();
+					json_.name_=name_;
+					json_.condition_=condition_;
+					json_.value_=value_;
+					obj.push(json_);
+				})
+				console.log(obj)
+			},
+			/**
+			 * 隐藏已选项
+			 */
+			hideOption() {
+				// 已经选过的name就不展示在select中
+				let selectedArr=[]; // 已选的下拉框选项
+				$(".table-cont .first-fl .select-menu-input").each(function(){
+					let val=$(this).val();
+					if(val&&val!="请选择"){
+						selectedArr.push(val);
+					}
+				})
+				// 隐藏掉已选项
+				$(".sortTable .first-fl").each(function(){
+					$(this).find(".select-menu-ul li").each(function(){
+						let val=$(this).text();
+						let flag=false;
+						selectedArr.forEach((item,index)=>{
+							if(val==item){
+								flag=true;
+								return false;
+							}
+						})
+						if(flag){
+							$(this).hide();
+						}else{
+							$(this).show();
+						}
+					})
+				})
+			},
+			/**
+			 * 下拉框选择后的回调
+			 */
+			selectCallback(th_) {
+				let that=this;
+				let val=$(th_).attr("diyValue");
+				let fatherTd=$(th_).closest(".table-tr").find(".fl").eq(1);
+				fatherTd.find(".select-menu-input").val(""); // 清空
+				fatherTd.find(".select-menu-ul li").removeClass("select-this"); // 清空
+				if(val==""||val=="请选择"){
+					fatherTd.find("li").show();
+				}else if(val.indexOf('时间')==-1){
+					fatherTd.find(".not-number").show();
+					fatherTd.find(".is-number").hide();
+				}else{
+					fatherTd.find(".not-number").hide();
+					fatherTd.find(".is-number").show();
+				}
+				that.hideOption();
+			},
+			/**
+			 * 初始化select
+			 */
+			initSelect() {
+				let that=this;
+				$(".select-menu").each(function(index){
+					let dom=this;
+					selectMenu({
+						$,
+						fatherDom:$(this)[0],
+						index,
+						callback:function (th_) {
+							if($(dom).closest(".fl").hasClass("first-fl")){
+								that.selectCallback(th_);
+							}
+						}
+					});
+				})
+			},
 			/**
 			 *	获取table头部标题集合
 			 */
@@ -241,40 +396,17 @@
 				})
 				return arr;
 			},
-			/**
-			 * 最终确定
-			 */
-			confirmFun() {
-
-			},
+			
 			/**
 			 * 新增一行
 			 */
 			addTr() {
+				//this.canInit=true;
 				this.tableArr.push({})
-			},
-			/**
-			 * 转换静态表格--layui-table   并塞入数据
-			 */
-			initTable(callBack){
-				let that=this;
-				let table = layui.table;
-				table.init('sort-table', {
-					height: 260 //设置高度
-					,limit: 10 //注意：请务必确保 limit 参数（默认：10）是与你服务端限定的数据条数一致
-					//支持所有基础参数
-					,done: function () {
-						// 把对应的dd加上对应的class
-						$("select[lay-filter='condition-select']").each(function(){
-							let fatherTd=$(this).closest("td");
-							$(this).find("option").each(function(index){
-								let className=$(this).attr("class");
-								fatherTd.find("dd").eq(index).attr("class",className);
-							})
-						})
-						callBack&&callBack();
-					}
-				}); 
+					this.$nextTick(()=>{
+					this.initSelect();
+				})
+				that.hideOption();
 			},
 			show(){
 				this.isShow=true;
