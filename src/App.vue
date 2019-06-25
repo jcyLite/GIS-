@@ -284,16 +284,6 @@
 					// 	makersArr.push(marker);
 					// }
 				}
-				// let num=0;  // 根据图层id获取该图层已有多少点
-				// that.tlayer.forEach((item,index)=>{
-				// 	if(item.tlayers[0].tid==currentTid){
-				// 		num=item.tlayers.length;
-				// 	}
-				// })
-				// alert(num);
-				// makersArr.forEach((item,index)=>{
-				// 	item.subIndex=index+num;
-				// })
 			});
 			var config = {
 				showLabel: true,
@@ -748,15 +738,6 @@
 					})
 				}
 			},
-			// jiazhai(i, index) {
-			// 	//地图位移
-			// 	var a = this.tlayer[index];
-			// 	if(a){
-			// 		var px = a.p.px;
-			// 		var py = a.p.py;
-			// 		this.map.centerAndZoom(new T.LngLat(px, py), this.zoom);
-			// 	}
-			// },
 			cksxb(item,index) {
 				if(!item.datas){
 					let tempstr = '/' + item.moduleName + '/' + 'queryModule';
@@ -775,11 +756,6 @@
 				}).then(d => {
 				})
 			},
-			// btna() {
-			// 	var markers = this.markerTool.getMarkers();
-			// 	this.map.removeOverLay(markers[markers.length - 1]);
-			// 	this.map.closeInfoWindow()
-			// },
 			shadea() {
 				$('.cpt-add').remove()
 			},
@@ -790,11 +766,6 @@
 				this.polygonTool.open();
 			},
 			editMarker() {
-				// var markers = this.markerTool.getMarkers();
-				// for(var i = 0; i < markers.length; i++) {
-				// 	let marker = markers[i];
-				// 	markers[i].disableDragging();
-				// }
 				this.markerTool.open();  // 开启标注点功能
 			},
 			openPolylineTool() {

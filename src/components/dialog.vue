@@ -138,17 +138,6 @@ export default {
       })
     }
 
-    //获取当前省份的城市。通过选取省份触发change()事件
-    // $("body").on("change","#pro",function(){
-    //   let val=$(this).val();
-    //   that.countySelect.forEach((item,index)=>{
-    //     if(item.code==val){
-    //       that.streetSelect=item.sub;
-    //       that.communitySelect=null;
-    //     }
-    //   })
-    // });
-
     layui.form.on('select(pro)', function(data){
       console.log(data.elem); //得到select原始DOM对象
       console.log(data.value); //得到被选中的值
@@ -165,16 +154,6 @@ export default {
         layui.form.render(); // 重载一下layui的表单元素
       });
     });
-
-    //获取当前城市的乡镇。通过选取城市触发change()事件
-    // $("#city").change(function(){
-    //     let val=$(this).val();
-    //     that.streetSelect.forEach((item,index)=>{
-    //       if(item.code==val){
-    //         that.communitySelect=item.sub;
-    //       }
-    //     })
-    // });
 
     layui.form.on('select(city)', function(data){
       console.log(data.elem); //得到select原始DOM对象
@@ -230,18 +209,6 @@ export default {
               lngLatEdited.forEach((item,index)=>{
                 arr.push(new T.LngLat(item.lng, item.lat))
               })
-              //let overLayArr=that.that.map.getOverlays();
-              //overLayArr.forEach((item,index)=>{
-                // if(item.tid==that.overLay.tid&&item.subIndex==that.overLay.subIndex){
-                //   item.setLngLats(arr);
-                //   let zbObj=new T.LngLat(arr[0].lng, arr[0].lat); // 如果是线 面 则取第一个点的经纬度对象
-                //   that.that.infoWindowObj.setLngLat(zbObj)
-                //   //that.that.infoWindowObj.update();
-                //   that.that.infoWindowObj.closeInfoWindow();  // 定位完  关闭信息框
-                //   let nowZoom=that.that.map.getZoom();  // 获取地图当前层级
-                //   that.that.map.centerAndZoom(zbObj, nowZoom); // 定位到修改点位置
-                // }
-              //})
               that.overLay.setLngLats(arr);
               let zbObj=new T.LngLat(arr[0].lng, arr[0].lat); // 如果是线 面 则取第一个点的经纬度对象
               that.that.infoWindowObj.setLngLat(zbObj)
@@ -250,20 +217,6 @@ export default {
               let nowZoom=that.that.map.getZoom();  // 获取地图当前层级
               that.that.map.centerAndZoom(zbObj, nowZoom); // 定位到修改点位置
             }else{ // 点
-              // let overLayArr=that.that.map.getOverlays();
-              // console.log(111111)
-              // console.log(overLayArr)
-              // overLayArr.forEach((item,index)=>{
-              //   if(item.tid==that.overLay.tid&&item.subIndex==that.overLay.subIndex){
-              //     let zbObj=new T.LngLat(lngLatEdited.lng, lngLatEdited.lat); // 经纬度对象
-              //     item.setLngLat(zbObj);
-              //     that.that.infoWindowObj.setLngLat(zbObj)
-              //     //that.that.infoWindowObj.update();
-              //     that.that.infoWindowObj.closeInfoWindow();  // 定位完  关闭信息框
-              //     let nowZoom=that.that.map.getZoom();  // 获取地图当前层级
-              //     that.that.map.centerAndZoom(zbObj, nowZoom); // 定位到修改点位置
-              //   }
-              // })
               let zbObj=new T.LngLat(lngLatEdited.lng, lngLatEdited.lat); // 经纬度对象
               that.overLay.setLngLat(zbObj);
               that.that.infoWindowObj.setLngLat(zbObj)

@@ -289,20 +289,6 @@ import { setTimeout } from 'timers';
 						return bool_;
 					} 
 				}
-
-				// $("#diyPoper .layui-table tbody tr").each(function(){
-				// 	let latV=$(this).find(".lat-input").val();
-				// 	let lngV=$(this).find(".lng-input").val();
-				// 	if(that.lngLatArrNew instanceof Array){  // 线  面
-				// 		that.lngLatArrNew.push({
-				// 			lat:latV,
-				// 			lng:lngV
-				// 		})
-				// 	}else{  // 点
-				// 		that.$set(that.lngLatArrNew,'lat',latV);
-				// 		that.$set(that.lngLatArrNew,'lng',lngV);
-				// 	}
-				// })
 				that.$emit("setLngLatFun",that.lngLatArrNew);	
 				that.isShow=false;			
 			},

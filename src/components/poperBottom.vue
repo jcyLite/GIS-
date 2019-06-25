@@ -215,23 +215,12 @@
 </template>
 
 <script>
-    /*
-                v-if="searchVal?
-                (item.bjmc.indexOf(searchVal)!=-1)
-                ||(item.bjbzm.indexOf(searchVal)!=-1)
-                ||(item.szxzq.indexOf(searchVal)!=-1)
-                :true"
-                */
 	import {markerClick} from '../module.js'
 	import { setTimeout } from 'timers';
 	export default {
 		props:['value','d'],
 		computed:{
-			// allActive(){
-			// 	if(this.d){
-			// 		return this.active.length==this.d.datas.length;
-			// 	}
-			// }
+			
 		},
 		watch:{
 			value(newV){
@@ -297,72 +286,8 @@
 					that.oactive=parseInt(obj.data.trueIndex)-1;  // 筛选修改
 					that.dingwei(that.d.datas[that.oactive],that.oactive)
 					that.moduleId=obj.data.id;
-					// let parentObj=that.$parent;
-					// // 获取地图中心坐标
-					// let lnglat=null;
-					// let centerLnglat=null;
-					// let id=obj.data.id;
-					// that.d.datas.forEach((item,index)=>{
-					// 	if(item.id==id){
-					// 		lnglat=item.lnglat
-					// 	}
-					// })
-					// if(lnglat instanceof Array){  // 代表是线或者面
-
-					// }else {
-					// 	centerLnglat.lng=lnglat.
-					// }
-					// //重新设置显示地图的中心点和级别
-					// parentObj.map.centerAndZoom(new T.LngLat(119.55, 31.47), parentObj.zoom);
-					// // 显示弹框
-					// var type1='线'
-					// var sContent = require('./dialog.tpl')();
-					// if(type1=='点'){
-					// 	var lngLat=new T.LngLat(119.55, 31.47) // 坐标对象
-					// 	var infoWin = new T.InfoWindow();  // 创建信息窗口对象
-					// 	infoWin.setContent(sContent);  // 插入内容
-					// 	infoWin.setLngLat(lngLat); // 设置弹框坐标
-					// 	parentObj.map.openInfoWindow(infoWin);  // 打开弹框
-					// 	parentObj.scbc([],true); 
-					// }else if(type1=='线'){
-					// 	var lngLat=new T.LngLat(119.55, 31.47) // 坐标对象
-					// 	var infoWin = new T.InfoWindow();  // 创建信息窗口对象
-					// 	infoWin.setContent(sContent);  // 插入内容
-					// 	infoWin.setLngLat(lngLat); // 设置弹框坐标
-					// 	parentObj.map.openInfoWindow(infoWin);  // 打开弹框
-					// 	parentObj.scbc([],true);
-					// 	// 根据历史坐标绘制
-					// 	let arrXy=[];
-					// 	arrXy.push(new T.LngLat(119.58, 31.41));
-					// 	arrXy.push(new T.LngLat(119.55, 31.42));
-					// 	parentObj.drawHistory(arrXy);
-					// }else if(type1=='面'){
-					// 	var lngLat=new T.LngLat(119.55, 31.47) // 坐标对象
-					// 	var infoWin = new T.InfoWindow();  // 创建信息窗口对象
-					// 	infoWin.setContent(sContent);  // 插入内容
-					// 	infoWin.setLngLat(lngLat); // 设置弹框坐标
-					// 	parentObj.map.openInfoWindow(infoWin);  // 打开弹框
-					// 	parentObj.scbc([],true);
-					// 	// 根据历史坐标绘制
-					// 	let arrXy=[];
-					// 	arrXy.push(new T.LngLat(119.58, 31.41));
-					// 	arrXy.push(new T.LngLat(119.55, 31.42));
-					// 	parentObj.drawHistory(arrXy);
-					// }
-					
-					// // 绘制范围
-
-					
 				});
 			})
-			
-			
-			/**
-			 * 复选框
-			 */
-			
-
-			
 		},
 		updated(){
 			this.$nextTick(() => {
@@ -492,18 +417,6 @@
 				//定位到显示弹窗的中心位置
 				window.map.centerAndZoom(new T.LngLat(lnglat.lng,lnglat.lat), 12);
 			},
-			// allSelect(){
-			// 	if(this.d){
-			// 		if(this.allActive){
-			// 			this.active=[];
-			// 		}else{
-			// 			this.active=[];
-			// 			this.d.datas.forEach((item,index)=>{
-			// 				this.active.push(index);
-			// 			})
-			// 		}
-			// 	}
-			// },
 			deleteModul(){
 				let that = this;
 				layer.confirm('确定要删除所选中的属性行吗？', {

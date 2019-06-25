@@ -31,16 +31,8 @@
 					</div>
 					<div class="row">
 						<div class="col">基础数据类型：</div>
-						<!--<input class="col" type="text" />-->
 						<div v-model="poperData.jcsjlx" class="col">部件数据</div>
 					</div>
-					<!--<div class="row">-->
-						<!--<div class="col">所属网格类型：</div>-->
-						<!--<select v-model="poperData.sswglx" placeholder="请选择" class="col" name="" id="">-->
-							<!--<option value="请选择">行政区划网格</option>-->
-							<!--<option value="请选择">考评工作网格</option>-->
-						<!--</select>-->
-					<!--</div>-->
 					<div class="row">
 						<div class="col">描述：</div>
 						<input v-model="poperData.miaoshu" class="col layui-input" type="text" />
