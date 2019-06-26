@@ -75,7 +75,7 @@ export default {
           overLay:this.$root.overLay,
           that:this.$root.that,
           isHistory:this.$root.isHistory,
-          countySelect:null,
+          countySelect:window.App.cityAry,
           streetSelect:null,
           communitySelect:null,
       }
@@ -95,47 +95,15 @@ export default {
     }else{
       this.mainData=null;
     }
-    if(!that.countySelect){
+    if(!that.that.cityAry){
       that.that.$http.post('gis/queryByCode',{
           dictionaryCode:'行政区划及代码'
       }).then(res=>{
         that.countySelect=res;
-        if(this.mainData==null){
-          this.$nextTick(()=>{
-            layui.form.render(); // 重载一下layui的表单元素
-          })
-          return false;
-        }
-        that.countySelect.forEach((item,index)=>{
-          if(item.code==that.mainData.districtCode){
-            that.streetSelect=item.sub;
-            item.sub.forEach((innerItem,innerIndex)=>{
-              if(innerItem.code==that.mainData.streetCode){
-                that.communitySelect=innerItem.sub;
-              }
-            })
-          }
-        })
-        this.$nextTick(()=>{
-          // 初始化select选中效果
-          $("#pro option").each(function(){
-            if($(this).val()==that.mainData.districtCode){
-              $(this).prop("selected","selected");
-            }
-          })
-          $("#city option").each(function(){
-            if($(this).val()==that.mainData.streetCode){
-              $(this).prop("selected","selected");
-            }
-          })
-          $("#dis option").each(function(){
-            if($(this).val()==that.mainData.communityCode){
-              $(this).prop("selected","selected");
-            }
-          })
-          layui.form.render(); // 重载一下layui的表单元素
-        })
+        that.initSelect();
       })
+    }else{
+      that.initSelect();
     }
 
     layui.form.on('select(pro)', function(data){
@@ -181,13 +149,54 @@ export default {
   },
   methods: {
     /**
+     * 初始化地区选择
+     */
+    initSelect() {
+      let that=this;
+      if(this.mainData==null){
+          this.$nextTick(()=>{
+            layui.form.render(); // 重载一下layui的表单元素
+          })
+          return false;
+        }
+        that.countySelect.forEach((item,index)=>{
+          if(item.code==that.mainData.districtCode){
+            that.streetSelect=item.sub;
+            item.sub.forEach((innerItem,innerIndex)=>{
+              if(innerItem.code==that.mainData.streetCode){
+                that.communitySelect=innerItem.sub;
+              }
+            })
+          }
+        })
+        this.$nextTick(()=>{
+          // 初始化select选中效果
+          $("#pro option").each(function(){
+            if($(this).val()==that.mainData.districtCode){
+              $(this).prop("selected","selected");
+            }
+          })
+          $("#city option").each(function(){
+            if($(this).val()==that.mainData.streetCode){
+              $(this).prop("selected","selected");
+            }
+          })
+          $("#dis option").each(function(){
+            if($(this).val()==that.mainData.communityCode){
+              $(this).prop("selected","selected");
+            }
+          })
+          layui.form.render(); // 重载一下layui的表单元素
+        })
+    },
+    /**
      * 弹出自定义弹框
      */
     diyFun() {
       let that=this;
       let overLayType=this.overLay.getType(); // 覆盖物类型  点 ==2  线==4  面==5
       let lngLatArr=null;
-      if(this.overLay.getLngLat){
+      if(this.overLay.getLngLat){  // 如果是点
 				lngLatArr=this.overLay.getLngLat();
 			}else{
 				lngLatArr=this.overLay.getLngLats();
@@ -211,16 +220,20 @@ export default {
               })
               that.overLay.setLngLats(arr);
               let zbObj=new T.LngLat(arr[0].lng, arr[0].lat); // 如果是线 面 则取第一个点的经纬度对象
-              that.that.infoWindowObj.setLngLat(zbObj)
-              //that.that.infoWindowObj.update();
-              that.that.infoWindowObj.closeInfoWindow();  // 定位完  关闭信息框
+              //   that.that.infoWindowObj.setLngLat(zbObj)
+              //   that.that.infoWindowObj.closeInfoWindow();  // 定位完  关闭信息框
+              that.that.map.closeInfoWindow();
               let nowZoom=that.that.map.getZoom();  // 获取地图当前层级
               that.that.map.centerAndZoom(zbObj, nowZoom); // 定位到修改点位置
             }else{ // 点
               let zbObj=new T.LngLat(lngLatEdited.lng, lngLatEdited.lat); // 经纬度对象
               that.overLay.setLngLat(zbObj);
-              that.that.infoWindowObj.setLngLat(zbObj)
-              that.that.infoWindowObj.closeInfoWindow();  // 定位完  关闭信息框
+              //  that.that.infoWindowObj.setLngLat(zbObj)
+              //  that.that.infoWindowObj.closeInfoWindow();  // 定位完  关闭信息框
+
+              //that.overLay.closeInfoWindow();
+
+              that.that.map.closeInfoWindow();
               let nowZoom=that.that.map.getZoom();  // 获取地图当前层级
               that.that.map.centerAndZoom(zbObj, nowZoom); // 定位到修改点位置
             }

@@ -68,26 +68,26 @@
 						共{{d.length}}个图层
 					</div>
 					<div>
-						<img @click="fiter" src="./img/filter.png" alt="" />
-						<img @click="addatuceng" src="./img/addb.png" alt="" style="width: 18px;"/>
-						<img @click="deleteAllLayer" src="./img/huishou.png" alt="" />
+						<img @click="fiter" src="./img/filter.png" alt="" title="筛选图层"/>
+						<img @click="addatuceng" src="./img/addb.png" alt="" title="新增图层" style="width: 18px;"/>
+						<img @click="deleteAllLayer" src="./img/huishou.png" alt="" title="删除全部图层" />
 					</div>
 				</div>
 				<div class="container">
 					<div :class="{active:active==index}" @click="clickLeftLayer(item,index)" class="box" :tid="item.tid" :moduleName='item.moduleName' v-for="(item,index) of d" :key="index">
 						<div class="t">
 							<div @click.stop="clickEye(item,index)" class="eye">
-								<img v-if="eye.indexOf(index)==-1" src="./img/eye.png" alt="" />
-								<img v-if="eye.indexOf(index)!=-1" src="./img/eye_active.png" alt="" />
+								<img v-if="eye.indexOf(index)==-1" src="./img/eye.png" alt="" title="展示图层覆盖物" />
+								<img v-if="eye.indexOf(index)!=-1" src="./img/eye_active.png" alt="" title="隐藏图层覆盖物" />
 							</div>
 							<div class="contenteditable too-long1">
 								{{item.tname }}
 							</div>
 							<div class="u">
-								<img @click.stop="changeName(item,index)" src="./img/edit.png" alt="" style="margin-right:6px;" />
-								<img @click="poperDetail(item,index)" src="./img/detail.png" alt="" style="width:17px;margin-right:5px;"/>
-								<img src="./img/earth.png" alt="" />
-								<img @click.stop="deleteLayer(item,index)" src="./img/hsz.png" alt="" style="width: 15px;" />
+								<img @click.stop="changeName(item,index)" src="./img/edit.png" alt="" title="编辑图层名称" style="margin-right:6px;" />
+								<img @click="poperDetail(item,index)" src="./img/detail.png" alt="" title="查看图层信息" style="width:17px;margin-right:5px;"/>
+								<!-- <img src="./img/earth.png" alt="" /> -->
+								<img @click.stop="deleteLayer(item,index)" src="./img/hsz.png" alt="" title="删除图层" style="width: 15px;" />
 							</div>
 						</div>
 						<div class="b">
@@ -118,10 +118,10 @@
 					<img @click="openPolygonTool" v-show="layerType=='面'" src="./img/m.png" alt="" />
 				</div>
 				<div class="toolb">
-					<img @click="openCircleTool" src="./img/circle.png" alt="" />
-					<img @click="openRectangleTool" src="./img/reck.png" alt="" />
-					<img @click="mlineTool" src="./img/cz.png" alt="" />
-					<img @click="mpolygonTool" src="./img/cm.png" alt="" />
+					<img @click="openCircleTool" src="./img/circle.png" alt="" title="绘制圆" />
+					<img @click="openRectangleTool" src="./img/reck.png" alt="" title="绘制矩形" />
+					<img @click="mlineTool" src="./img/cz.png" alt="" title="测量距离" />
+					<img @click="mpolygonTool" src="./img/cm.png" alt="" title="测量面积" />
 					<!-- 暂时隐藏掉 -->
 					<!-- <img @click="searchShow=true" src="./img/search.png" alt=""/> -->
 
@@ -153,6 +153,9 @@
 		jzdian,
 		jzxian,
 		jzmian,
+		editMarker,
+		openPolylineTool,
+		openPolygonTool
 	}
 
 	from './module.js'
@@ -250,43 +253,43 @@
 			this.control = new T.Control.Zoom();
 			//添加缩放平移控件
 			//		this.map.addControl(this.control);
-			this.infoWindowObj = new T.InfoWindow();
-			this.markerTool = new T.MarkTool(this.map, {
-				follow: true
-			});
-			var infoWindowObj = this.infoWindowObj;
-			var that = this;
-			var sContent = require('./components/dialog.tpl')();
-			this.markerTool.addEventListener('mouseup', function(obj) {
-				// 点击标注一个点的时候触发，线和面的触发是其他方法
-				var lnglat = obj.currentLnglat;
 
-				var markers = that.markerTool.getMarkers();
-				infoWindowObj.setContent(sContent);
-				//let makersArr=[];  // 存储所有的点 后面按照图层tid 来设置suIndex
-				let currentTid=$(".leftBox .bottom .box.active").attr("tid"); // 当前的图层id
-				for(var i = 0; i < markers.length; i++) {
-					let marker = markers[i];
-					if(!marker.tid){  // 如果不存在，就肯定是新标注的点,防止重复绑定
-						//that.map.openInfoWindow(infoWindowObj, lnglat);
-						marker.openInfoWindow(infoWindowObj, lnglat);
-						//that.scbc(marker,false);
-						scbc(marker,false,that);
-						// 点击新增标注点的时候触发，区别于点击上次增加的标注点
-						marker.tid=currentTid;
-						marker.addEventListener('click', function(obj) {
-							//that.markerClick(this, obj,false)
-							markerClick(this,obj,false,that)
-							//alert("xindedian")
-						});
-						marker.enableDragging();
-						// if(marker.tid==currentTid){
-						// 	makersArr.push(marker);
-						// }
-					}
+			// this.infoWindowObj = new T.InfoWindow();
+			// this.markerTool = new T.MarkTool(this.map, {
+			// 	follow: true
+			// });
+			// var infoWindowObj = this.infoWindowObj;
+			// var sContent = require('./components/dialog.tpl')();
+			// this.markerTool.addEventListener('mouseup', function(obj) {
+			// 	// 点击标注一个点的时候触发，线和面的触发是其他方法
+			// 	var lnglat = obj.currentLnglat;
+
+			// 	var markers = that.markerTool.getMarkers();
+			// 	infoWindowObj.setContent(sContent);
+			// 	//let makersArr=[];  // 存储所有的点 后面按照图层tid 来设置suIndex
+			// 	let currentTid=$(".leftBox .bottom .box.active").attr("tid"); // 当前的图层id
+			// 	for(var i = 0; i < markers.length; i++) {
+			// 		let marker = markers[i];
+			// 		if(!marker.tid){  // 如果不存在，就肯定是新标注的点,防止重复绑定
+			// 			//that.map.openInfoWindow(infoWindowObj, lnglat);
+			// 			marker.openInfoWindow(infoWindowObj);
+			// 			//that.scbc(marker,false);
+			// 			scbc(marker,false,that);
+			// 			// 点击新增标注点的时候触发，区别于点击上次增加的标注点
+			// 			marker.tid=currentTid;
+			// 			marker.addEventListener('click', function(obj) {
+			// 				//that.markerClick(this, obj,false)
+			// 				markerClick(this,obj,false,that)
+			// 				//alert("xindedian")
+			// 			});
+			// 			marker.enableDragging();
+			// 			// if(marker.tid==currentTid){
+			// 			// 	makersArr.push(marker);
+			// 			// }
+			// 		}
 					
-				}
-			});
+			// 	}
+			// });
 			var config = {
 				showLabel: true,
 				color: "blue",
@@ -297,7 +300,7 @@
 			};
 			this.polygonTool = new T.PolygonTool(map, config);
 			this.lineTool = new T.PolylineTool(map, config);
-			this.ControlsetPosition();
+			this.ControlsetPosition();// ?????
 			var that = this;
 			// ??? ???????
 			$('body').on('click', '*[click]', function(e) {
@@ -774,69 +777,77 @@
 			mpolygonTool() {
 				this.polygonTool.open();
 			},
-			editMarker() {
-				this.markerTool.open();  // 开启标注点功能
+			editMarker() {  // 点
+				editMarker(this);
+				//this.markerTool.open();  // 开启标注点功能
 			},
-			openPolylineTool() {
-				var that = this;
-				var handler = this.handler;
-				if(handler) handler.close();
-				handler = new T.PolylineTool(this.map);
-				handler.addEventListener('draw', function(obj) {  // 画线 双击确定后 触发
-					var currentLnglats = obj.currentLnglats;
-					var lnglat = currentLnglats[currentLnglats.length - 1];
-					var sContent = require('./components/dialog.tpl')();
-					var InfoContent = new T.InfoWindow();
-					that.infoWindowObj=InfoContent;
-					InfoContent.setContent(sContent);
-					//obj.currentPolyline.openInfoWindow(InfoContent);
-					that.map.openInfoWindow(InfoContent,lnglat);
-					obj.currentPolyline.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
-					//that.scbc(obj.currentPolyline,false);
-					scbc(obj.currentPolyline,false,that);
-					(function(th_){
-						th_.addEventListener('click', (obj) => {
-							var InfoContent = new T.InfoWindow();
-							that.infoWindowObj=InfoContent;
-							InfoContent.setContent(sContent);
-							that.map.openInfoWindow(InfoContent, lnglat);
-							//that.scbc(th_,false);
-							scbc(th_,false,that);
-						})
-					})(obj.currentPolyline)
-				});
-				handler.open();
+			openPolylineTool(){  // 绘制线
+				openPolylineTool(this);
 			},
-			openPolygonTool() {
-				var that = this;
-				var handler = this.handler;
-				if(handler) handler.close();
-				handler = new T.PolygonTool(this.map);
-				handler.addEventListener('draw', function(obj) {
-					var currentLnglats = obj.currentLnglats;
-					var lnglat = currentLnglats[currentLnglats.length - 1];
-					var sContent = require('./components/dialog.tpl')();
-					var InfoContent = new T.InfoWindow();
-					that.infoWindowObj=InfoContent;
-					InfoContent.setContent(sContent);
-					//obj.currentPolygon.openInfoWindow(InfoContent);
-					that.map.openInfoWindow(InfoContent,lnglat);
-					obj.currentPolygon.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
-					//that.scbc(obj.currentPolygon,false);
-					scbc(obj.currentPolygon,false,that);
-					(function(th_){
-						th_.addEventListener('click', (objInner) => {
-							var InfoContent = new T.InfoWindow();
-							that.infoWindowObj=InfoContent;
-							InfoContent.setContent(sContent);
-							that.map.openInfoWindow(InfoContent, lnglat);
-							//that.scbc(th_,false);
-							scbc(th_,false,that);
-						})
-					})(obj.currentPolygon)
-				});
-				handler.open();
+			openPolygonTool(){  // 绘制面
+				openPolygonTool(this);
 			},
+			// openPolylineTool() {
+			// 	var that = this;
+			// 	var handler = this.handler;
+			// 	if(handler) handler.close();
+			// 	handler = new T.PolylineTool(this.map);
+			// 	handler.addEventListener('draw', function(obj) {  // 画线 双击确定后 触发
+			// 		var currentLnglats = obj.currentLnglats;
+			// 		var lnglat = currentLnglats[currentLnglats.length - 1];
+			// 		var sContent = require('./components/dialog.tpl')();
+			// 		var InfoContent = new T.InfoWindow();
+			// 		that.infoWindowObj=InfoContent;
+			// 		InfoContent.setContent(sContent);
+			// 		//obj.currentPolyline.openInfoWindow(InfoContent);
+			// 		that.map.openInfoWindow(InfoContent,lnglat);
+			// 		obj.currentPolyline.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
+			// 		//that.scbc(obj.currentPolyline,false);
+			// 		scbc(obj.currentPolyline,false,that);
+			// 		(function(th_){
+			// 			th_.addEventListener('click', (obj) => {
+			// 				var InfoContent = new T.InfoWindow();
+			// 				that.infoWindowObj=InfoContent;
+			// 				InfoContent.setContent(sContent);
+			// 				that.map.openInfoWindow(InfoContent, lnglat);
+			// 				//that.scbc(th_,false);
+			// 				scbc(th_,false,that);
+			// 			})
+			// 		})(obj.currentPolyline)
+			// 	});
+			// 	handler.open();
+			// },
+			
+			// openPolygonTool() {
+			// 	var that = this;
+			// 	var handler = this.handler;
+			// 	if(handler) handler.close();
+			// 	handler = new T.PolygonTool(this.map);
+			// 	handler.addEventListener('draw', function(obj) {
+			// 		var currentLnglats = obj.currentLnglats;
+			// 		var lnglat = currentLnglats[currentLnglats.length - 1];
+			// 		var sContent = require('./components/dialog.tpl')();
+			// 		var InfoContent = new T.InfoWindow();
+			// 		that.infoWindowObj=InfoContent;
+			// 		InfoContent.setContent(sContent);
+			// 		//obj.currentPolygon.openInfoWindow(InfoContent);
+			// 		that.map.openInfoWindow(InfoContent,lnglat);
+			// 		obj.currentPolygon.tid=$(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
+			// 		//that.scbc(obj.currentPolygon,false);
+			// 		scbc(obj.currentPolygon,false,that);
+			// 		(function(th_){
+			// 			th_.addEventListener('click', (objInner) => {
+			// 				var InfoContent = new T.InfoWindow();
+			// 				that.infoWindowObj=InfoContent;
+			// 				InfoContent.setContent(sContent);
+			// 				that.map.openInfoWindow(InfoContent, lnglat);
+			// 				//that.scbc(th_,false);
+			// 				scbc(th_,false,that);
+			// 			})
+			// 		})(obj.currentPolygon)
+			// 	});
+			// 	handler.open();
+			// },
 			openRectangleTool() {
 				//绘制矩形
 				var handler = this.handler;

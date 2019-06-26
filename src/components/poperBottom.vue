@@ -144,8 +144,8 @@
 					|
 					<input v-model="searchVal" type="text" placeholder="请输入搜索内容" class="layui-input right-input" />
 					<span @click="bactive=!bactive" class="d">
-						<img v-show="!bactive" src="../img/fullScreen.png" class="screen-img"/>
-						<img v-show="bactive" src="../img/smallScreen.png" class="screen-img" />
+						<img v-show="!bactive" src="../img/fullScreen.png" class="screen-img" title="全屏展示" />
+						<img v-show="bactive" src="../img/smallScreen.png" class="screen-img" title="退出全屏" />
 					</span>
 				</div>
 			</div>
