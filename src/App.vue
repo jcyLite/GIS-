@@ -50,7 +50,7 @@
 			<div class="top">
 				<div class="floor">
 					<span class="left-span">部件大类：</span>
-					<select v-model="dl" name="aa" id="" lay-filter="bigLei">
+			    	<select v-model="dl" name="aa" id="" lay-filter="bigLei">
 						<option v-for="(item,index) in bigLei" :key="index" :value='item.value'>{{item.value}}</option>
 					</select>
 				</div>
@@ -155,7 +155,9 @@
 		jzmian,
 		editMarker,
 		openPolylineTool,
-		openPolygonTool
+		openPolygonTool,
+		openCircleTool,
+		openRectangleTool
 	}
 
 	from './module.js'
@@ -211,6 +213,7 @@
 		},
 		mounted() {
 			import('layui-src/dist/layui.all.js').then(d=>{
+				import('./authtree.js')
 				window.layer=layui.layer;
 				window.selectMenu=selectMenu;
 				layui.form.on('select(bigLei)', function(data){
@@ -849,23 +852,29 @@
 			// 	handler.open();
 			// },
 			openRectangleTool() {
-				//绘制矩形
-				var handler = this.handler;
-				if(handler) handler.close();
-				handler = new T.RectangleTool(map, {
-					follow: true
-				});
-				handler.open();
+				openRectangleTool(this);
 			},
 			openCircleTool() {
-				//绘制圆
-				var handler = this.handler;
-				if(handler) handler.close();
-				handler = new T.CircleTool(map, {
-					follow: true
-				});
-				handler.open();
+				openCircleTool(this);
 			},
+			// openRectangleTool() {
+			// 	//绘制矩形
+			// 	var handler = this.handler;
+			// 	if(handler) handler.close();
+			// 	handler = new T.RectangleTool(map, {
+			// 		follow: true
+			// 	});
+			// 	handler.open();
+			// },
+			// openCircleTool() {
+			// 	//绘制圆
+			// 	var handler = this.handler;
+			// 	if(handler) handler.close();
+			// 	handler = new T.CircleTool(map, {
+			// 		follow: true
+			// 	});
+			// 	handler.open();
+			// },
 			ControlsetPosition() {
 				var controlPositionStr = 'leftTOP';
 				this.leftTOP = T_ANCHOR_TOP_LEFT;
