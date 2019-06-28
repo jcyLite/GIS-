@@ -41,7 +41,7 @@
         </form>
       </div>
       <div class="row">
-        <div class="col">地址描述：</div>
+        <div class="col">网格编码：</div>
         <input
           class="col layui-input"
           type="text"
@@ -50,7 +50,7 @@
         >
       </div>
       <div class="row">
-        <div class="col">主管部门：</div>
+        <div class="col">网格名称：</div>
         <input
           class="col layui-input"
           type="text"
@@ -59,22 +59,25 @@
         >
       </div>
       <div class="row">
-        <div class="col">权属单位：</div>
-        <input
-          class="col layui-input"
-          type="text"
-          id="quanshuPart"
-          :value="mainData&&mainData.ownerDept"
-        >
+        <div class="col">网格类型：</div>
+        <select name="" id="">
+          <option value="">请选择</option>
+        </select>
       </div>
       <div class="row">
-        <div class="col">养护单位：</div>
-        <input
-          class="col layui-input"
-          type="text"
-          id="yanghuPart"
-          :value="mainData&&mainData.guardDept"
-        >
+        <div class="col">面积：</div>
+        <div class="calculate-col">
+          <input type="text" class="layui-input" v-model="area">平方米
+          <span @click="autoCalculate">自动计算</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">数据状态：</div>
+        <select name="" id="">
+          <option value="">请选择</option>
+          <option value="1">可用</option>
+          <option value="0">禁用</option>
+        </select>
       </div>
       <div class="row">
         <div class="col">数据来源：</div>
@@ -118,7 +121,8 @@ export default {
       isHistory: this.$root.isHistory,
       countySelect: window.App.cityAry,
       streetSelect: null,
-      communitySelect: null
+      communitySelect: null,
+      area:0, // 面积
     };
   },
   mounted() {
@@ -167,7 +171,9 @@ export default {
         ]
       }
     ];
-    // 延迟300 不然不会成功渲染？？？
+    /**
+     * 树形图初始化---延迟300毫秒才行？？
+     */
     setTimeout(()=>{
       layui.authtree.render("#LAY-auth-tree-index", trees, {
         inputname: "authids",
@@ -176,11 +182,15 @@ export default {
         checkType: "radio"
       });
     },300)
+    /**
+     * 树形图change事件
+     */
     layui.authtree.on("change(lay-check-auth)", function(data) {
       // 获取所有已选中节点
       var checked = layui.authtree.getChecked("#LAY-auth-tree-index");
       console.log("checked", checked);
     });
+    
     //如果是修改 则渲染数据
     if (this.isHistory) {
       //this.mainData=this.that.d.datas[this.that.oactive];
@@ -247,6 +257,13 @@ export default {
   },
   watch: {},
   methods: {
+    /**
+     * 计算面积
+     */
+    autoCalculate() {
+      // 因为网格全是面类型，这里就不判断了
+      this.area=this.that.polygonTool.getArea(this.overLay.getLngLats()[0]);
+    },
     /**
      * 初始化地区选择
      */

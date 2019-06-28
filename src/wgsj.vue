@@ -55,7 +55,7 @@
     >
       <div class="top">
         <div class="floor">
-          <span class="left-span">部件大类：</span>
+          <span class="left-span">网格类型：</span>
           <select v-model="dl" name="aa" id lay-filter="bigLei">
             <option v-for="(item,index) in bigLei" :key="index" :value="item.value">{{item.value}}</option>
           </select>
@@ -165,8 +165,8 @@
 import "layui-src/src/css/modules/layer/default/layer.css";
 // import 'layui-src/dist/layui.all.js';
 import "layui-src/src/css/layui.css";
-import "./components/dialog.less";
-import poperBottom from "./components/poperBottom.vue";
+import "./components/wgsjDialog.less";
+import poperBottom from "./components/wgsjPoperBottom.vue";
 import leftSearch from "./components/leftSearch.vue";
 import { markerClick, scbc } from "./module.js";
 import { selectMenu } from "./select.js";
@@ -502,7 +502,7 @@ export default {
       this.tlayer.push(a);
     },
     poperDetail(data) {
-      this.$createPoperDetail({
+      this.$createWgsjPoperDetail({
         $props: {
           data
         }
@@ -906,7 +906,7 @@ export default {
     addatuceng() {
       var abc = this.bigLei;
       var that = this;
-      this.$createAdd({
+      this.$createWgsjAdd({
         $props: {
           abc
         },
