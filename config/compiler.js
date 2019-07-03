@@ -8,7 +8,6 @@ const isDev = process.env.NODE_ENV === 'development';
 const PostCompilePlugin = require('webpack-post-compile-plugin')
 const isProd = process.env.NODE_ENV === 'production'
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-
 function dist(odist) {
     if (odist) {
         return '../' + odist
@@ -20,7 +19,8 @@ module.exports = function(src, odist) {
     return {
         target: 'web',
         entry: {
-            index: ['./src/index.js']
+            index: ['./src/index.js'],
+            wgsjIndex: ['./src/wgsj-index.js']
         }, //入口JS
         devtool: isProd ?
             false : '#cheap-module-source-map',
@@ -55,7 +55,20 @@ module.exports = function(src, odist) {
                     minimize: false,
                     removeConments: false, //remove the note in html
                     collapseWhitespace: false // delete the white and space
-                }
+                },
+            }),
+            new HtmlWebpackPlugin({
+                template: './wgsj-index.html', // 模板文件           
+                filename: 'wgsj-index.html',
+                env: isDev ? 'development' : 'production',
+                chunks: ['vendor', 'utils', 'wgsjIndex'],
+                chunkSortMode: 'manual',
+                inject: true,
+                minify: {
+                    minimize: false,
+                    removeConments: false, //remove the note in html
+                    collapseWhitespace: false // delete the white and space
+                },
             }),
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
@@ -64,6 +77,11 @@ module.exports = function(src, odist) {
             new VueLoaderPlugin(),
             new CleanWebpackPlugin(['dist', 'build'], {
                 verbose: false
+            }),
+            new webpack.optimize.CommonsChunkPlugin({
+                //公共块的块名称
+                name: 'vendor',
+                filename: '[name].[hash].js'
             })
         ].concat(isProd ? [new ExtractTextPlugin({
             filename: 'common.[chunkhash].css'

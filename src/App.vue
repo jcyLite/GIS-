@@ -213,7 +213,6 @@
 		},
 		mounted() {
 			import('layui-src/dist/layui.all.js').then(d=>{
-				import('./authtree.js')
 				window.layer=layui.layer;
 				window.selectMenu=selectMenu;
 				layui.form.on('select(bigLei)', function(data){

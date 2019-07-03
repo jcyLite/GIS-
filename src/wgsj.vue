@@ -165,10 +165,21 @@
 import "layui-src/src/css/modules/layer/default/layer.css";
 // import 'layui-src/dist/layui.all.js';
 import "layui-src/src/css/layui.css";
-import "./components/wgsjDialog.less";
+import "./components/dialog.less";
 import poperBottom from "./components/wgsjPoperBottom.vue";
 import leftSearch from "./components/leftSearch.vue";
-import { markerClick, scbc } from "./module.js";
+import { 
+    markerClick,
+		scbc,
+		jzdian,
+		jzxian,
+		jzmian,
+		editMarker,
+		openPolylineTool,
+		openPolygonTool,
+		openCircleTool,
+		openRectangleTool
+ } from "./module.js";
 import { selectMenu } from "./select.js";
 
 var $ = require("jquery");
@@ -219,8 +230,9 @@ export default {
     // }
   },
   mounted() {
-    alert("xinde")
+    window.pageType=1; // 1是网格
     import("layui-src/dist/layui.all.js").then(d => {
+      import('./authtree.js')
       window.layer = layui.layer;
       window.selectMenu = selectMenu;
       layui.form.on("select(bigLei)", function(data) {
@@ -406,12 +418,15 @@ export default {
           if (d.data) {
             // 生成对应的图层以及图层内的所有覆盖物 点 线 面
             var a;
-            if (item.tleixing == "点") {
-              a = this.jzdian(d.data, this.d[index].tid);
-            } else if (item.tleixing == "线") {
-              a = this.jzxian(d.data, this.d[index].tid);
-            } else if (item.tleixing == "面") {
-              a = this.jzmian(d.data, this.d[index].tid);
+            if(item.tleixing == '点') {
+              //a = this.jzdian(d.data, this.d[index].tid);
+              a = jzdian(d.data, this.d[index].tid,this);
+            } else if(item.tleixing == '线') {
+              //a = this.jzxian(d.data, this.d[index].tid);
+              a = jzxian(d.data, this.d[index].tid,this);
+            } else if(item.tleixing == '面') {
+              //a = this.jzmian(d.data, this.d[index].tid);
+              a = jzmian(d.data, this.d[index].tid,this);
             }
             this.tlayer[index] = a; // 储存覆盖物
           }
@@ -492,12 +507,15 @@ export default {
       console.log(type);
       console.log(tid);
       var a;
-      if (type == "点") {
-        a = this.jzdian(arr, tid);
-      } else if (type == "线") {
-        a = this.jzxian(arr, tid);
-      } else if (type == "面") {
-        a = this.jzmian(arr, tid);
+      if(type == '点') {
+        //a = this.jzdian(arr, tid);
+        a = jzdian(arr, tid,this);
+      } else if(type == '线') {
+        //a = this.jzxian(arr, tid);
+        a = jzxian(arr, tid,this);
+      } else if(type == '面') {
+        //a = this.jzmian(arr,tid);
+        a = jzmian(arr,tid,this);
       }
       this.tlayer.push(a);
     },
@@ -582,183 +600,183 @@ export default {
       scbc.call(this, overLay, isHistory);
       //this.overLayObj=overLay;
     },
-    jzdian(data, tid) {
-      // data是属性表里面的数据; tid 是整个图层的id
-      if (!data) {
-        return false;
-      }
-      var lx = 0,
-        ly = 0;
-      var that = this;
-      var tlayers = [];
-      window.activeMarkers = [];
-      data &&
-        data.forEach((item, index) => {
-          var x = item.lnglat.lng;
-          var y = item.lnglat.lat;
-          lx += parseFloat(x);
-          ly += parseFloat(y);
-          var marker = new T.Marker(new T.LngLat(parseFloat(x), parseFloat(y)));
-          marker.id = item.id;
-          marker.subIndex = index;
-          marker.addEventListener("mouseup", function(param) {
-            let subIndex = this.subIndex;
-            that.$children.forEach((item, index) => {
-              // 选择poperBottom组件实例,修改oactive
-              if (item.$el.parentNode.id == "poper-bottom-cont") {
-                item.oactive = subIndex;
-              }
-            });
-            this.enableDragging(); // 让用户拖动 点 （ 但是需要先点击一下才能拖动 ）
-          });
-          marker.addEventListener("dragend", function(param) {
-            // 拖拽事件
-            console.log("发生了拖拽事件完毕");
-            this.setLngLat(new T.LngLat(param.lnglat.lng, param.lnglat.lat));
-          });
-          marker.bid = item.bid;
-          marker.tid = tid;
-          // 点击上次增加的标注点的时候触发，区别于点击新增标注点
-          marker.addEventListener("click", function(obj) {
-            // 点击事件
-            that.markerClick(this, obj, true); // 触发弹框
-            //alert(222)
-          });
+    // jzdian(data, tid) {
+    //   // data是属性表里面的数据; tid 是整个图层的id
+    //   if (!data) {
+    //     return false;
+    //   }
+    //   var lx = 0,
+    //     ly = 0;
+    //   var that = this;
+    //   var tlayers = [];
+    //   window.activeMarkers = [];
+    //   data &&
+    //     data.forEach((item, index) => {
+    //       var x = item.lnglat.lng;
+    //       var y = item.lnglat.lat;
+    //       lx += parseFloat(x);
+    //       ly += parseFloat(y);
+    //       var marker = new T.Marker(new T.LngLat(parseFloat(x), parseFloat(y)));
+    //       marker.id = item.id;
+    //       marker.subIndex = index;
+    //       marker.addEventListener("mouseup", function(param) {
+    //         let subIndex = this.subIndex;
+    //         that.$children.forEach((item, index) => {
+    //           // 选择poperBottom组件实例,修改oactive
+    //           if (item.$el.parentNode.id == "poper-bottom-cont") {
+    //             item.oactive = subIndex;
+    //           }
+    //         });
+    //         this.enableDragging(); // 让用户拖动 点 （ 但是需要先点击一下才能拖动 ）
+    //       });
+    //       marker.addEventListener("dragend", function(param) {
+    //         // 拖拽事件
+    //         console.log("发生了拖拽事件完毕");
+    //         this.setLngLat(new T.LngLat(param.lnglat.lng, param.lnglat.lat));
+    //       });
+    //       marker.bid = item.bid;
+    //       marker.tid = tid;
+    //       // 点击上次增加的标注点的时候触发，区别于点击新增标注点
+    //       marker.addEventListener("click", function(obj) {
+    //         // 点击事件
+    //         that.markerClick(this, obj, true); // 触发弹框
+    //         //alert(222)
+    //       });
 
-          activeMarkers.push(marker);
-          this.map.addOverLay(marker);
-          marker.hide(); // 隐藏 点
-          tlayers.push(marker);
-        });
-      var px = lx / data.length;
-      var py = ly / data.length;
-      return {
-        tlayers,
-        p: {
-          px,
-          py
-        }
-      };
-    },
-    jzxian(data, tid) {
-      if (!data) {
-        return false;
-      }
-      var that = this;
-      var lx = 0,
-        ly = 0,
-        bb = 0;
-      var tlayers = [];
-      data &&
-        data.forEach((item, index) => {
-          var points = [];
-          item.lnglat.forEach(ii => {
-            lx += parseFloat(ii.lng);
-            ly += parseFloat(ii.lat);
-            bb++;
-            points.push(new T.LngLat(parseFloat(ii.lng), parseFloat(ii.lat)));
-          });
-          var pointers = new T.Polyline(points);
-          pointers.bid = item.bid;
-          pointers.id = item.id;
-          pointers.tid = tid;
-          pointers.subIndex = index;
-          // 点击上次增加的标注点的时候触发，区别于点击新增标注点
-          pointers.addEventListener("click", function(obj) {
-            var lnglat = obj.lnglat;
-            var sContent = require("./components/dialog.tpl")();
-            var InfoContent = new T.InfoWindow();
-            that.infoWindowObj = InfoContent;
-            InfoContent.setContent(sContent);
-            that.map.openInfoWindow(InfoContent, lnglat);
-            //alert("历史的线")
-            that.scbc(this, true); // true 代表是历史数据线
-            // 同步一下poperbottom组件的两个属性
-            let subIndex = this.subIndex;
-            that.$children.forEach((item, index) => {
-              // 选择poperBottom组件实例,修改oactive
-              if (item.$el.parentNode.id == "poper-bottom-cont") {
-                item.oactive = subIndex;
-              }
-            });
-          });
-          this.map.addOverLay(pointers);
-          pointers.hide();
-          tlayers.push(pointers);
-        });
-      window.xianLayers = tlayers;
-      var px = lx / bb;
-      var py = ly / bb;
-      return {
-        tlayers,
-        p: {
-          px,
-          py
-        }
-      };
-    },
-    jzmian(data, tid) {
-      if (!data) {
-        return false;
-      }
-      var that = this;
-      var lx = 0,
-        ly = 0,
-        bb = 0;
-      var tlayers = [];
-      data &&
-        data.forEach((item, index) => {
-          var points = [];
-          item.lnglat.forEach(ii => {
-            lx += parseFloat(ii.lng);
-            ly += parseFloat(ii.lat);
-            bb++;
-            points.push(new T.LngLat(parseFloat(ii.lng), parseFloat(ii.lat)));
-          });
-          var polygons = new T.Polygon(points, {
-            color: "blue",
-            weight: 3,
-            opacity: 0.5,
-            fillColor: "#FFFFFF",
-            fillOpacity: 0.5
-          });
-          polygons.bid = item.bid;
-          polygons.id = item.id;
-          polygons.tid = tid;
-          polygons.subIndex = index;
-          // 点击上次增加的标注点的时候触发，区别于点击新增标注点
-          polygons.addEventListener("click", function(obj) {
-            var lnglat = obj.lnglat;
-            var sContent = require("./components/dialog.tpl")();
-            var InfoContent = new T.InfoWindow();
-            that.infoWindowObj = InfoContent;
-            InfoContent.setContent(sContent);
-            that.map.openInfoWindow(InfoContent, lnglat);
-            that.scbc(this, true); // true 代表是历史数据面
-            // 同步一下poperbottom组件的两个属性
-            let subIndex = this.subIndex;
-            that.$children.forEach((item, index) => {
-              // 选择poperBottom组件实例,修改oactive
-              if (item.$el.parentNode.id == "poper-bottom-cont") {
-                item.oactive = subIndex;
-              }
-            });
-          });
-          this.map.addOverLay(polygons);
-          polygons.hide();
-          tlayers.push(polygons);
-        });
-      window.mianLayers = tlayers;
-      var px = lx / bb;
-      var py = ly / bb;
-      return {
-        tlayers,
-        p: {
-          px,
-          py
-        }
-      };
-    },
+    //       activeMarkers.push(marker);
+    //       this.map.addOverLay(marker);
+    //       marker.hide(); // 隐藏 点
+    //       tlayers.push(marker);
+    //     });
+    //   var px = lx / data.length;
+    //   var py = ly / data.length;
+    //   return {
+    //     tlayers,
+    //     p: {
+    //       px,
+    //       py
+    //     }
+    //   };
+    // },
+    // jzxian(data, tid) {
+    //   if (!data) {
+    //     return false;
+    //   }
+    //   var that = this;
+    //   var lx = 0,
+    //     ly = 0,
+    //     bb = 0;
+    //   var tlayers = [];
+    //   data &&
+    //     data.forEach((item, index) => {
+    //       var points = [];
+    //       item.lnglat.forEach(ii => {
+    //         lx += parseFloat(ii.lng);
+    //         ly += parseFloat(ii.lat);
+    //         bb++;
+    //         points.push(new T.LngLat(parseFloat(ii.lng), parseFloat(ii.lat)));
+    //       });
+    //       var pointers = new T.Polyline(points);
+    //       pointers.bid = item.bid;
+    //       pointers.id = item.id;
+    //       pointers.tid = tid;
+    //       pointers.subIndex = index;
+    //       // 点击上次增加的标注点的时候触发，区别于点击新增标注点
+    //       pointers.addEventListener("click", function(obj) {
+    //         var lnglat = obj.lnglat;
+    //         var sContent = require("./components/dialog.tpl")();
+    //         var InfoContent = new T.InfoWindow();
+    //         that.infoWindowObj = InfoContent;
+    //         InfoContent.setContent(sContent);
+    //         that.map.openInfoWindow(InfoContent, lnglat);
+    //         //alert("历史的线")
+    //         that.scbc(this, true); // true 代表是历史数据线
+    //         // 同步一下poperbottom组件的两个属性
+    //         let subIndex = this.subIndex;
+    //         that.$children.forEach((item, index) => {
+    //           // 选择poperBottom组件实例,修改oactive
+    //           if (item.$el.parentNode.id == "poper-bottom-cont") {
+    //             item.oactive = subIndex;
+    //           }
+    //         });
+    //       });
+    //       this.map.addOverLay(pointers);
+    //       pointers.hide();
+    //       tlayers.push(pointers);
+    //     });
+    //   window.xianLayers = tlayers;
+    //   var px = lx / bb;
+    //   var py = ly / bb;
+    //   return {
+    //     tlayers,
+    //     p: {
+    //       px,
+    //       py
+    //     }
+    //   };
+    // },
+    // jzmian(data, tid) {
+    //   if (!data) {
+    //     return false;
+    //   }
+    //   var that = this;
+    //   var lx = 0,
+    //     ly = 0,
+    //     bb = 0;
+    //   var tlayers = [];
+    //   data &&
+    //     data.forEach((item, index) => {
+    //       var points = [];
+    //       item.lnglat.forEach(ii => {
+    //         lx += parseFloat(ii.lng);
+    //         ly += parseFloat(ii.lat);
+    //         bb++;
+    //         points.push(new T.LngLat(parseFloat(ii.lng), parseFloat(ii.lat)));
+    //       });
+    //       var polygons = new T.Polygon(points, {
+    //         color: "blue",
+    //         weight: 3,
+    //         opacity: 0.5,
+    //         fillColor: "#FFFFFF",
+    //         fillOpacity: 0.5
+    //       });
+    //       polygons.bid = item.bid;
+    //       polygons.id = item.id;
+    //       polygons.tid = tid;
+    //       polygons.subIndex = index;
+    //       // 点击上次增加的标注点的时候触发，区别于点击新增标注点
+    //       polygons.addEventListener("click", function(obj) {
+    //         var lnglat = obj.lnglat;
+    //         var sContent = require("./components/dialog.tpl")();
+    //         var InfoContent = new T.InfoWindow();
+    //         that.infoWindowObj = InfoContent;
+    //         InfoContent.setContent(sContent);
+    //         that.map.openInfoWindow(InfoContent, lnglat);
+    //         that.scbc(this, true); // true 代表是历史数据面
+    //         // 同步一下poperbottom组件的两个属性
+    //         let subIndex = this.subIndex;
+    //         that.$children.forEach((item, index) => {
+    //           // 选择poperBottom组件实例,修改oactive
+    //           if (item.$el.parentNode.id == "poper-bottom-cont") {
+    //             item.oactive = subIndex;
+    //           }
+    //         });
+    //       });
+    //       this.map.addOverLay(polygons);
+    //       polygons.hide();
+    //       tlayers.push(polygons);
+    //     });
+    //   window.mianLayers = tlayers;
+    //   var px = lx / bb;
+    //   var py = ly / bb;
+    //   return {
+    //     tlayers,
+    //     p: {
+    //       px,
+    //       py
+    //     }
+    //   };
+    // },
     /**
      *  点 线 面 显示切换
      */
@@ -807,83 +825,96 @@ export default {
       this.polygonTool.open();
     },
     editMarker() {
-      this.markerTool.open(); // 开启标注点功能
+      editMarker(this);
+				//this.markerTool.open();  // 开启标注点功能
     },
-    openPolylineTool() {
-      var that = this;
-      var handler = this.handler;
-      if (handler) handler.close();
-      handler = new T.PolylineTool(this.map);
-      handler.addEventListener("draw", function(obj) {
-        // 画线 双击确定后 触发
-        var currentLnglats = obj.currentLnglats;
-        var lnglat = currentLnglats[currentLnglats.length - 1];
-        var sContent = require("./components/dialog.tpl")();
-        var InfoContent = new T.InfoWindow();
-        that.infoWindowObj = InfoContent;
-        InfoContent.setContent(sContent);
-        //obj.currentPolyline.openInfoWindow(InfoContent);
-        that.map.openInfoWindow(InfoContent, lnglat);
-        obj.currentPolyline.tid = $(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
-        that.scbc(obj.currentPolyline, false);
-        (function(th_) {
-          th_.addEventListener("click", obj => {
-            var InfoContent = new T.InfoWindow();
-            that.infoWindowObj = InfoContent;
-            InfoContent.setContent(sContent);
-            that.map.openInfoWindow(InfoContent, lnglat);
-            that.scbc(th_, false);
-          });
-        })(obj.currentPolyline);
-      });
-      handler.open();
+    openPolylineTool(){  // 绘制线
+      openPolylineTool(this);
     },
-    openPolygonTool() {
-      var that = this;
-      var handler = this.handler;
-      if (handler) handler.close();
-      handler = new T.PolygonTool(this.map);
-      handler.addEventListener("draw", function(obj) {
-        var currentLnglats = obj.currentLnglats;
-        var lnglat = currentLnglats[currentLnglats.length - 1];
-        var sContent = require("./components/dialog.tpl")();
-        var InfoContent = new T.InfoWindow();
-        that.infoWindowObj = InfoContent;
-        InfoContent.setContent(sContent);
-        //obj.currentPolygon.openInfoWindow(InfoContent);
-        that.map.openInfoWindow(InfoContent, lnglat);
-        obj.currentPolygon.tid = $(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
-        that.scbc(obj.currentPolygon, false);
-        (function(th_) {
-          th_.addEventListener("click", objInner => {
-            var InfoContent = new T.InfoWindow();
-            that.infoWindowObj = InfoContent;
-            InfoContent.setContent(sContent);
-            that.map.openInfoWindow(InfoContent, lnglat);
-            that.scbc(th_, false);
-          });
-        })(obj.currentPolygon);
-      });
-      handler.open();
+    openPolygonTool(){  // 绘制面
+      openPolygonTool(this);
     },
+    // openPolylineTool() {
+    //   var that = this;
+    //   var handler = this.handler;
+    //   if (handler) handler.close();
+    //   handler = new T.PolylineTool(this.map);
+    //   handler.addEventListener("draw", function(obj) {
+    //     // 画线 双击确定后 触发
+    //     var currentLnglats = obj.currentLnglats;
+    //     var lnglat = currentLnglats[currentLnglats.length - 1];
+    //     var sContent = require("./components/dialog.tpl")();
+    //     var InfoContent = new T.InfoWindow();
+    //     that.infoWindowObj = InfoContent;
+    //     InfoContent.setContent(sContent);
+    //     //obj.currentPolyline.openInfoWindow(InfoContent);
+    //     that.map.openInfoWindow(InfoContent, lnglat);
+    //     obj.currentPolyline.tid = $(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
+    //     that.scbc(obj.currentPolyline, false);
+    //     (function(th_) {
+    //       th_.addEventListener("click", obj => {
+    //         var InfoContent = new T.InfoWindow();
+    //         that.infoWindowObj = InfoContent;
+    //         InfoContent.setContent(sContent);
+    //         that.map.openInfoWindow(InfoContent, lnglat);
+    //         that.scbc(th_, false);
+    //       });
+    //     })(obj.currentPolyline);
+    //   });
+    //   handler.open();
+    // },
+    // openPolygonTool() {
+    //   var that = this;
+    //   var handler = this.handler;
+    //   if (handler) handler.close();
+    //   handler = new T.PolygonTool(this.map);
+    //   handler.addEventListener("draw", function(obj) {
+    //     var currentLnglats = obj.currentLnglats;
+    //     var lnglat = currentLnglats[currentLnglats.length - 1];
+    //     var sContent = require("./components/dialog.tpl")();
+    //     var InfoContent = new T.InfoWindow();
+    //     that.infoWindowObj = InfoContent;
+    //     InfoContent.setContent(sContent);
+    //     //obj.currentPolygon.openInfoWindow(InfoContent);
+    //     that.map.openInfoWindow(InfoContent, lnglat);
+    //     obj.currentPolygon.tid = $(".leftBox .bottom .box.active").attr("tid"); // 赋值图层id
+    //     that.scbc(obj.currentPolygon, false);
+    //     (function(th_) {
+    //       th_.addEventListener("click", objInner => {
+    //         var InfoContent = new T.InfoWindow();
+    //         that.infoWindowObj = InfoContent;
+    //         InfoContent.setContent(sContent);
+    //         that.map.openInfoWindow(InfoContent, lnglat);
+    //         that.scbc(th_, false);
+    //       });
+    //     })(obj.currentPolygon);
+    //   });
+    //   handler.open();
+    // },
     openRectangleTool() {
-      //绘制矩形
-      var handler = this.handler;
-      if (handler) handler.close();
-      handler = new T.RectangleTool(map, {
-        follow: true
-      });
-      handler.open();
+      openRectangleTool(this);
     },
     openCircleTool() {
-      //绘制圆
-      var handler = this.handler;
-      if (handler) handler.close();
-      handler = new T.CircleTool(map, {
-        follow: true
-      });
-      handler.open();
+      openCircleTool(this);
     },
+    // openRectangleTool() {
+    //   //绘制矩形
+    //   var handler = this.handler;
+    //   if (handler) handler.close();
+    //   handler = new T.RectangleTool(map, {
+    //     follow: true
+    //   });
+    //   handler.open();
+    // },
+    // openCircleTool() {
+    //   //绘制圆
+    //   var handler = this.handler;
+    //   if (handler) handler.close();
+    //   handler = new T.CircleTool(map, {
+    //     follow: true
+    //   });
+    //   handler.open();
+    // },
     ControlsetPosition() {
       var controlPositionStr = "leftTOP";
       this.leftTOP = T_ANCHOR_TOP_LEFT;
