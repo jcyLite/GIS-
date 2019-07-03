@@ -295,7 +295,7 @@
 				 * 根据全屏展示按钮，就重新初始化table高度
 				 */
 				var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-				var hei=this.bactive?(h-41):160;  
+				var hei=this.bactive?(h-41-13):160;  
 				this.initTable(hei)
 			})
 		},
@@ -348,7 +348,7 @@
 			dragTable() {
 				var that=this;
 				var h = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-				var maxHei=h-41;
+				var maxHei=h-41-13;
 				var oBox = $("#poper-bottom")[0];
 				var targetDom =$(oBox).find(".drag-div")[0];
 				var tableBox = $(oBox).find(".layui-table-body.layui-table-main")[0];
