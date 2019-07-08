@@ -5,8 +5,7 @@ export function markerClick(marker, obj, isHistory, that) {//点击标注时触�
     //     $("#LAY-auth-tree-index").html("");
     //   }
     var lnglat = obj.lnglat;
-    var sContent = require(window.pageType==1?'./components/wgsjDialog.tpl':'./components/dialog.tpl')();
-    //var sContent = require('./components/wgsjDialog.tpl')();
+    var sContent = require('./components/dialog.tpl')();
     var InfoContent = new T.InfoWindow();
     that.infoWindowObj = InfoContent;
     InfoContent.setContent(sContent);
@@ -34,6 +33,7 @@ export function markerClick(marker, obj, isHistory, that) {//点击标注时触�
 import Vue from 'vue'
 import dialog from './components/dialog.vue'
 import wgsjDialog from './components/wgsjDialog.vue'
+import sjsjDialog from './components/sjsjDialog.vue'
 /**
  * 绘制点 线 面 的时候触发， 并弹框
  */
@@ -49,7 +49,7 @@ export function scbc(overLay, isHistory, that) {  // that---app对象
                 isHistory: isHistory || false, // isHistory：true--是上次标记的点
             }
         },
-        render: h => h(window.pageType==1?wgsjDialog:dialog),
+        render: h => h(window.pageType==1?wgsjDialog:window.pageType==2?sjsjDialog:dialog),
     })
 }
 /**
@@ -65,7 +65,7 @@ export function editMarker(that) {
         // 点击标注一个点的时候触发，线和面的触发是其他方法
         that.infoWindowObj = new T.InfoWindow();
         var infoWindowObj = that.infoWindowObj;
-        var sContent = require(window.pageType==1?'./components/wgsjDialog.tpl':'./components/dialog.tpl')();
+        var sContent = require('./components/dialog.tpl')();
         var lnglat = obj.currentLnglat;
         var markers = handler.getMarkers();
         infoWindowObj.setContent(sContent);
@@ -102,7 +102,7 @@ export function openPolygonTool(that) {
     handler.addEventListener('draw', function (obj) {
         var currentLnglats = obj.currentLnglats;
         var lnglat = currentLnglats[currentLnglats.length - 1];
-        var sContent = require(window.pageType==1?'./components/wgsjDialog.tpl':'./components/dialog.tpl')();
+        var sContent = require('./components/dialog.tpl')();
         var InfoContent = new T.InfoWindow();
         that.infoWindowObj = InfoContent;
         InfoContent.setContent(sContent);
@@ -135,7 +135,7 @@ export function openPolylineTool(that) {
     handler.addEventListener('draw', function (obj) {  // 画线 双击确定后 触发
         var currentLnglats = obj.currentLnglats;
         var lnglat = currentLnglats[currentLnglats.length - 1];
-        var sContent = require(window.pageType==1?'./components/wgsjDialog.tpl':'./components/dialog.tpl')();
+        var sContent = require('./components/dialog.tpl')();
         var InfoContent = new T.InfoWindow();
         that.infoWindowObj = InfoContent;
         InfoContent.setContent(sContent);
@@ -241,7 +241,7 @@ export function jzxian(data, tid, that) { // data是属性表里面的数据; ti
         // 点击上次增加的标注点的时候触发，区别于点击新增标注点
         pointers.addEventListener('click', function (obj) {
             var lnglat = obj.lnglat;
-            var sContent = require(window.pageType==1?'./components/wgsjDialog.tpl':'./components/dialog.tpl')();
+            var sContent = require('./components/dialog.tpl')();
             var InfoContent = new T.InfoWindow();
             that.infoWindowObj = InfoContent;
             InfoContent.setContent(sContent);
@@ -305,7 +305,7 @@ export function jzmian(data, tid, that) { // data是属性表里面的数据; ti
         // 点击上次增加的标注点的时候触发，区别于点击新增标注点
         polygons.addEventListener('click', function (obj) {
             var lnglat = obj.lnglat;
-            var sContent = require(window.pageType==1?'./components/wgsjDialog.tpl':'./components/dialog.tpl')();
+            var sContent = require('./components/dialog.tpl')();
             var InfoContent = new T.InfoWindow();
             that.infoWindowObj = InfoContent;
             InfoContent.setContent(sContent);

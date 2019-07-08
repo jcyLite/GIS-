@@ -212,7 +212,7 @@
 			// }
 		},
 		mounted() {
-			window.pageType=0; // 0是部件
+			window.pageType=2; // 2是事件
 			import('layui-src/dist/layui.all.js').then(d=>{
 				window.layer=layui.layer;
 				window.selectMenu=selectMenu;

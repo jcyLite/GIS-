@@ -18,12 +18,13 @@
 					</div>
 					<div class="row">
 						<div class="col">基础数据类型：</div>
-						<div v-model="poperData.jcsjlx" class="col">网格数据</div>
+						<div class="col">网格数据</div>
 					</div>
 					<div class="row">
 						<div class="col">所属网格类型：</div>
-						<select v-model="poperData.tleixing" placeholder="请选择" class="col" name="" id=""  lay-filter="tleixing">
+						<select v-model="poperData.type" placeholder="请选择" class="col" name="" id=""  lay-filter="wgType">
 							<option value="">请选择</option>
+							<option v-for="(item,index) in tempAry" :key="index" :value="item.value">{{item.value}}</option>
 						</select>
 					</div>
 					<div class="row">
@@ -51,9 +52,9 @@
 				poperData:{
 					tname:'',
 					tleixing:'',
+					type:'',  // 网格类型
 					jcsjlx:'网格数据',
 					miaoshu:'',
-                    bigType:'',
                     minType:'',
 					bigCode:'',
 					minCode:''
@@ -64,24 +65,11 @@
 		mounted() {
 			let that=this;
             this.tempAry = this.abc;
-            // this.secondAry =  this.abc[0].sub;
-	        console.log("sstempAryssss=="+this.tempAry);
-			console.log("this.secondAry=="+this.secondAry);
-			layui.form.on('select(bigType)', function(data){
+			layui.form.on('select(wgType)', function(data){
 				//console.log(data.elem); //得到select原始DOM对象
 				//console.log(data.value); //得到被选中的值
 				//console.log(data.othis); //得到美化后的DOM对象
-				that.poperData.bigType=data.value;
-				that.$nextTick(() => {
-					that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
-					layui.form.render(); // 重载一下layui的表单元素
-				});
-			});
-			layui.form.on('select(minType)', function(data){
-				//console.log(data.elem); //得到select原始DOM对象
-				//console.log(data.value); //得到被选中的值
-				//console.log(data.othis); //得到美化后的DOM对象
-				that.poperData.minType=data.value;
+				that.poperData.type=data.value;
 				that.$nextTick(() => {
 					that.$forceUpdate(); //强制刷新，解决页面不会重新渲染的问题
 					layui.form.render(); // 重载一下layui的表单元素
@@ -103,31 +91,6 @@
 			layui.form.render(); // 重载一下layui的表单元素
 		},
         watch:{
-            'poperData.bigType' :{
-                handler(newName,oldName){
-                    console.log('newName='+newName);
-                    console.log('oldName='+oldName);
-                    this.tempAry.forEach((item,index)=>{
-                        if(item.value == newName){
-                            this.secondAry=item.sub;
-                            console.log('item.sub=='+this.secondAry);
-                            this.poperData.bigCode = item.key;
-                        }
-
-                    })
-                }
-            },
-            'poperData.minType' :{
-                handler(newName,oldName){
-                    this.secondAry.forEach((item,index)=>{
-                        if(item.value == newName){
-                            console.log('item.sub=='+this.secondAry);
-                            this.poperData.minCode = item.key;
-                        }
-
-                    })
-                }
-			}
         },
 		methods:{
 			show(){

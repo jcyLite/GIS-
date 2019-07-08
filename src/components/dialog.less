@@ -11,7 +11,7 @@
    max-height:260px;
    width:100%;
    overflow-y: scroll;
-   padding-left: 15px;
+   padding:0 10px 0 0;
 }
 .row{
     min-height:35px;
@@ -66,10 +66,12 @@
             font-size: 12px;
         }
     }
-    &>div{
-        width:80px;
-        line-height:22px;
+    &>div.col{
+        width:100px;
         text-align: right;
+    }
+    .layui-upload{
+        display: block;
     }
     input{
         vertical-align: middle;
@@ -84,6 +86,49 @@
     &::after{
         clear:both;
     }
+    .layui-table td, .layui-table th {
+        padding: 5px 8px;
+        text-align: center;
+    }
+    .layui-upload-list{
+        .layui-table th:nth-child(1){
+            width: 110px;
+        }
+        .layui-table th:nth-child(3){
+            width: 60px;
+        }
+        .layui-table th:nth-child(4){
+            width: 80px;
+        }
+    }
+    .table-cont{
+        .layui-table th {
+            padding: 5px 8px;
+        }
+        .layui-table td{
+            padding: 0;
+            &.empty-td{
+                padding: 10px 15px;
+            }
+            .layui-input{
+                width:100%;
+                padding-left: 5px;
+                padding-right: 5px;
+                height: 34px;
+                border: none;
+            }
+        }
+        .layui-table th:nth-child(1){
+            width: 50px;
+        }
+        .layui-table th:nth-child(2){
+            width: 80px;
+        }
+        .layui-table th:nth-child(4){
+            width: 30px;
+        }
+    }
+    
 }
 .buttons{
     position:absolute;

@@ -6,8 +6,8 @@
 		}
 		.close{
 			position:absolute;
-			right:10px;
-			top:6px;
+			right:5px;
+			top:3px;
 			z-index: 1;
 			cursor: pointer;
 			img{
@@ -39,6 +39,7 @@
 				background-color: rgba(221, 221, 221, 1);
 				border-top-left-radius: 5px;
 				border-top-right-radius: 5px;
+				margin-bottom: 0;
 				.drag-div{
 					position: absolute;
 					top: -10px;
@@ -60,7 +61,7 @@
 			.right{
 				width:400px;
 				line-height: 29px;
-				margin-right:46px;
+				margin-right:38px;
 				float:right;
 				.b{
 					position: relative;

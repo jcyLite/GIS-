@@ -45,8 +45,8 @@
         <input
           class="col layui-input"
           type="text"
-          id="dizhiScript"
-          :value="mainData&&mainData.address"
+          id="trellisCoding"
+          :value="mainData&&mainData.code"
         >
       </div>
       <div class="row">
@@ -54,14 +54,15 @@
         <input
           class="col layui-input"
           type="text"
-          id="zhuguanPart"
-          :value="mainData&&mainData.adminDept"
+          id="trellisName"
+          :value="mainData&&mainData.name"
         >
       </div>
       <div class="row">
         <div class="col">网格类型：</div>
-        <select name="" id="">
+        <select name="" id="trellisType">
           <option value="">请选择</option>
+          <option v-for="(item,index) in trellisArr" :key="index" :value="item.value">{{item.value}}</option>
         </select>
       </div>
       <div class="row">
@@ -73,7 +74,7 @@
       </div>
       <div class="row">
         <div class="col">数据状态：</div>
-        <select name="" id="">
+        <select name="" id="dataStatus">
           <option value="">请选择</option>
           <option value="1">可用</option>
           <option value="0">禁用</option>
@@ -84,7 +85,7 @@
         <input
           class="col layui-input"
           type="text"
-          id="shujuSource"
+          id="dataSource"
           :value="mainData&&mainData.source"
         >
       </div>
@@ -93,13 +94,13 @@
         <input
           class="col layui-input"
           type="text"
-          id="shujuReceive"
+          id="dataRecorder"
           :value="mainData&&mainData.recorder"
         >
       </div>
       <div class="row">
         <div class="col">备注：</div>
-        <input class="col layui-input" type="text" id="beizhu" :value="mainData&&mainData.remark">
+        <input class="col layui-input" type="text" id="remark" :value="mainData&&mainData.remark">
       </div>
     </div>
     <div class="buttons">
@@ -115,6 +116,7 @@ import { setTimeout } from 'timers';
 export default {
   data() {
     return {
+      trellisArr:this.$root.that.trellisArr,
       mainData: null,
       overLay: this.$root.overLay,
       that: this.$root.that,
@@ -187,8 +189,7 @@ export default {
      */
     layui.authtree.on("change(lay-check-auth)", function(data) {
       // 获取所有已选中节点
-      var checked = layui.authtree.getChecked("#LAY-auth-tree-index");
-      console.log("checked", checked);
+      that.parentGrid = layui.authtree.getChecked("#LAY-auth-tree-index");
     });
     
     //如果是修改 则渲染数据
@@ -199,8 +200,6 @@ export default {
           this.mainData = item.datas[this.overLay.subIndex];
         }
       });
-      console.log("mainData");
-      console.log(this.mainData);
     } else {
       this.mainData = null;
     }
@@ -250,10 +249,6 @@ export default {
     });
   },
   updated() {
-    // this.$nextTick(() => {
-    //   alert(999)
-    //     layui.form.render(); // 重载一下layui的表单元素
-    // });
   },
   watch: {},
   methods: {
@@ -375,27 +370,20 @@ export default {
       // type --- 为 ‘add’或者‘edit’
       var select3 = document.getElementById("dis");
       var thirdName = select3.value;
-      var thirdValue = $("#dis")
-        .find("option[value=" + thirdName + "]")
-        .html();
+      var thirdValue = $("#dis").find("option[value=" + thirdName + "]").html();
       var select2 = document.getElementById("city");
       var secondName = select2.value;
-      var secondValue = $("#city")
-        .find("option[value=" + secondName + "]")
-        .html();
+      var secondValue = $("#city").find("option[value=" + secondName + "]").html();
       var select1 = document.getElementById("pro");
       var firstName = select1.value;
-      var firstValue = $("#pro")
-        .find("option[value=" + firstName + "]")
-        .html();
-      var bujianName = document.getElementById("bujianName").value;
-      var dizhiScript = document.getElementById("dizhiScript").value;
-      var zhuguanPart = document.getElementById("zhuguanPart").value;
-      var quanshuPart = document.getElementById("quanshuPart").value;
-      var yanghuPart = document.getElementById("yanghuPart").value;
-      var shujuSource = document.getElementById("shujuSource").value;
-      var shujuReceive = document.getElementById("shujuReceive").value;
-      var beizhu = document.getElementById("beizhu").value;
+      var firstValue = $("#pro").find("option[value=" + firstName + "]").html();
+      var trellisName = document.getElementById("trellisName").value;
+      var trellisCoding = document.getElementById("trellisCoding").value;
+      var trellisType = document.getElementById("trellisType").value;
+      var dataStatus = document.getElementById("dataStatus").value;
+      var dataSource = document.getElementById("dataSource").value;
+      var dataRecorder = document.getElementById("dataRecorder").value;
+      var remark = document.getElementById("remark").value;
       var lnglat = null;
       if (!this.that.isHistory) {
         // 新增
@@ -419,14 +407,14 @@ export default {
         streetName: secondValue,
         communityCode: thirdName,
         communityName: thirdValue,
-        name: bujianName,
-        address: dizhiScript,
-        adminDept: zhuguanPart,
-        ownerDept: quanshuPart,
-        guardDept: yanghuPart,
-        source: shujuSource,
-        recorder: shujuReceive,
-        remark: beizhu,
+        parentGrid: that.parentGrid[0],
+        name: trellisName,
+        code:trellisCoding,
+        type:trellisType,
+        status:dataStatus,
+        source:dataSource,
+        recorder:dataRecorder,
+        remark: remark,
         lnglat: lnglat
       };
       if (type == "edit") {

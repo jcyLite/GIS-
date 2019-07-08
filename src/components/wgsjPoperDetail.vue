@@ -12,15 +12,15 @@
 				</div>
 				<div class="floor clearfix">
 					<div class="fl">图层类型：</div>
-					<div class="fl">{{data.tleixing}}</div>
+					<div class="fl">面</div>
 				</div>
 				<div class="floor clearfix">
 					<div class="fl">基础数据类型：</div>
-					<div class="fl">{{data.jcsjlx}}</div>
+					<div class="fl">网格数据</div>
 				</div>
 				<div class="floor clearfix">
 					<div class="fl">所属网格类型：</div>
-					<div class="fl">{{data.bleixingx}}</div>
+					<div class="fl">{{data.type}}</div>
 				</div>
 				<div class="floor clearfix">
 					<div class="fl">描述：</div>

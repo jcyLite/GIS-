@@ -1,6 +1,7 @@
 import Vue from 'vue'
-import App from './App.vue'
+import App from './App.vue'  // 部件页面
 import Wgsj from './wgsj.vue'  // 网格页面
+import Sjsj from './sjsj.vue'  // 事件页面
 import { createStore } from './store'
 import { createRouter } from './router'
 import { sync } from 'vuex-router-sync'
@@ -25,7 +26,7 @@ Vue.createAPI(wgsjAdd,true)
 Vue.createAPI(wgsjPoperDetail,true)
 
 
-export function createApp (type) {  // type：1---网格页面
+export function createApp (type) {  // type：0---部件页面  1---网格页面  2---事件页面
   // create store and router instances
   const store = createStore()
   const router = createRouter()
@@ -40,7 +41,7 @@ export function createApp (type) {  // type：1---网格页面
     router,
     store,
     mounted(){},
-    render: h => h(type==1?Wgsj:App)
+    render: h => h(type==1?Wgsj:type==2?Sjsj:App)
   })
 
   // expose the app, the router and the store.

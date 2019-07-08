@@ -56,8 +56,8 @@
       <div class="top">
         <div class="floor">
           <span class="left-span">网格类型：</span>
-          <select v-model="dl" name="aa" id lay-filter="bigLei">
-            <option v-for="(item,index) in bigLei" :key="index" :value="item.value">{{item.value}}</option>
+          <select v-model="dl" name="aa" id lay-filter="trellisType">
+            <option v-for="(item,index) in trellisArr" :key="index" :value="item.value">{{item.value}}</option>
           </select>
         </div>
         <div class="floor">
@@ -212,7 +212,7 @@ export default {
       tlayer: [], // 储存某大类里面多个图层的所有点
       dl: "",
       xl: "",
-      bigLei: [],
+      trellisArr: [],  // 网格类型数组
       cityAry: [],
       overLayObj: null, // 地图图层对象
       infoWindowObj: null // 地图信息框 对象
@@ -235,7 +235,7 @@ export default {
       import('./authtree.js')
       window.layer = layui.layer;
       window.selectMenu = selectMenu;
-      layui.form.on("select(bigLei)", function(data) {
+      layui.form.on("select(trellisType)", function(data) {
         //console.log(data.elem); //得到select原始DOM对象
         //console.log(data.value); //得到被选中的值
         //console.log(data.othis); //得到美化后的DOM对象
@@ -450,9 +450,7 @@ export default {
           dictionaryCode: "部件分类代码"
         })
         .then(d => {
-          this.bigLei = d;
-          localStorage.setItem("localAry", this.bigLei);
-          var get = localStorage.getItem("localAry");
+          this.trellisArr = d;
         });
     },
     searchlei(callback) {
@@ -935,7 +933,7 @@ export default {
      * 添加一个图层
      */
     addatuceng() {
-      var abc = this.bigLei;
+      var abc = this.trellisArr;
       var that = this;
       this.$createWgsjAdd({
         $props: {
